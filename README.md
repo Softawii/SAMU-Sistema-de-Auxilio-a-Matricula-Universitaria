@@ -138,23 +138,14 @@ Documento de Requisitos
   </tr>
 </table>
 
+# ***Conteúdo***
 
-**Conteúdo**
-
-
-[TOC]
-
-
-
-
-1. 
- Introdução
+## **1. Introdução**
 Este documento tem por objetivo apresentar os requisitos que o sistema, feito para a Instituição de Ensino Natália Schots, deve atender em diferentes níveis de detalhamento. Dessa forma, serve como acordo entre as partes envolvidas – cliente e analista/desenvolvedor.
 
 
 
-2. 
- Escopo
+## **2. Escopo**
 O software visa informatizar o procedimento de matrícula em disciplinas a cada semestre. O novo sistema se chama Sistema de Auxílio à Matrícula (SAM), e busca automatizar a procura de disciplinas conforme o período atual e perfil do aluno. 
 
 A partir de sua implementação o sistema irá transferir todas as informações dos alunos atuais para o SAM, e os novos cadastros serão feitos no SAM.
@@ -167,8 +158,7 @@ Apesar de tudo, o software não funcionará com o objetivo de automatizar o rece
 
 
 
-3. 
- Definições, siglas e abreviações
+# **3. Definições, siglas e abreviações**
 User-friendly - Sistema intuitivo e de fácil utilização pelo usuário;
 
 SAM - Sistema de Auxílio à Matrícula;
@@ -181,16 +171,14 @@ RN - Regra de Negócio.
 
 
 
-4. 
- Referências
+## **4. Referências**
 Mini-mundo - Matrícula de Alunos - Origem: SIGAA.
 
 Google Material Design - Origem: [https://material.io/design/](https://material.io/design/)
 
 
 
-5. 
- Técnicas de Elicitação de Requisitos
+## **5. Técnicas de Elicitação de Requisitos**
 Entrevista - Foi feita uma rápida entrevista com o cliente para ter um feedback se o sistema se alinhava com o que havia sido depreendido do Minimundo;
 
 Brainstorming entre os desenvolvedores - Foi considerada uma forma eficiente e rápida de identificar todas as necessidades e descrevê-las, assim como resolver potenciais problemas. A equipe se uniu para agilizar a descrição do sistema e definir a melhor solução.
@@ -203,12 +191,10 @@ Prototipação evolutiva - Foi usado especialmente pelo feedback, para confirmar
 
 
 
-6. 
- Requisitos Específicos
+## **6. Requisitos Específicos**
 
 
-    1. 
- Requisitos Funcionais
+### **1. Requisitos Funcionais**
 RF01 - O sistema deve permitir cadastrar usuários; (RN01, RN11)
 
 RF02 - O sistema deve permitir cadastrar cursos; (RN02)
@@ -231,8 +217,7 @@ RF10 - O sistema deve recomendar disciplinas optativas baseado no perfil do alun
 
 
 
-    2. 
-Regras de Negócio
+### **2. Regras de Negócio**
 RN01 - Cada aluno terá as seguintes informações: matrícula, nome, senha, endereço, curso;
 
 RN02 - Cada curso terá as seguintes informações: ID, nome do curso, disciplinas obrigatórias, disciplinas optativas por período;
@@ -259,8 +244,7 @@ RN12 - O sistema irá criar um usuário administrador de sistema padrão na prim
 
 
 
-    3. 
- Requisitos Não-Funcionais
+### **3. Requisitos Não-Funcionais**
 _Confiabilidade:_
 
 RNF01 - O sistema deverá realizar a transferência do sistema anterior sem haver perda de informações no processo;
