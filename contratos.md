@@ -69,8 +69,8 @@ Abaixo será possível observar todos os contratos relacionados.
 
 ### **Pós-Condições**:
 
-- Confirmação da lista de oferta de disciplinas;
-- Redirecionamento para a confirmação e encerramento do processo de matrícula.
+- O sistema fecha a lista de ofertas selecionada pelo aluno
+- O sistema solicita confirmação da lista de ofertas 
 
 
 <!-- Pular Linha -->
