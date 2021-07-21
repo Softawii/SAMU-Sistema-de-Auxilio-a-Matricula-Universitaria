@@ -15,11 +15,11 @@ Apesar de tudo, o software **não** funcionará com o objetivo de automatizar o 
 - Documentos
     - [Minimundo](/documentos/minimundo.md)
     - [Documento de Requisitos](/documentos/documento_de_requisitos.md)
-    - [Casos de Uso](./)
+    - [Casos de Uso](/documentos/casos_de_uso.md)
 - Diagramas
-     - [Casos de Uso](/diagramas/Casos-de-Uso/Diagrama-de-Caso-de-Uso-0.png)
+     - [Casos de Uso](/diagramas/Casos%20de%20Uso/Diagrama%20de%20Caso%20de%20Uso%200.png)
      - Classes
          - [Classes de Análise](/diagramas/Classes/Classe%20de%20Análise)
          - [Classes de Projeto](/diagramas/Classes/Classe%20de%20Projeto/)
-     - [Sequência de Sistema](diagramas/Sequencia%20do%20Sistema)
+     - [Sequência de Sistema](/diagramas/Sequencia%20do%20Sistema)
          - Contratos
