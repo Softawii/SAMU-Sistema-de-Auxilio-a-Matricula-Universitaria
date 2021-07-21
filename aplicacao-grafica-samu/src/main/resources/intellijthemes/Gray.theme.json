@@ -38,6 +38,8 @@
       "shadowColor": "#A6A6A620",
       "startBorderColor": "#C4C4C4",
       "endBorderColor": "#C4C4C4",
+      "startBackground": "#00FA9A",
+      "endBackground": "#00FA9A",
       "default": {
         "foreground": "#FFFFFF",
         "startBackground": "#528CC7",

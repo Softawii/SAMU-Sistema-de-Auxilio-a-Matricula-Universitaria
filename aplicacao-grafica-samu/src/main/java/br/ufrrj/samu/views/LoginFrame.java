@@ -1,7 +1,7 @@
 package br.ufrrj.samu.views;
 
 import br.ufrrj.samu.RoundedCornerBorder;
-import br.ufrrj.samu.intellijthemes.IJThemesFrame;
+import br.ufrrj.samu.utils.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,7 +17,7 @@ import static java.util.Objects.requireNonNull;
 
 public class LoginFrame extends JFrame {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger(LoginFrame.class);
     private static final int FIELDS_CORNER_RADIUS = 4;
 
     JPanel mainJPanel;
@@ -30,7 +30,6 @@ public class LoginFrame extends JFrame {
     JButton signinJButton;
     JButton themesButton;
 
-    IJThemesFrame ijThemesFrame;
     private String frameTitle = "SAMU - Sistema de Aux\u00EDlio a Matr\u00EDcula Universit\u00E1ria";
     private int width = 450+10;
     private int height = 500+30;
@@ -201,13 +200,17 @@ public class LoginFrame extends JFrame {
                     JOptionPane.WARNING_MESSAGE);
         });
 
-        themesButton = new JButton("Temas");
+        themesButton = new JButton("Modo Escuro");
         themesButton.setFocusable(false);
         themesButton.setRolloverEnabled(false);
         themesButton.setFont(themesButton.getFont().deriveFont(20f));
-        ijThemesFrame = new IJThemesFrame();
         themesButton.addActionListener(e -> {
-            ijThemesFrame.setVisible(true);
+            Util.switchMode();
+            if (Util.isDarkMode) {
+                themesButton.setText("Modo Claro");
+            } else {
+                themesButton.setText("Modo Escuro");
+            }
         });
 
         JLabel samuLabel = new JLabel("SAMU", SwingConstants.CENTER);
@@ -249,6 +252,10 @@ public class LoginFrame extends JFrame {
         gridConstraints.gridy = 6;
         gridConstraints.insets = new Insets(0, leftPadding, 0, rightPadding);
         loginJPanel.add(signinJButton, gridConstraints);
+
+        gridConstraints.gridy = 7;
+        gridConstraints.insets = new Insets(0, leftPadding, 0, rightPadding);
+        loginJPanel.add(themesButton, gridConstraints);
 
         GridBagConstraints mainPanelGridConstraints = new GridBagConstraints();
         mainPanelGridConstraints.insets = new Insets(0, 0, 0, 0);

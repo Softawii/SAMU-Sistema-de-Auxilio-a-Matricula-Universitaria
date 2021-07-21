@@ -1,19 +1,22 @@
 package br.ufrrj.samu.utils;
 
-import com.formdev.flatlaf.FlatDarculaLaf;
-import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatIntelliJLaf;
-import com.formdev.flatlaf.FlatLightLaf;
+import br.ufrrj.samu.SAMU;
+import com.formdev.flatlaf.*;
 import com.formdev.flatlaf.intellijthemes.FlatAllIJThemes;
+import com.formdev.flatlaf.intellijthemes.FlatGrayIJTheme;
+import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMoonlightContrastIJTheme;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
+import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.FontUIResource;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,7 +29,25 @@ import static java.util.Objects.requireNonNull;
 
 public class Util {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    public static boolean isDarkMode = false;
+
+    private static final Logger LOGGER = LogManager.getLogger(Util.class);
+
+    public static void switchMode() {
+        isDarkMode = !isDarkMode;
+        try {
+            if (isDarkMode) {
+                LOGGER.info("Changing to dark theme(Flat Moonlight Contrast IJTheme)");
+                UIManager.setLookAndFeel(SAMU.customMoonlightContrastTheme);
+            } else {
+                LOGGER.info("Changing to light theme(Flat Gray IJTheme)");
+                UIManager.setLookAndFeel(SAMU.customGrayTheme);
+            }
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
+        FlatLaf.updateUILater();
+    }
 
 
     public static void centreWindow(Window frame) {
@@ -79,10 +100,10 @@ public class Util {
     public static Font getSansationFont() {
         InputStream fontStream = null;
         Font sansationFont = null;
-        try {
-            fontStream = Files.newInputStream(Paths.get(requireNonNull(Util.class.getClassLoader().getResource("fonts/Sansation_Regular.ttf")).toURI()));
+        try  {
+            fontStream = requireNonNull(Util.class.getClassLoader().getResourceAsStream("fonts/Sansation_Regular.ttf"));
             sansationFont = Font.createFont(Font.TRUETYPE_FONT, fontStream);
-        } catch (IOException | URISyntaxException | FontFormatException e) {
+        } catch (IOException | FontFormatException e) {
             e.printStackTrace();
             LOGGER.warn(e);
         }
