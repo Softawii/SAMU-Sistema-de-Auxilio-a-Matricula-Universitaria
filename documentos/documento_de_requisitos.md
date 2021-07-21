@@ -27,10 +27,10 @@
 3. DEFINIÇÕES, SIGLAS E ABREVIAÇÕES
 4. REFERÊNCIAS
 5. TÉCNICAS DE ELICITAÇÃO DE REQUISITOS
-6. REQUISITOS ESPECÍFICOS        
-    6.1 Requisitos Funcionais
-    6.2 Regras de Negócio
-    6.3 Requisitos Não-Funcionais
+6. REQUISITOS ESPECÍFICOS  
+    6.1 Requisitos Funcionais  
+    6.2 Regras de Negócio  
+    6.3 Requisitos Não-Funcionais  
 
 ----
 # 1. Introdução
@@ -124,17 +124,17 @@ RN10 - Cada coordenador terá as seguintes informações: nome, usuário, senha
 
 ## 3. Requisitos Não-Funcionais
 
-- Confiabilidade:
-    RNF01 - O sistema deverá realizar a transferência do sistema anterior sem haver perda de informações no processo;
-    RNF02 - O sistema terá no mínimo 40% de capacidade de processamento reservada para atender nos momentos de pico de uso;
+- Confiabilidade:  
+    RNF01 - O sistema deverá realizar a transferência do sistema anterior sem haver perda de informações no processo;  
+    RNF02 - O sistema terá no mínimo 40% de capacidade de processamento reservada para atender nos momentos de pico de uso;  
     RNF03 - O sistema armazenará todas as informações de cada usuário de forma segura e livre de falhas, contra-ataques e invasões.
 
-- Usabilidade:
-    RNF04 - O sistema terá uma interface intuitiva e simplificada, para que qualquer usuário leigo seja capaz de usá-lo sem dificuldades;
+- Usabilidade:  
+    RNF04 - O sistema terá uma interface intuitiva e simplificada, para que qualquer usuário leigo seja capaz de usá-lo sem dificuldades;  
     RNF05 - O sistema deve seguir as diretrizes do Design Material do Google como identidade visual, de modo a desenvolver um produto único que será adaptável a computadores e smartphones e terá a experiência do usuário como prioridade.
 
-- Manutenibilidade:
+- Manutenibilidade:  
     RNF06 - O sistema permitirá que futuras atualizações possam ser realizadas e implementadas através de uma implementação de software proprietária que realiza as atualizações de modo automático.
 
-- Portabilidade:
+- Portabilidade:  
     RNF07 - O sistema deve ser desenvolvido para a plataforma desktop, sendo compatível com todos os sistemas operacionais do mercado
