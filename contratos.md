@@ -2,7 +2,7 @@
 
 Abaixo será possível observar todos os contratos relacionados.
 
-## Realizar matrícula:
+## Realizar Matrícula:
 
 ### Operações:
 
@@ -34,7 +34,7 @@ Abaixo será possível observar todos os contratos relacionados.
 
 ### **Responsabilidades**:
 
-- Adicionar oferta de disciplina ao conjunto de disciplinas escolhida pelo aluno
+- Adicionar oferta de disciplina ao conjunto de disciplinas escolhida pelo aluno.
 
 ### **Referências Cruzadas**:
 
@@ -92,6 +92,99 @@ Abaixo será possível observar todos os contratos relacionados.
 ### **Pós-Condições**:
 
 - O processo de matrícula do aluno é cancelado e os objetos instanciados são destruídos.
+
+<!-- Pular Linha -->
+<br></br>
+
+----
+## Avaliar Experiência:
+
+### Operações:
+
+### 1. **Operação**: iniciarProcessoDeAvaliação (aluno:Aluno)
+-----------------------
+
+### **Responsabilidades**:
+
+- Iniciar processo de avaliação de uma turma.
+
+### **Referências Cruzadas**:
+
+- **Caso de Uso:** "Avaliar experiência (UC09)"
+
+### **Pré-Condições**:
+
+- Ter uma turma e estar em período de avaliação de disciplina.
+
+### **Pós-Condições**:
+
+- Lista de turmas para serem avaliadas é instanciada.
+
+<!-- Pular Linha -->
+<br></br>
+
+### 2. **Operação**: selecionarTurmaParaAvaliar (turma:Turma)
+-----------------------
+
+### **Responsabilidades**:
+
+- Selecionar turma que será avaliada.
+
+### **Referências Cruzadas**:
+
+- **Caso de Uso:** "Avaliar experiência (UC09)"
+
+### **Pré-Condições**:
+
+- Ter a lista de turmas disponível.
+
+### **Pós-Condições**:
+
+- Objeto turma é selecionado da lista e armazenado outra variável.
+
+<!-- Pular Linha -->
+<br></br>
+
+### 3. **Operação**: fazerAvaliação (turma:Turma, avaliação:Avaliação)
+-----------------------
+
+### **Responsabilidades**:
+
+- Fazer avaliação da turma selecionada.
+
+### **Referências Cruzadas**:
+
+- **Caso de Uso:** "Avaliar experiência (UC09)"
+
+### **Pré-Condições**:
+
+- Ter uma turma selecionada e avaliação realizada.
+
+### **Pós-Condições**:
+
+- Nenhuma.
+
+<!-- Pular Linha -->
+<br></br>
+
+### 3.1. **Operação**: validarAvaliação (avaliação:Avaliação)
+-----------------------
+
+### **Responsabilidades**:
+
+- Validar a avaliação da turma feita pelo usuário.
+
+### **Referências Cruzadas**:
+
+- **Caso de Uso:** "Avaliar experiência (UC09)"
+
+### **Pré-Condições**:
+
+- Avaliação ter sido realizada.
+
+### **Pós-Condições**:
+
+- Turma é avaliada.
 
 <!-- Pular Linha -->
 <br></br>
