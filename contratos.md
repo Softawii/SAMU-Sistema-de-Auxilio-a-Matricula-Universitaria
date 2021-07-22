@@ -24,7 +24,7 @@ Abaixo será possível observar todos os contratos relacionados.
 
 ### **Pós-Condições**:
 
-- Lista de ofertas de disciplina que o aluno pode fazer matrícula é exibida.
+- Lista de ofertas de disciplinas é instanciada.
 
 <!-- Pular Linha -->
 <br></br>
@@ -52,32 +52,7 @@ Abaixo será possível observar todos os contratos relacionados.
 <br></br>
 
 
-### **3.** encerrarEscolhasOfertasDisciplina (ofertas:List\<Oferta\>)
------------------------
-
-### **Responsabilidades**:
-
-- Encerrar o processo de seleção de disciplinas pelo aluno
-
-### **Referências Cruzadas**:
-
-- **Caso de Uso:** "Realizar Matrícula"
-
-### **Pré-Condições**:
-
-- Ter pelo menos uma oferta na lista de ofertas de disciplina
-
-### **Pós-Condições**:
-
-- O sistema fecha a lista de ofertas selecionada pelo aluno
-- O sistema solicita confirmação da lista de ofertas 
-
-
-<!-- Pular Linha -->
-<br></br>
-
-
-### **4.** confirmarEscolhasOfertasDisciplina (aluno:Aluno)
+### **3.** confirmarEscolhasOfertasDisciplina (aluno:Aluno)
 -----------------------
 
 ### **Responsabilidades**:
@@ -94,12 +69,12 @@ Abaixo será possível observar todos os contratos relacionados.
 
 ### **Pós-Condições**:
 
-- Uma nova solicitação de matrícula é registrada para o coordenador realizar a confirmação posteriormente.
+- Uma nova solicitação de matrícula é registrada no sistema.
 
 <!-- Pular Linha -->
 <br></br>
 
-### 5. **Operação**: cancelarProcessoMatrícula (aluno:Aluno)
+### 4. **Operação**: cancelarProcessoMatrícula (aluno:Aluno)
 -----------------------
 
 ### **Responsabilidades**:
@@ -116,7 +91,7 @@ Abaixo será possível observar todos os contratos relacionados.
 
 ### **Pós-Condições**:
 
-- O processo de matrícula do aluno é cancelado.
+- O processo de matrícula do aluno é cancelado e os objetos instanciados são destruídos.
 
 <!-- Pular Linha -->
 <br></br>
