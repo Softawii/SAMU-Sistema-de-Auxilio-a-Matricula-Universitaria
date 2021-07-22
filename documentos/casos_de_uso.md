@@ -121,7 +121,7 @@
 
 # 5. Caso de uso: Matricular aluno em disciplina (UC05).
 - Ator: Aluno.
-- Visão Geral: Permite que o aluno se matricule em uma oferta de disciplina disponível.
+- Visão Geral: Permite que o aluno se matricule em uma ou mais ofertas de disciplinas disponíveis.
 - Referência Cruzada:
     - Requisitos: RF04.
     - Caso relacionado: Fazer login(UC08).
@@ -215,15 +215,15 @@
 
 # 9. Caso de uso: Avaliar experiência (UC09).
 - Ator: Aluno.
-- Visão geral: Permite que o aluno avalie sua experiência em uma disciplina.
+- Visão geral: Permite que o aluno avalie sua experiência em uma ou mais disciplinas.
 - Referências cruzadas:
     - Requisitos: RF05.
     - Outros casos de uso relacionados: Fazer login (UC08).
-- Pré-condições: O aluno deverá ter feito login e deve ter finalizado a disciplina.
+- Pré-condições: O aluno deverá ter feito login e deve ter finalizado a(s) disciplina(s).
 - Pós-condições: O usuário terá sua avaliação enviada.
 - Fluxo principal:
     1.  O sistema exibe a lista de disciplinas disponíveis para avaliação;
-    2.  O aluno seleciona a turma que deseja avaliar;
+    2.  O aluno seleciona uma ou mais turma que deseja avaliar;
     3.  O sistema solicita a quantidade de estrelas ao aluno;
     4.  O aluno seleciona a quantidade de estrelas;
     5.  O sistema analisa a avaliação; (FE-01)
