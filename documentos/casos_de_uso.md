@@ -226,9 +226,8 @@
     2.  O aluno seleciona uma ou mais turma que deseja avaliar;
     3.  O sistema solicita a quantidade de estrelas ao aluno;
     4.  O aluno seleciona a quantidade de estrelas;
-    5.  O sistema analisa a avaliação; (FE-01)
-    6.  O sistema valida a avaliação;
-    7.  O caso de uso é encerrado.
+    5.  O sistema analisa e valida a avaliação; (FE-01)
+    6.  O caso de uso é encerrado.
 - Fluxo alternativo:
     - Não há.
 - Fluxo de exceção:
