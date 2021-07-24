@@ -23,6 +23,7 @@
       "selectionInactiveBackground": "#2f334d",
       "separatorColor": "#222436"
     },
+
     "activeCaption": "#222436",
     "ActionButton": {
       "hoverBackground": "#74a0f150",
@@ -678,6 +679,7 @@
     "TabbedPane.mt.tab.background": "#191a2a",
     "Table": {
       "alternativeRowBackground": "#191a2a",
+      "alternateRowColor": "#212237",
       "background": "#222436",
       "cellNoFocusBorder": "10,5,10,5",
       "focusCellHighlightBorder": "10,5,10,5",
@@ -687,7 +689,7 @@
       "focusCellBackground": "#2f334d",
       "focusCellForeground": "#FFFFFF",
       "foreground": "#c8d3f5",
-      "gridColor": "#222436",
+      "gridColor": "#474964",
       "highlightOuter": "#2f334d",
       "hoverBackground": "#444a7370",
       "hoverInactiveBackground": "#2f334d",
