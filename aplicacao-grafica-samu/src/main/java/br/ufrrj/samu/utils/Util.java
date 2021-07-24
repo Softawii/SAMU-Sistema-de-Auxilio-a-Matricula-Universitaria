@@ -3,23 +3,14 @@ package br.ufrrj.samu.utils;
 import br.ufrrj.samu.SAMU;
 import com.formdev.flatlaf.*;
 import com.formdev.flatlaf.intellijthemes.FlatAllIJThemes;
-import com.formdev.flatlaf.intellijthemes.FlatGrayIJTheme;
-import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMoonlightContrastIJTheme;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
-import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.FontUIResource;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.FileSystem;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Map;
@@ -28,6 +19,25 @@ import java.util.stream.Collectors;
 import static java.util.Objects.requireNonNull;
 
 public class Util {
+
+    public static final JButton THEME_BUTTON;
+
+    static
+    {
+        THEME_BUTTON = new JButton();
+        THEME_BUTTON.setIcon(new ImageIcon(requireNonNull(Util.class.getClassLoader().getResource("images/darkModeIcon.png"))));
+        THEME_BUTTON.setFocusable(false);
+        THEME_BUTTON.setRolloverEnabled(false);
+        THEME_BUTTON.setFont(THEME_BUTTON.getFont().deriveFont(20f));
+        THEME_BUTTON.addActionListener(e -> {
+            Util.switchMode();
+            if (Util.isDarkMode) {
+                THEME_BUTTON.setIcon(new ImageIcon(requireNonNull(Util.class.getClassLoader().getResource("images/lightModeIcon.png"))));
+            } else {
+                THEME_BUTTON.setIcon(new ImageIcon(requireNonNull(Util.class.getClassLoader().getResource("images/darkModeIcon.png"))));
+            }
+        });
+    }
 
     public static boolean isDarkMode = false;
 

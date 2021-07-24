@@ -28,7 +28,6 @@ public class LoginFrame extends JFrame {
     JPasswordField passwordField;
     JButton signupJButton;
     JButton signinJButton;
-    JButton themesButton;
 
     private String frameTitle = "SAMU - Sistema de Aux\u00EDlio a Matr\u00EDcula Universit\u00E1ria";
     private int width = 450+10;
@@ -200,19 +199,6 @@ public class LoginFrame extends JFrame {
                     JOptionPane.WARNING_MESSAGE);
         });
 
-        themesButton = new JButton("Modo Escuro");
-        themesButton.setFocusable(false);
-        themesButton.setRolloverEnabled(false);
-        themesButton.setFont(themesButton.getFont().deriveFont(20f));
-        themesButton.addActionListener(e -> {
-            Util.switchMode();
-            if (Util.isDarkMode) {
-                themesButton.setText("Modo Claro");
-            } else {
-                themesButton.setText("Modo Escuro");
-            }
-        });
-
         JLabel samuLabel = new JLabel("SAMU", SwingConstants.CENTER);
         JLabel signInLabel = new JLabel("Fazer login", SwingConstants.CENTER);
 
@@ -255,7 +241,7 @@ public class LoginFrame extends JFrame {
 
         gridConstraints.gridy = 7;
         gridConstraints.insets = new Insets(0, leftPadding, 0, rightPadding);
-        loginJPanel.add(themesButton, gridConstraints);
+        loginJPanel.add(Util.THEME_BUTTON, gridConstraints);
 
         GridBagConstraints mainPanelGridConstraints = new GridBagConstraints();
         mainPanelGridConstraints.insets = new Insets(0, 0, 0, 0);
@@ -282,8 +268,6 @@ public class LoginFrame extends JFrame {
         centreWindow(this);
 //        this.setResizable(true);
     }
-
-
 
 }
 
