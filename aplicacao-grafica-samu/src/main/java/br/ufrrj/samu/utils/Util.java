@@ -32,9 +32,9 @@ public class Util {
         THEME_BUTTON.addActionListener(e -> {
             Util.switchMode();
             if (Util.isDarkMode) {
-                THEME_BUTTON.setIcon(new ImageIcon(requireNonNull(Util.class.getClassLoader().getResource("images/lightModeIcon.png"))));
-            } else {
                 THEME_BUTTON.setIcon(new ImageIcon(requireNonNull(Util.class.getClassLoader().getResource("images/darkModeIcon.png"))));
+            } else {
+                THEME_BUTTON.setIcon(new ImageIcon(requireNonNull(Util.class.getClassLoader().getResource("images/lightModeIcon.png"))));
             }
         });
     }
