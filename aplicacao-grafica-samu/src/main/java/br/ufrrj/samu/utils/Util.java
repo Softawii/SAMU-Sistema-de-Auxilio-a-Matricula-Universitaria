@@ -22,26 +22,30 @@ public class Util {
 
     public static final JButton THEME_BUTTON;
 
+    private static final ImageIcon LIGHT_MODE_ICON = new ImageIcon(requireNonNull(Util.class.getClassLoader().getResource("images/lightModeIcon.png")));
+
+    private static final ImageIcon DARK_MODE_ICON = new ImageIcon(requireNonNull(Util.class.getClassLoader().getResource("images/darkModeIcon.png")));
+
+    public static boolean isDarkMode = false;
+
+    private static final Logger LOGGER = LogManager.getLogger(Util.class);
+
     static
     {
         THEME_BUTTON = new JButton();
-        THEME_BUTTON.setIcon(new ImageIcon(requireNonNull(Util.class.getClassLoader().getResource("images/darkModeIcon.png"))));
+        THEME_BUTTON.setIcon(LIGHT_MODE_ICON);
         THEME_BUTTON.setFocusable(false);
         THEME_BUTTON.setRolloverEnabled(false);
         THEME_BUTTON.setFont(THEME_BUTTON.getFont().deriveFont(20f));
         THEME_BUTTON.addActionListener(e -> {
             Util.switchMode();
             if (Util.isDarkMode) {
-                THEME_BUTTON.setIcon(new ImageIcon(requireNonNull(Util.class.getClassLoader().getResource("images/darkModeIcon.png"))));
+                THEME_BUTTON.setIcon(DARK_MODE_ICON);
             } else {
-                THEME_BUTTON.setIcon(new ImageIcon(requireNonNull(Util.class.getClassLoader().getResource("images/lightModeIcon.png"))));
+                THEME_BUTTON.setIcon(LIGHT_MODE_ICON);
             }
         });
     }
-
-    public static boolean isDarkMode = false;
-
-    private static final Logger LOGGER = LogManager.getLogger(Util.class);
 
     public static void switchMode() {
         isDarkMode = !isDarkMode;
