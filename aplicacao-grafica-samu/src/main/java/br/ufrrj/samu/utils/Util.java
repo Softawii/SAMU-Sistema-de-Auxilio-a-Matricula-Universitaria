@@ -58,6 +58,7 @@ public class Util {
                 UIManager.setLookAndFeel(SAMU.customGrayTheme);
             }
         } catch (UnsupportedLookAndFeelException e) {
+            LOGGER.warn(e);
             e.printStackTrace();
         }
         FlatLaf.updateUILater();
