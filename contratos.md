@@ -46,7 +46,8 @@ Abaixo será possível observar todos os contratos relacionados.
 
 ### **Pós-Condições**:
 
-- A oferta de disciplina é inserida lista de ofertas de disciplina.
+- A oferta de disciplina selecionado pelo aluno é inserida em uma lista de disciplinas escolhidas por cada aluno.
+
 
 <!-- Pular Linha -->
 <br></br>
