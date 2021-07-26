@@ -46,7 +46,8 @@ Abaixo será possível observar todos os contratos relacionados.
 
 ### **Pós-Condições**:
 
-- A oferta de disciplina é inserida lista de ofertas de disciplina.
+- A oferta de disciplina selecionado pelo aluno é inserida em uma lista de disciplinas escolhidas por cada aluno.
+
 
 <!-- Pular Linha -->
 <br></br>
@@ -167,12 +168,12 @@ Abaixo será possível observar todos os contratos relacionados.
 <!-- Pular Linha -->
 <br></br>
 
-### 3.1. **Operação**: validarAvaliação (avaliação:Avaliação)
+### 4. **Operação**: cancelarProcessoAvaliação ()
 -----------------------
 
 ### **Responsabilidades**:
 
-- Validar a avaliação da turma feita pelo usuário.
+- Cancelar o processo de avaliação sem realizar alterações no sistema.
 
 ### **Referências Cruzadas**:
 
@@ -180,11 +181,11 @@ Abaixo será possível observar todos os contratos relacionados.
 
 ### **Pré-Condições**:
 
-- Avaliação ter sido realizada.
+- Nenhuma.
 
 ### **Pós-Condições**:
 
-- Turma é avaliada.
+- O processo de avaliação de turma é cancelado e os objetos instanciados são destruídos.
 
 <!-- Pular Linha -->
 <br></br>

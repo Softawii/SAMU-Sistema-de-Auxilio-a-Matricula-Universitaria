@@ -225,11 +225,12 @@
     1.  O sistema exibe a lista de turmas disponíveis para avaliação;
     2.  O aluno seleciona uma ou mais turma que deseja avaliar;
     3.  O sistema solicita a quantidade de estrelas ao aluno;
-    4.  O aluno seleciona a quantidade de estrelas;
+    4.  O aluno seleciona a quantidade de estrelas e confirma a avaliação; (FA-01)
     5.  O sistema analisa e valida a avaliação; (FE-01)
     6.  O caso de uso é encerrado.
 - Fluxo alternativo:
-    - Não há.
+    - FA-01 - Cancelar processo de avaliação
+        1. O caso de uso é encerrado e nenhum processo é salvo.
 - Fluxo de exceção:
     - FE-01 - Nenhuma estrela colocada
         1.  O sistema informa que não foi colocada nenhuma estrela;
