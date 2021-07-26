@@ -55,7 +55,7 @@ public class LoginFrame extends JFrame {
             @Override public void updateUI() {
                 super.updateUI();
                 setOpaque(false);
-                setBorder(new RoundedCornerBorder(8, new Color(0xef5da8)));
+                setBorder(new RoundedCornerBorder(8, UIManager.getColor("Button.startBackground")));
             }
         };
         loginJPanel.setPreferredSize(new Dimension(width - 60, height - 70));
