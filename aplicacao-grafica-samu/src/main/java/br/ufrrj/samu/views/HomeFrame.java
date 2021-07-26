@@ -18,8 +18,8 @@ public class HomeFrame extends JFrame {
     private static final Logger LOGGER = LogManager.getLogger(HomeFrame.class);
 
     private String frameTitle = "SAMU - Sistema de Aux\u00EDlio a Matr\u00EDcula Universit\u00E1ria";
-    private int width = 1124;
-    private int height = 800;
+    private int width = 1366;
+    private int height = 720;
     JPanel mainJPanel;
 
     JTable coursesTable;
@@ -60,33 +60,50 @@ public class HomeFrame extends JFrame {
 
         GridBagConstraints gridConstraints = new GridBagConstraints();
 
-        gridConstraints.gridy = 0;
-        gridConstraints.gridx = 0;
-        gridConstraints.fill = GridBagConstraints.BOTH;
-        gridConstraints.insets = new Insets(0, 0, 10, 0);
-        userInfoPanel.add(userImage, gridConstraints);
+        gridConstraints.anchor = GridBagConstraints.CENTER;
+        gridConstraints.weighty = 0.05;
 
         gridConstraints.gridy = 1;
+        gridConstraints.gridx = 0;
+        gridConstraints.fill = GridBagConstraints.NONE; /* Troquei para NONE, o both tava fazendo ficar com a parte branca bem maior */
+        gridConstraints.insets = new Insets(0, 0, 10, 4);
+        userInfoPanel.add(userImage, gridConstraints);
+
+        gridConstraints.insets = new Insets(0, 0, 0, 0);
+
         gridConstraints.fill = GridBagConstraints.NONE;
-        gridConstraints.insets = new Insets(0, 0, 4, 0);
-        gridConstraints.weighty = 1;
+        gridConstraints.gridy = 2;
         userInfoPanel.add(username, gridConstraints);
 
-        gridConstraints.gridy = 2;
+        gridConstraints.gridy = 3;
         userInfoPanel.add(enrollment, gridConstraints);
 
-        gridConstraints.gridy = 3;
+        gridConstraints.gridy = 4;
         userInfoPanel.add(course, gridConstraints);
 
-        gridConstraints.gridy = 4;
+        gridConstraints.gridy = 5;
         userInfoPanel.add(semester, gridConstraints);
 
-        gridConstraints.gridy = 5;
-        gridConstraints.weighty = 2;
-        userInfoPanel.add(new JButton("aaaaaaaaa"), gridConstraints);
-
+        gridConstraints.weighty = 0.08;
         gridConstraints.gridy = 6;
-        userInfoPanel.add(new JButton("aaaaaaaaa"), gridConstraints);
+        gridConstraints.insets = new Insets(20,0,0,0);
+        userInfoPanel.add(new JLabel("Menu de Navega\u00E7\u00E3o"), gridConstraints);
+
+        /* Zerei o espaçamento entre os botões e coloquei um preenchimento maneiro */
+        gridConstraints.weighty = 0;
+        gridConstraints.insets = new Insets(0,0,0,0);
+        gridConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridConstraints.anchor = GridBagConstraints.FIRST_LINE_START;
+
+        gridConstraints.gridy = 7;
+        userInfoPanel.add(new JButton("Disciplinas Matriculadas"), gridConstraints);
+
+        gridConstraints.gridy = 8;
+        userInfoPanel.add(new JButton("Disciplinas Dispon\u00EDveis"), gridConstraints);
+
+        gridConstraints.gridy = 9;
+        gridConstraints.weighty = 2.0;
+        userInfoPanel.add(new JButton("Matriz Curricular"), gridConstraints);
 
         mainJPanel.add(userInfoPanel, BorderLayout.WEST);
     }
@@ -186,7 +203,7 @@ public class HomeFrame extends JFrame {
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         coursesTable.setDefaultRenderer(String.class, centerRenderer);
 //        table.getColumnModel().getColumn(0).setCellRenderer(new WordWrapCellRenderer()); //bugado
-        coursesTable.setFont(coursesTable.getFont().deriveFont(20f));
+        coursesTable.setFont(coursesTable.getFont().deriveFont(18f));
         coursesTable.setRowHeight(coursesTable.getFont().getSize() * 4);
         coursesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         coursesTable.getTableHeader().setReorderingAllowed(false);
@@ -200,7 +217,7 @@ public class HomeFrame extends JFrame {
 
     public static void resizeColumnsWidth(JTable table, Dimension dimension) {
         final TableColumnModel columnModel = table.getColumnModel();
-        float namePercentage = 0.5f;
+        float namePercentage = 0.50f;
         columnModel.getColumn(0).setPreferredWidth((int) (dimension.getWidth() * namePercentage));
         for (int columnIndex = 1; columnIndex < table.getColumnCount(); columnIndex++) {
             columnModel.getColumn(columnIndex).setPreferredWidth((int) (dimension.getWidth() * ((1.0 - namePercentage) / 2)));
