@@ -14,14 +14,14 @@ if "%~1"=="" goto :sem
 @REM Com argumento
 echo Com argumento
 @REM echo %astah_commandw% -image all -f "%arg1%" -o "%currentFolder%"
-%astah_commandw% -image all -f "%arg1%" -o "%currentFolder%
+%astah_commandw% --dpi 200 -image all -f "%arg1%" -o "%currentFolder%
 goto fim
 
 :sem
 @REM Sem argumento
 echo Sem argumento
 @REM echo %astah_commandw% -image all -f "%currentFolder%Caso de Uso.asta" -o "%currentFolder%"
-%astah_commandw% -image all -f "%currentFolder%%filename%" -o "%currentFolder%
+%astah_commandw% --dpi 200 -image all -f "%currentFolder%%filename%" -o "%currentFolder%
 
 :fim
 set currentFolder=%currentFolder:~0,-1%
