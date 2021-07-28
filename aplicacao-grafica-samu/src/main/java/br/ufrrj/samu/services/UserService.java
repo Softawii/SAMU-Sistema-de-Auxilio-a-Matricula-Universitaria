@@ -1,6 +1,7 @@
 package br.ufrrj.samu.services;
 
 import br.ufrrj.samu.entities.User;
+import br.ufrrj.samu.utils.LoginStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -155,4 +156,29 @@ public class UserService {
             return Optional.empty();
         }
     }
+
+    public LoginStatus checkPassword(String username, String password) {
+        /**
+         *
+         *
+         */
+        Optional<User> userDB = this.obterUsuario(username);
+
+        if(userDB.isPresent()) {
+            LOGGER.debug(userDB.get());
+            LOGGER.debug("DB: " + userDB.get().getPassword() + " : " + this.encoder.encode(userDB.get().getPassword()));
+            LOGGER.debug("IN: " + password + " : " + this.encoder.encode(password));
+        }
+
+        if(userDB.isEmpty())
+            return LoginStatus.UNKNOWN_USER;
+        else {
+            User user = userDB.get();
+
+            if(user.getPassword().equals(password))
+                return LoginStatus.SUCCESS;
+        }
+        return LoginStatus.WRONG_PASSWORD;
+    }
+
 }
