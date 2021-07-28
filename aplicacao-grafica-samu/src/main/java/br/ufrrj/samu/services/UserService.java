@@ -1,6 +1,5 @@
 package br.ufrrj.samu.services;
 
-import br.ufrrj.samu.SQLTest;
 import br.ufrrj.samu.entities.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +34,7 @@ public class UserService {
             LOGGER.debug("Starting connection to database");
             connection = DriverManager.getConnection(
                     "jdbc:sqlite:" +
-                            new File(SQLTest.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toPath().getParent() +
+                            new File(UserService.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toPath().getParent() +
                             "\\database.db");
             Statement statement = connection.createStatement();
             LOGGER.warn("Creating User table if not exists");
