@@ -1,7 +1,6 @@
 package br.ufrrj.samu.services;
 
 import br.ufrrj.samu.entities.User;
-import br.ufrrj.samu.utils.LoginStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -43,6 +42,10 @@ public class UserService {
         } catch (SQLException | URISyntaxException throwable) {
             LOGGER.warn(throwable);
         }
+    }
+
+    public BCryptPasswordEncoder getEncoder() {
+        return encoder;
     }
 
     public Optional<User> insertUser(User user) {
@@ -100,7 +103,7 @@ public class UserService {
         return true;
     }
 
-    public boolean atualizarUsuario(User user) {
+    public boolean updateUser(User user) {
         try {
             PreparedStatement findStatement = connection.prepareStatement("SELECT * FROM USERS WHERE id=?1");
             findStatement.setLong(1, user.getId());
@@ -121,7 +124,7 @@ public class UserService {
         return true;
     }
 
-    public Optional<User> obterUsuario(long userId) {
+    public Optional<User> findUserById(long userId) {
         try {
             PreparedStatement findStatement = connection.prepareStatement("SELECT * FROM USERS WHERE id=?1");
             findStatement.setLong(1, userId);
@@ -139,7 +142,7 @@ public class UserService {
         }
     }
 
-    public Optional<User> obterUsuario(String name) {
+    public Optional<User> findUserByName(String name) {
         try {
             PreparedStatement findStatement = connection.prepareStatement("SELECT * FROM USERS WHERE name=?1");
             findStatement.setString(1, name);
@@ -155,24 +158,6 @@ public class UserService {
             LOGGER.warn(String.format("User with username '%s' could not be found", name), throwable);
             return Optional.empty();
         }
-    }
-
-    public LoginStatus checkPassword(String username, String password) {
-        /**
-         *
-         *
-         */
-        Optional<User> userDB = this.obterUsuario(username);
-
-        if(userDB.isEmpty())
-            return LoginStatus.UNKNOWN_USER;
-        else {
-            User user = userDB.get();
-
-            if(encoder.matches(password, userDB.get().getPassword()))
-                return LoginStatus.SUCCESS;
-        }
-        return LoginStatus.WRONG_PASSWORD;
     }
 
 }
