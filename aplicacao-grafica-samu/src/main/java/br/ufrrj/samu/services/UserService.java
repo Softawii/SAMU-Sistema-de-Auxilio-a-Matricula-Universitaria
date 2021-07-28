@@ -164,18 +164,12 @@ public class UserService {
          */
         Optional<User> userDB = this.obterUsuario(username);
 
-        if(userDB.isPresent()) {
-            LOGGER.debug(userDB.get());
-            LOGGER.debug("DB: " + userDB.get().getPassword() + " : " + this.encoder.encode(userDB.get().getPassword()));
-            LOGGER.debug("IN: " + password + " : " + this.encoder.encode(password));
-        }
-
         if(userDB.isEmpty())
             return LoginStatus.UNKNOWN_USER;
         else {
             User user = userDB.get();
 
-            if(user.getPassword().equals(password))
+            if(encoder.matches(password, userDB.get().getPassword()))
                 return LoginStatus.SUCCESS;
         }
         return LoginStatus.WRONG_PASSWORD;
