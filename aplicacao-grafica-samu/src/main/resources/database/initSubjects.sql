@@ -7,8 +7,9 @@ CREATE TABLE IF NOT EXISTS Subjects
 );
 
 INSERT INTO Subjects (code, name, description, prerequisites)
-VALUES ('DCC00', 'Circuitos Digitais', ' - ', ''),
-       ('DCC01', 'Arquitetura de Computadores I', ' - ', 'DCC01'),
+VALUES ('DCC05', 'Circuitos Digitais', ' - ', ''),
+       ('DCC00', 'Circuitos Digitais', ' - ', ''),
+       ('DCC01', 'Arquitetura de Computadores I', ' - ', 'DCC00,DCC05'),
        ('DCC02', 'Arquitetura de Computadores II', ' - ', 'DCC02'),
        ('DMT00', 'Calculo I', ' - ', ''),
        ('DMT01', 'Calculo II', ' - ', 'DMT00'),
