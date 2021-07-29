@@ -16,12 +16,21 @@ public class Subject {
 
     private HashMap<String, Subject> prerequisite;
 
+    private String stringPrerequisites;
+
     public Subject(String name, String description, String code) {
         this.name = name;
         this.description = description;
         this.code = code;
 
         this.prerequisite = new HashMap<String,Subject>();
+    }
+
+    public Subject(String name, String description, String code, String stringPrerequisites) {
+        this.name = name;
+        this.description = description;
+        this.code = code;
+        this.stringPrerequisites = stringPrerequisites;
     }
 
     public String getName() {
