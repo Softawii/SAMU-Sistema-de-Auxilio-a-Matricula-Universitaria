@@ -40,7 +40,11 @@ public class SubjectService {
                             "\\database.db");
 
             LOGGER.warn("Initializing database");
-            initDatabase();
+            try {
+                //initDatabase();
+            } catch(Exception e) {
+
+            }
         } catch (SQLException | URISyntaxException throwable) {
             LOGGER.warn(throwable);
         }
@@ -61,7 +65,7 @@ public class SubjectService {
             insertStatement.setString(1, subject.getCode());
             insertStatement.setString(2, subject.getName());
             insertStatement.setString(3, subject.getDescription());
-            insertStatement.setString(4, subject.getPrerequisiteCodes());
+            insertStatement.setString(4, subject.getPrerequisitesList());
 
             insertStatement.executeUpdate();
             LOGGER.debug(String.format("Subject with code %s was inserted to the database", subject.getCode()));
@@ -121,7 +125,7 @@ public class SubjectService {
         StudentService studentService = new StudentService();
         SubjectService subjectService = new SubjectService();
 
-        Optional<Student> opStudent = studentService.findStudentById(1);
+        Optional<Student> opStudent = studentService.findStudentById(2);
 
         if(opStudent.isEmpty())
             return;

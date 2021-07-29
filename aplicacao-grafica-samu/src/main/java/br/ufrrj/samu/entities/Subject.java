@@ -80,6 +80,7 @@ public class Subject {
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", code='" + code + '\'' +
+                ", prerequisites=" + prerequisites +
                 '}';
     }
 }
