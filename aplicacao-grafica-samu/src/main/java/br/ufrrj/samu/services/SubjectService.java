@@ -35,7 +35,7 @@ public class SubjectService {
             LOGGER.debug("Starting connection to database");
             connection = DriverManager.getConnection(
                     "jdbc:sqlite:" +
-                            new File(StudentService.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toPath().getParent() +
+                            new File(SubjectService.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toPath().getParent() +
                             "\\database.db");
 
             LOGGER.warn("Initializing database");
@@ -106,11 +106,11 @@ public class SubjectService {
             // TODO: PreRequisites String to array
             // PREREQUISITES AS A STRING IS A TEMPORARY SOLUTION!!!
             Subject subject = new Subject(name, description, code, prerequisites);
-            LOGGER.debug(String.format("Student with code '%s' and name '%s' was found with success", subject.getCode(), subject.getName()));
+            LOGGER.debug(String.format("Subject with code '%s' and name '%s' was found with success", subject.getCode(), subject.getName()));
             return Optional.of(subject);
 
         } catch (SQLException throwable) {
-            LOGGER.warn(String.format("Student with code '%s' could not be found", code), throwable);
+            LOGGER.warn(String.format("Subject with code '%s' could not be found", code), throwable);
             return Optional.empty();
         }
     }
