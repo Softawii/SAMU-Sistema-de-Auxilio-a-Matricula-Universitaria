@@ -38,8 +38,8 @@ public class SubjectService {
                             new File(StudentService.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toPath().getParent() +
                             "\\database.db");
 
-            //LOGGER.warn("Initializing database");
-            //initDatabase();
+            LOGGER.warn("Initializing database");
+            initDatabase();
         } catch (SQLException | URISyntaxException throwable) {
             LOGGER.warn(throwable);
         }
