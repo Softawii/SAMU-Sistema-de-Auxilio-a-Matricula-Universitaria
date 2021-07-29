@@ -3,6 +3,7 @@ package br.ufrrj.samu.services;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.sql.*;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
@@ -105,7 +106,7 @@ public class SubjectService {
 
             // TODO: PreRequisites String to array
             // PREREQUISITES AS A STRING IS A TEMPORARY SOLUTION!!!
-            Subject subject = new Subject(name, description, code, prerequisites);
+            Subject subject = new Subject(name, description, code, Arrays.stream(prerequisites.split(",")).toList());
             LOGGER.debug(String.format("Subject with code '%s' and name '%s' was found with success", subject.getCode(), subject.getName()));
             return Optional.of(subject);
 

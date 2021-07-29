@@ -4,7 +4,9 @@ import br.ufrrj.samu.services.SubjectService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Subject {
 
@@ -14,23 +16,24 @@ public class Subject {
     private String description;
     private String code;
 
-    private HashMap<String, Subject> prerequisite;
+    private ArrayList<String> prerequisites;
 
-    private String stringPrerequisites;
 
     public Subject(String name, String description, String code) {
         this.name = name;
         this.description = description;
         this.code = code;
 
-        this.prerequisite = new HashMap<String,Subject>();
+        this.prerequisites = new ArrayList<>();
     }
 
-    public Subject(String name, String description, String code, String stringPrerequisites) {
+    public Subject(String name, String description, String code, List<String> prerequisite) {
         this.name = name;
         this.description = description;
         this.code = code;
-        this.stringPrerequisites = stringPrerequisites;
+
+        // IDK if is better to create than copy the old arraylist
+        this.prerequisites = new ArrayList<>(prerequisite);
     }
 
     public String getName() {
@@ -53,20 +56,13 @@ public class Subject {
         this.description = description;
     }
 
-    public void addPrerequisite(Subject subject) {
-        this.prerequisite.put(subject.getCode(), subject);
-    }
 
-    public HashMap<String, Subject> getPrerequisite() {
-        return prerequisite;
-    }
-
-    public String getPrerequisiteCodes() {
+    public String getPrerequisitesList() {
 
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (HashMap.Entry<String,Subject> pair : this.prerequisite.entrySet()) {
-            stringBuilder.append(pair.getKey() + ",");
+        for(String preReq : this.prerequisites) {
+            stringBuilder.append(preReq + ",");
         }
 
         if(!stringBuilder.isEmpty()) {
@@ -75,6 +71,8 @@ public class Subject {
 
         return stringBuilder.toString();
     }
+
+    //TODO: Maybe in the future we need to get prereqs informations (like name) maybe a method to do this would be a good thing
 
     @Override
     public String toString() {
