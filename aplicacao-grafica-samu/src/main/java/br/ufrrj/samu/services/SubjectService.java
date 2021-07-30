@@ -3,10 +3,7 @@ package br.ufrrj.samu.services;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.sql.*;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import br.ufrrj.samu.entities.Student;
 import br.ufrrj.samu.entities.Subject;
@@ -39,12 +36,9 @@ public class SubjectService {
                             new File(SubjectService.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toPath().getParent() +
                             "\\database.db");
 
-            LOGGER.warn("Initializing database");
-            try {
-                //initDatabase();
-            } catch(Exception e) {
+            //LOGGER.warn("Initializing database");
+            //initDatabase();
 
-            }
         } catch (SQLException | URISyntaxException throwable) {
             LOGGER.warn(throwable);
         }
@@ -120,6 +114,25 @@ public class SubjectService {
         }
     }
 
+    public List<Subject> getSubjectFromStringArray(String[] subjectsArray) {
+
+        ArrayList<Subject> subjects = new ArrayList<>();
+
+        for(String subject : subjectsArray) {
+
+            Optional<Subject> optSub = this.findSubjectByCode(subject);
+
+            if(optSub.isPresent()) {
+                subjects.add(optSub.get());
+            } else {
+                LOGGER.debug("We couldn't find the subject %s, so let's throw an exception");
+                // TODO: ok ok?
+            }
+        }
+
+        return subjects;
+    }
+
     public static void main(String[] args) {
 
         StudentService studentService = new StudentService();
@@ -132,15 +145,7 @@ public class SubjectService {
 
         Student student = opStudent.get();
 
-        LOGGER.debug(student.getCourses());
-
-        Optional<Subject> opSub = subjectService.findSubjectByCode(student.getCourses());
-
-        if(opSub.isEmpty())
-            return;
-
-        Subject subject = opSub.get();
-
-        LOGGER.debug(subject);
+        LOGGER.debug(student);
+        LOGGER.debug(student.getSubjects());
     }
 }

@@ -1,6 +1,7 @@
 package br.ufrrj.samu.services;
 
 import br.ufrrj.samu.entities.Student;
+import br.ufrrj.samu.entities.Subject;
 import br.ufrrj.samu.entities.User;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.logging.log4j.LogManager;
@@ -12,6 +13,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -43,6 +45,7 @@ public class StudentService {
                             "\\database.db");
             LOGGER.warn("Initializing database");
             initDatabase();
+
         } catch (SQLException | URISyntaxException throwable) {
             LOGGER.warn(throwable);
         }
@@ -66,7 +69,7 @@ public class StudentService {
             insertStatement.setString(2, encoder.encode(student.getPassword()));
             insertStatement.setString(3, student.getName());
             insertStatement.setString(4, student.getAddress());
-            insertStatement.setString(5, student.getCourses());
+            insertStatement.setString(5, student.getSubjectsCodes());
 
             insertStatement.executeUpdate();
             LOGGER.debug(String.format("Student with id %d was inserted to the database", student.getId()));
@@ -129,7 +132,7 @@ public class StudentService {
             updateStatement.setString(2, student.getPassword());
             updateStatement.setString(3, student.getName());
             updateStatement.setString(4, student.getAddress());
-            updateStatement.setString(5, student.getCourses());
+            updateStatement.setString(5, student.getSubjectsCodes());
             updateStatement.setLong(6, student.getId());
 
             updateStatement.executeUpdate();
@@ -152,8 +155,13 @@ public class StudentService {
             String password = findResultSet.getString(3);
             String name = findResultSet.getString(4);
             String address = findResultSet.getString(5);
-            String courses = findResultSet.getString(6);
-            Student user = new Student(id, username, password, name, address, courses);
+            String subjectsString = findResultSet.getString(6);
+
+
+            // Maybe we can find another way to get it :(
+            SubjectService subjectService = new SubjectService();
+
+            Student user = new Student(id, username, password, name, address, subjectService.getSubjectFromStringArray(subjectsString.split(",")));
             LOGGER.debug(String.format("Student with id '%d' and username '%s' was found with success", user.getId(), user.getUsername()));
             return Optional.of(user);
         } catch (SQLException throwable) {
@@ -173,8 +181,12 @@ public class StudentService {
             String password = findResultSet.getString(3);
             String name = findResultSet.getString(4);
             String address = findResultSet.getString(5);
-            String courses = findResultSet.getString(6);
-            Student user = new Student(id, username, password, name, address, courses);
+            String subjectsString = findResultSet.getString(6);
+
+            // Maybe we can find another way to get it :(
+            SubjectService subjectService = new SubjectService();
+
+            Student user = new Student(id, username, password, name, address, subjectService.getSubjectFromStringArray(subjectsString.split(",")));
             LOGGER.debug(String.format("Student with id '%d' and username '%s' was found with success", user.getId(), user.getUsername()));
             return Optional.of(user);
         } catch (SQLException throwable) {
