@@ -1,7 +1,6 @@
 package br.ufrrj.samu.services;
 
 import br.ufrrj.samu.entities.Student;
-import br.ufrrj.samu.entities.Subject;
 import br.ufrrj.samu.entities.User;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.logging.log4j.LogManager;
@@ -13,7 +12,6 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -24,6 +22,8 @@ public class StudentService {
     private Connection connection;
 
     private BCryptPasswordEncoder encoder;
+
+    private SubjectService subjectService;
 
     static {
         try {
@@ -49,6 +49,10 @@ public class StudentService {
         } catch (SQLException | URISyntaxException throwable) {
             LOGGER.warn(throwable);
         }
+    }
+
+    public void setSubjectService(SubjectService subjectService) {
+        this.subjectService = subjectService;
     }
 
     public BCryptPasswordEncoder getEncoder() {
@@ -158,9 +162,6 @@ public class StudentService {
             String subjectsString = findResultSet.getString(6);
 
 
-            // Maybe we can find another way to get it :(
-            SubjectService subjectService = new SubjectService();
-
             Student user = new Student(id, username, password, name, address, subjectService.getSubjectFromStringArray(subjectsString.split(",")));
             LOGGER.debug(String.format("Student with id '%d' and username '%s' was found with success", user.getId(), user.getUsername()));
             return Optional.of(user);
@@ -183,8 +184,6 @@ public class StudentService {
             String address = findResultSet.getString(5);
             String subjectsString = findResultSet.getString(6);
 
-            // Maybe we can find another way to get it :(
-            SubjectService subjectService = new SubjectService();
 
             Student user = new Student(id, username, password, name, address, subjectService.getSubjectFromStringArray(subjectsString.split(",")));
             LOGGER.debug(String.format("Student with id '%d' and username '%s' was found with success", user.getId(), user.getUsername()));

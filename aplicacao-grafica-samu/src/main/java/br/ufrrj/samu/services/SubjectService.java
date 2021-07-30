@@ -37,7 +37,7 @@ public class SubjectService {
                             "\\database.db");
 
             //LOGGER.warn("Initializing database");
-            //initDatabase();
+            initDatabase();
 
         } catch (SQLException | URISyntaxException throwable) {
             LOGGER.warn(throwable);
@@ -137,6 +137,7 @@ public class SubjectService {
 
         StudentService studentService = new StudentService();
         SubjectService subjectService = new SubjectService();
+        studentService.setSubjectService(subjectService);
 
         Optional<Student> opStudent = studentService.findStudentById(2);
 
