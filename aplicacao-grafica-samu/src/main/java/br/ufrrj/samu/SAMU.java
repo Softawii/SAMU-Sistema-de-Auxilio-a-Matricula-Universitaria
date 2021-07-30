@@ -1,5 +1,9 @@
 package br.ufrrj.samu;
 
+import br.ufrrj.samu.controllers.HomeController;
+import br.ufrrj.samu.controllers.LoginController;
+import br.ufrrj.samu.services.StudentService;
+import br.ufrrj.samu.services.SubjectService;
 import br.ufrrj.samu.utils.Util;
 import br.ufrrj.samu.views.LoginFrame;
 import com.formdev.flatlaf.FlatLaf;
@@ -24,6 +28,12 @@ public class SAMU {
 
     private final LoginFrame loginFrame;
 
+    private LoginController loginController;
+    private HomeController homeController;
+
+    private StudentService studentService;
+    private SubjectService subjectService;
+
     static
     {
         try {
@@ -47,11 +57,31 @@ public class SAMU {
     }
 
     private SAMU() {
-        loginFrame = new LoginFrame();
+        subjectService = new SubjectService();
+
+        studentService = new StudentService();
+        studentService.setSubjectService(subjectService);
+
+        loginController = new LoginController(studentService);
+        homeController = new HomeController(subjectService, studentService);
+
+        loginFrame = new LoginFrame(loginController, this);
+    }
+
+    public StudentService getStudentService() {
+        return studentService;
+    }
+
+    public SubjectService getSubjectService() {
+        return subjectService;
     }
 
     public static void startSamu() {
         LOGGER.info("Starting SAMU GUI");
         SwingUtilities.invokeLater(SAMU::new);
+    }
+
+    public HomeController getHomeController() {
+        return this.homeController;
     }
 }

@@ -1,7 +1,6 @@
 package br.ufrrj.samu.services;
 
 import br.ufrrj.samu.entities.Student;
-import br.ufrrj.samu.entities.User;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,6 +33,9 @@ public class StudentService {
         }
     }
 
+    /**
+     * <b>Precisa</b> que o SubjectService seja definido usando <b>setSubjectService</b>
+     */
     public StudentService() {
         try {
             LOGGER.debug("Instantiating BCryptPasswordEncoder");
@@ -49,6 +51,10 @@ public class StudentService {
         } catch (SQLException | URISyntaxException throwable) {
             LOGGER.warn(throwable);
         }
+    }
+
+    public SubjectService getSubjectService() {
+        return subjectService;
     }
 
     public void setSubjectService(SubjectService subjectService) {
@@ -160,9 +166,11 @@ public class StudentService {
             String name = findResultSet.getString(4);
             String address = findResultSet.getString(5);
             String subjectsString = findResultSet.getString(6);
+            String course = findResultSet.getString(7);
+            String semester = findResultSet.getString(8);
 
 
-            Student user = new Student(id, username, password, name, address, subjectService.getSubjectFromStringArray(subjectsString.split(",")));
+            Student user = new Student(id, username, password, name, address, subjectService.getSubjectFromStringArray(subjectsString.split(",")), course, semester);
             LOGGER.debug(String.format("Student with id '%d' and username '%s' was found with success", user.getId(), user.getUsername()));
             return Optional.of(user);
         } catch (SQLException throwable) {
@@ -171,9 +179,9 @@ public class StudentService {
         }
     }
 
-    public Optional<User> findStudentByName(String findName) {
+    public Optional<Student> findStudentByUsername(String findName) {
         try {
-            PreparedStatement findStatement = connection.prepareStatement("SELECT * FROM Student WHERE name=?1");
+            PreparedStatement findStatement = connection.prepareStatement("SELECT * FROM Student WHERE username=?1");
             findStatement.setString(1, findName);
 
             ResultSet findResultSet = findStatement.executeQuery();
@@ -183,9 +191,11 @@ public class StudentService {
             String name = findResultSet.getString(4);
             String address = findResultSet.getString(5);
             String subjectsString = findResultSet.getString(6);
+            String course = findResultSet.getString(7);
+            String semester = findResultSet.getString(8);
 
 
-            Student user = new Student(id, username, password, name, address, subjectService.getSubjectFromStringArray(subjectsString.split(",")));
+            Student user = new Student(id, username, password, name, address, subjectService.getSubjectFromStringArray(subjectsString.split(",")), course, semester);
             LOGGER.debug(String.format("Student with id '%d' and username '%s' was found with success", user.getId(), user.getUsername()));
             return Optional.of(user);
         } catch (SQLException throwable) {

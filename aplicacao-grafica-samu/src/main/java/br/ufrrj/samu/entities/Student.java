@@ -9,6 +9,8 @@ public class Student extends User {
 
     private String name;
     private String address;
+    private String course;
+    private String semester;
 
     private ArrayList<Subject> subjects;
 
@@ -16,10 +18,12 @@ public class Student extends User {
         super();
     }
 
-    public Student(String username, String password, String name, String address, List<Subject> subjects) {
+    public Student(String username, String password, String name, String address, List<Subject> subjects, String course, String semester) {
         super(username, password);
         this.name = name;
         this.address = address;
+        this.course = course;
+        this.semester = semester;
 
         try {
             this.subjects = new ArrayList<>(subjects);
@@ -28,10 +32,12 @@ public class Student extends User {
         }
     }
 
-    public Student(long id, String username, String password, String name, String address, List<Subject> subjects) {
+    public Student(long id, String username, String password, String name, String address, List<Subject> subjects, String course, String semester) {
         super(id, username, password);
         this.name = name;
         this.address = address;
+        this.course = course;
+        this.semester = semester;
 
         try {
             this.subjects = new ArrayList<>(subjects);
@@ -68,6 +74,13 @@ public class Student extends User {
         this.subjects.remove(subject);
     }
 
+    public String getCourse() {
+        return course;
+    }
+
+    public String getSemester() {
+        return semester;
+    }
 
     public String getSubjectsCodes() {
         // Maybe we can get a better name to this

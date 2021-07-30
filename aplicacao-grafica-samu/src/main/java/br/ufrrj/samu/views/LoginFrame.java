@@ -1,6 +1,10 @@
 package br.ufrrj.samu.views;
 
 import br.ufrrj.samu.RoundedCornerBorder;
+import br.ufrrj.samu.SAMU;
+import br.ufrrj.samu.controllers.LoginController;
+import br.ufrrj.samu.controllers.LoginController.LoginStatus;
+import br.ufrrj.samu.services.StudentService;
 import br.ufrrj.samu.utils.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,13 +33,16 @@ public class LoginFrame extends JFrame {
     JButton signupJButton;
     JButton signinJButton;
 
+    private LoginController loginController;
+
     private String frameTitle = "SAMU - Sistema de Aux\u00EDlio a Matr\u00EDcula Universit\u00E1ria";
     private int width = 450+10;
     private int height = 500+30;
 
-    public LoginFrame() {
+    public LoginFrame(LoginController loginController, SAMU samu) {
         super();
         frameInit();
+        this.loginController = loginController;
         mainJPanel = new JPanel();
         mainJPanel.setLayout(new GridBagLayout());
 //        mainJPanel.setBorder(BorderFactory.createLineBorder(Color.RED));
@@ -192,11 +199,21 @@ public class LoginFrame extends JFrame {
         signinJButton.setPreferredSize(new Dimension(300, 40));
         signinJButton.addActionListener(e -> {
             LOGGER.debug("Click sign in button");
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Acesso ainda n\u00E3o implementado",
-                    "Indispon\u00EDvel",
-                    JOptionPane.WARNING_MESSAGE);
+            String username = usernameTextField.getText();
+            String password = new String(passwordField.getPassword());
+            LoginStatus loginStatus = loginController.checkPassword(username, password);
+            System.out.println("loginStatus: " + loginStatus.getMessage());
+            if (loginStatus != LoginStatus.SUCCESS) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Usuário ou senha inválidos",
+                        "Falha no login",
+                        JOptionPane.ERROR_MESSAGE);
+            } else {
+                this.dispose();
+                StudentService studentService = loginController.getStudentService();
+                new HomeFrame(username, samu);
+            }
         });
 
         JLabel samuLabel = new JLabel("SAMU", SwingConstants.CENTER);

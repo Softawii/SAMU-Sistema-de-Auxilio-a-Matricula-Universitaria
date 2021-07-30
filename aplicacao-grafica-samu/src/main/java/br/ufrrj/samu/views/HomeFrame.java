@@ -1,5 +1,9 @@
 package br.ufrrj.samu.views;
 
+import br.ufrrj.samu.SAMU;
+import br.ufrrj.samu.controllers.HomeController;
+import br.ufrrj.samu.entities.Student;
+import br.ufrrj.samu.entities.Subject;
 import br.ufrrj.samu.utils.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,6 +13,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
 
 import static br.ufrrj.samu.utils.Util.centreWindow;
 import static java.util.Objects.requireNonNull;
@@ -20,13 +25,21 @@ public class HomeFrame extends JFrame {
     private String frameTitle = "SAMU - Sistema de Aux\u00EDlio a Matr\u00EDcula Universit\u00E1ria";
     private int width = 1366;
     private int height = 720;
+
     JPanel mainJPanel;
 
     JTable coursesTable;
 
-    public HomeFrame() throws HeadlessException {
+    private HomeController homeController;
+
+    private Student student;
+
+    public HomeFrame(String username, SAMU samu) throws HeadlessException {
         super();
         frameInit();
+        homeController = samu.getHomeController();
+        student = homeController.getStudent(username);
+
         mainJPanel = new JPanel();
         mainJPanel.setLayout(new BorderLayout());
         mainJPanel.setBackground(Color.GREEN);
@@ -42,8 +55,6 @@ public class HomeFrame extends JFrame {
         JPanel userInfoPanel = new JPanel();
         userInfoPanel.setPreferredSize(new Dimension(250, height));
         userInfoPanel.setLayout(new GridBagLayout());
-        Util.switchMode();
-        Util.switchMode();
 //        userInfoPanel.setBorder(BorderFactory.createLineBorder(UIManager.getColor("SAMU.homeBorderColor"), 2));
         userInfoPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 2, UIManager.getColor("Button.default.startBorderColor")));
 
@@ -53,10 +64,10 @@ public class HomeFrame extends JFrame {
         userImage.setSize(new Dimension(150, 150));
         userImage.setIcon(new ImageIcon(requireNonNull(this.getClass().getClassLoader().getResource("images/userImage.png"))));
 
-        JLabel username = new JLabel("Nome do Usu\u00E1rio");
-        JLabel enrollment = new JLabel("Matr\u00EDcula");
-        JLabel course = new JLabel("Curso");
-        JLabel semester = new JLabel("Semestre");
+        JLabel username = new JLabel("Nome: " + student.getName());
+        JLabel enrollment = new JLabel("Matr\u00EDcula: " + String.format("%05d",student.getId()));
+        JLabel course = new JLabel("Curso: " + student.getCourse());
+        JLabel semester = new JLabel("Entrou: " + student.getSemester());
 
         GridBagConstraints gridConstraints = new GridBagConstraints();
 
@@ -145,14 +156,15 @@ public class HomeFrame extends JFrame {
 
     public JScrollPane coursesTable() {
         String[] columnNames = {"Nome da Disciplina", "Professor", "Hor\u00E1rio"};
-        Object[][] data = {
-                {"ARQUITETURA DE COMPUTADORES II", "MARCELO PANARO DE MORAES ZAMITH", "Qua: 10:00 - 12:00 Sex: 14:00 - 16:00"},
-                {"C\u00C1LCULO APLICADO", "MARCELO PANARO DE MORAES ZAMITH", "Qua: 10:00 - 12:00 Sex: 14:00 - 16:00"},
-                {"F\u00CDSICA PARA CI\u00CANCIA DA COMPUTA\u00C7\u00C3O", "JOSE WEBERSZPIL", "Qua: 10:00 - 12:00 Sex: 14:00 - 16:00"},
-                {"MODELAGEM E PROJETO DE SOFTWARE", "FILIPE BRAIDA DO CARMO", "Ter e Qui: 10:00 - 12:00"},
-                {"PROBABILIDADE E ESTAT\u00CDSTICA PARA CI\u00CANCIA DA COMPUTA\u00C7\u00C3O", "ADEILTON PEDRO DE ALCANTARA", "Seg e Sex: 16:00 - 18:00"},
-                {"C\u00C1LCULO I", "ALEKSANDRO DE MELLO", "Seg e Sex: 16:00 - 18:00"},
-        };
+        List<Subject> studentSubjects = homeController.getStudentSubjects(student.getUsername());
+        Object[][] data = new Object[studentSubjects.size()][columnNames.length];
+        for (int i = 0; i < studentSubjects.size(); i++) {
+            Subject subject = studentSubjects.get(i);
+            data[i][0] = subject.getName();
+            data[i][1] = subject.getProfessor();
+            data[i][2] = subject.getSchedule();
+        }
+
         coursesTable = new JTable(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -202,7 +214,6 @@ public class HomeFrame extends JFrame {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         coursesTable.setDefaultRenderer(String.class, centerRenderer);
-//        table.getColumnModel().getColumn(0).setCellRenderer(new WordWrapCellRenderer()); //bugado
         coursesTable.setFont(coursesTable.getFont().deriveFont(18f));
         coursesTable.setRowHeight(coursesTable.getFont().getSize() * 4);
         coursesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -251,7 +262,7 @@ public class HomeFrame extends JFrame {
     }
 
     public static void main(String[] args) {
-        new HomeFrame();
+//        new HomeFrame();
     }
 
 }

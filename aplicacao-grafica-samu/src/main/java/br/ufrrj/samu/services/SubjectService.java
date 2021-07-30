@@ -101,10 +101,11 @@ public class SubjectService {
             String name = findResultSet.getString(2);
             String description = findResultSet.getString(3);
             String prerequisites = findResultSet.getString(4);
+            String schedule = findResultSet.getString(5);
 
             // TODO: PreRequisites String to array
             // PREREQUISITES AS A STRING IS A TEMPORARY SOLUTION!!!
-            Subject subject = new Subject(name, description, code, Arrays.stream(prerequisites.split(",")).toList());
+            Subject subject = new Subject(name, description, code, Arrays.stream(prerequisites.split(",")).toList(), schedule);
             LOGGER.debug(String.format("Subject with code '%s' and name '%s' was found with success", subject.getCode(), subject.getName()));
             return Optional.of(subject);
 
