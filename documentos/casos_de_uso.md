@@ -165,7 +165,7 @@
 - Fluxo de exceção:
     - Não há.
 
-# 7. Caso de uso: Gerar relatório (UC 07).
+# 7. Caso de uso: Gerar relatório (UC07).
 - Ator: Coordenador.
 - Visão geral: Permite que o coordenador do curso gere relatórios.
 - Referências cruzadas:
