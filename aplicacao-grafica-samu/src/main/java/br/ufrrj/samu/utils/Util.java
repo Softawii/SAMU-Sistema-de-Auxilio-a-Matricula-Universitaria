@@ -3,23 +3,14 @@ package br.ufrrj.samu.utils;
 import br.ufrrj.samu.SAMU;
 import com.formdev.flatlaf.*;
 import com.formdev.flatlaf.intellijthemes.FlatAllIJThemes;
-import com.formdev.flatlaf.intellijthemes.FlatGrayIJTheme;
-import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMoonlightContrastIJTheme;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
-import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.FontUIResource;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.FileSystem;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Map;
@@ -29,9 +20,32 @@ import static java.util.Objects.requireNonNull;
 
 public class Util {
 
+    public static final JButton THEME_BUTTON;
+
+    private static final ImageIcon LIGHT_MODE_ICON = new ImageIcon(requireNonNull(Util.class.getClassLoader().getResource("images/lightModeIcon.png")));
+
+    private static final ImageIcon DARK_MODE_ICON = new ImageIcon(requireNonNull(Util.class.getClassLoader().getResource("images/darkModeIcon.png")));
+
     public static boolean isDarkMode = false;
 
     private static final Logger LOGGER = LogManager.getLogger(Util.class);
+
+    static
+    {
+        THEME_BUTTON = new JButton();
+        THEME_BUTTON.setIcon(LIGHT_MODE_ICON);
+        THEME_BUTTON.setFocusable(false);
+        THEME_BUTTON.setRolloverEnabled(false);
+        THEME_BUTTON.setFont(THEME_BUTTON.getFont().deriveFont(20f));
+        THEME_BUTTON.addActionListener(e -> {
+            Util.switchMode();
+            if (Util.isDarkMode) {
+                THEME_BUTTON.setIcon(DARK_MODE_ICON);
+            } else {
+                THEME_BUTTON.setIcon(LIGHT_MODE_ICON);
+            }
+        });
+    }
 
     public static void switchMode() {
         isDarkMode = !isDarkMode;
@@ -44,6 +58,7 @@ public class Util {
                 UIManager.setLookAndFeel(SAMU.customGrayTheme);
             }
         } catch (UnsupportedLookAndFeelException e) {
+            LOGGER.warn(e);
             e.printStackTrace();
         }
         FlatLaf.updateUILater();

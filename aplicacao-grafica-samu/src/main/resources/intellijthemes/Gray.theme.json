@@ -187,7 +187,11 @@
       "contentAreaColor": "#E1E3E6"
     },
 
-    "Table.stripeColor": "#F2F3F5",
+    "Table": {
+      "stripeColor": "#F2F3F5",
+      "gridColor": "#2f334d",
+      "alternateRowColor": "#b7b7b7"
+    },
 
     "TableHeader": {
       "cellBorder": "3,0,3,0",

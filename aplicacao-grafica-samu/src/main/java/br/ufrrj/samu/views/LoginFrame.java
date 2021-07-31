@@ -1,6 +1,10 @@
 package br.ufrrj.samu.views;
 
 import br.ufrrj.samu.RoundedCornerBorder;
+import br.ufrrj.samu.SAMU;
+import br.ufrrj.samu.controllers.LoginController;
+import br.ufrrj.samu.controllers.LoginController.LoginStatus;
+import br.ufrrj.samu.services.StudentService;
 import br.ufrrj.samu.utils.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,15 +32,17 @@ public class LoginFrame extends JFrame {
     JPasswordField passwordField;
     JButton signupJButton;
     JButton signinJButton;
-    JButton themesButton;
+
+    private LoginController loginController;
 
     private String frameTitle = "SAMU - Sistema de Aux\u00EDlio a Matr\u00EDcula Universit\u00E1ria";
     private int width = 450+10;
     private int height = 500+30;
 
-    public LoginFrame() {
+    public LoginFrame(LoginController loginController, SAMU samu) {
         super();
         frameInit();
+        this.loginController = loginController;
         mainJPanel = new JPanel();
         mainJPanel.setLayout(new GridBagLayout());
 //        mainJPanel.setBorder(BorderFactory.createLineBorder(Color.RED));
@@ -56,7 +62,7 @@ public class LoginFrame extends JFrame {
             @Override public void updateUI() {
                 super.updateUI();
                 setOpaque(false);
-                setBorder(new RoundedCornerBorder(8, new Color(0xef5da8)));
+                setBorder(new RoundedCornerBorder(8, UIManager.getColor("Button.startBackground")));
             }
         };
         loginJPanel.setPreferredSize(new Dimension(width - 60, height - 70));
@@ -193,23 +199,20 @@ public class LoginFrame extends JFrame {
         signinJButton.setPreferredSize(new Dimension(300, 40));
         signinJButton.addActionListener(e -> {
             LOGGER.debug("Click sign in button");
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Acesso ainda n\u00E3o implementado",
-                    "Indispon\u00EDvel",
-                    JOptionPane.WARNING_MESSAGE);
-        });
-
-        themesButton = new JButton("Modo Escuro");
-        themesButton.setFocusable(false);
-        themesButton.setRolloverEnabled(false);
-        themesButton.setFont(themesButton.getFont().deriveFont(20f));
-        themesButton.addActionListener(e -> {
-            Util.switchMode();
-            if (Util.isDarkMode) {
-                themesButton.setText("Modo Claro");
+            String username = usernameTextField.getText();
+            String password = new String(passwordField.getPassword());
+            LoginStatus loginStatus = loginController.checkPassword(username, password);
+            System.out.println("loginStatus: " + loginStatus.getMessage());
+            if (loginStatus != LoginStatus.SUCCESS) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Usuário ou senha inválidos",
+                        "Falha no login",
+                        JOptionPane.ERROR_MESSAGE);
             } else {
-                themesButton.setText("Modo Escuro");
+                this.dispose();
+                StudentService studentService = loginController.getStudentService();
+                new HomeFrame(username, samu);
             }
         });
 
@@ -255,7 +258,7 @@ public class LoginFrame extends JFrame {
 
         gridConstraints.gridy = 7;
         gridConstraints.insets = new Insets(0, leftPadding, 0, rightPadding);
-        loginJPanel.add(themesButton, gridConstraints);
+        loginJPanel.add(Util.THEME_BUTTON, gridConstraints);
 
         GridBagConstraints mainPanelGridConstraints = new GridBagConstraints();
         mainPanelGridConstraints.insets = new Insets(0, 0, 0, 0);
@@ -282,8 +285,6 @@ public class LoginFrame extends JFrame {
         centreWindow(this);
 //        this.setResizable(true);
     }
-
-
 
 }
 
