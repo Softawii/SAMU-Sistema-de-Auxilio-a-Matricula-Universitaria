@@ -59,21 +59,21 @@
             2.  Fim do caso de uso.
 
 # 3. Caso de uso: Cadastrar curso (UC03).
-- Ator: Coordenador.
+- Ator: Administrador do sistema.
 - Visão geral: Permite cadastrar um novo curso.
 - Referências cruzadas:
     - Requisitos: RF02.
     - Caso relacionado: Fazer login (UC08).
-- Pré-condição: Coordenador ter feito login no sistema (RF08).
+- Pré-condição: administrador do sistema ter feito login no sistema (RF08).
 - Pós-condições: O sistema irá gerar um novo curso.
 - Fluxo principal:
     1.  O sistema solicita o nome do curso;
-    2.  O coordenador informa o nome do curso (FE-01);
+    2.  O administrador do sistema informa o nome do curso (FE-01);
     3.  O sistema exibe uma lista de disciplinas obrigatórias e optativas;
     4.  O sistema solicita as disciplinas obrigatórias e optativas;
-    5.  O coordenador seleciona as disciplinas obrigatórias e optativas da lista (FA-01);
-    6.  O sistema gera um ID e exibe as informações para o coordenador confirmar;
-    7.  O coordenador confirma as informações;
+    5.  O administrador do sistema seleciona as disciplinas obrigatórias e optativas da lista (FA-01);
+    6.  O sistema gera um ID e exibe as informações para o administrador do sistema confirmar;
+    7.  O administrador do sistema confirma as informações;
     8.  Fim do caso de uso.
 - Fluxo Alternativo:
     - FA-01 - Disciplina não cadastrada
