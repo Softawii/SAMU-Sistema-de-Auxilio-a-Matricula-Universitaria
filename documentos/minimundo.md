@@ -2,7 +2,7 @@
 
 Uma faculdade está começando a se informatizar e, como primeira iniciativa neste sentido, quer um sistema que auxilie na matrícula dos alunos nas disciplinas a cada semestre.
 
-Cada aluno deve ser cadastrado pela matrícula, nome, data de nascimento, endereço e curso. Cada curso tem um professor deve ser cadastrado com seu nome, data de nascimento, endereço e curso. Além disto, um professor pode ser coordenador de um curso. O curso é armazenado por um código único e pelo seu nome. Cada curso possui algumas  disciplinas que são obrigatórias e outras optativas.
+Cada aluno deve ser cadastrado pela matrícula, nome, data de nascimento, endereço e curso. Cada curso tem um professor que deve ser cadastrado com seu nome, data de nascimento, endereço e curso. Além disto, um professor pode ser coordenador de um curso. O curso é armazenado por um código único e pelo seu nome. Cada curso possui algumas  disciplinas que são obrigatórias e outras optativas.
 
 Cada disciplina é identificada por um controle único e pela sua descrição. Além disto, a disciplina possui um plano de aula elaborado pelo professor e a alocação da sala. Uma disciplina pode possuir pré-requisitos, ou seja, exigir que  outras disciplinas sejam cursadas antes.
 
