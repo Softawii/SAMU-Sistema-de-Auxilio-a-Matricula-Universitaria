@@ -50,7 +50,7 @@
     4.  O administrador do sistema confirma a escolha (FE-01);
     5. Fim do caso de uso.
 - Fluxos Alternativos:
-    - FA-01 - Professor não cadastrado:
+    - FA-01 - Nenhum professor cadastrado:
         1.  O caso de uso é redirecionado para o passo 1 de (UC10);
         2.  O caso de uso retorna ao passo 1 do fluxo principal.
     - Fluxo de exceção:
@@ -271,10 +271,10 @@
 - Pré-condição: Coordenador ter feito login no sistema. (RF08).
 - Pós-condições: O sistema irá gerar uma nova turma.
 - Fluxo principal:
-    1.  O sistema exibe uma lista e solicita a escolha da disciplina;
-    2.  O coordenador seleciona a disciplina (FA-01);
-    3.  O sistema exibe uma lista e solicita a escolha de um professor;
-    4.  O coordenador seleciona o professor (FA-02);
+    1.  O sistema exibe uma lista e solicita a escolha da disciplina (FA-01);
+    2.  O coordenador seleciona a disciplina;
+    3.  O sistema exibe uma lista e solicita a escolha de um professor (FA-02);
+    4.  O coordenador seleciona o professor;
     5.  O sistema solicita o período letivo da turma; 
     6.  O coordenador informa qual é o período letivo;
     7.  O sistema solicita o número de alunos da turma;
@@ -287,11 +287,11 @@
     14. O coordenador confirma as informações;
     15. Fim do caso de uso.
 - Fluxo Alternativo:
-    - FA-01 - Disciplina não cadastrada
-        1.  O caso de uso é redirecionado para o passo 1 de UC04;
+    - FA-01 - Nenhuma disciplina cadastrada
+        1.  O caso de uso é redirecionado para o passo 1 de (UC04);
         2.  O caso de uso retorna ao passo 2 do fluxo principal.
     - FA-02 - Nenhum professor cadastrado
-        1. O caso de uso é redirecionado para o passo 1 de UC10; 
+        1. O caso de uso é redirecionado para o passo 1 de (UC10); 
         2.  O caso de uso retorna ao passo 4 do fluxo principal.
 - Fluxo de exceção:
     - FE-01 - Em construção...
