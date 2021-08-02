@@ -45,9 +45,9 @@
 - Pós-condições: O sistema irá gerar um novo coordenador.
 - Fluxo principal:
     1.  O sistema exibe uma lista de professores do curso e solicita que escolha um professor  (FA-01);
-    2.  O administrador do sistema seleciona um professor da lista (FE-01);
+    2.  O administrador do sistema seleciona um professor da lista;
     3.  O sistema sistema exibe as informações do professor selecionado para o administrador do sistema confirmar;
-    4.  O administrador do sistema confirma a escolha;
+    4.  O administrador do sistema confirma a escolha (FE-01);
     5. Fim do caso de uso.
 - Fluxos Alternativos:
     - FA-01 - Professor não cadastrado:
@@ -250,10 +250,10 @@
     - FA-01 - Cadastrar novo curso:
         1.  O caso de uso é redirecionado para o passo 1 de (UC03);
         2.  O caso de uso retorna ao passo 4 do fluxo principal.
-    - Fluxo de exceção:
-        - FE-01 - Professor já cadastrado:
-            1.  O sistema informa que o professor já foi cadastrado;
-            2.  Fim do caso de uso.
+- Fluxo de exceção:
+    - FE-01 - Professor já cadastrado:
+         1.  O sistema informa que o professor já foi cadastrado;
+         2.  Fim do caso de uso.
     - FE-02 - CEP inválido:
         1.  O sistema informa que o CEP é inválido;
         2.  O caso de uso retorna ao passo 1 do fluxo principal.
@@ -290,7 +290,7 @@
     - FA-01 - Disciplina não cadastrada
         1.  O caso de uso é redirecionado para o passo 1 de UC04;
         2.  O caso de uso retorna ao passo 2 do fluxo principal.
-    - FA-02 - Professor não cadastrado
+    - FA-02 - Nenhum professor cadastrado
         1. O caso de uso é redirecionado para o passo 1 de UC10; 
         2.  O caso de uso retorna ao passo 4 do fluxo principal.
 - Fluxo de exceção:
