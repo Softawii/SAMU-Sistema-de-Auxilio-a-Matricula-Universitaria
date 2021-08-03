@@ -2,8 +2,8 @@ package br.ufrrj.samu;
 
 import br.ufrrj.samu.controllers.HomeController;
 import br.ufrrj.samu.controllers.LoginController;
-import br.ufrrj.samu.services.StudentService;
-import br.ufrrj.samu.services.SubjectService;
+import br.ufrrj.samu.repositories.StudentRepository;
+import br.ufrrj.samu.repositories.SubjectRepository;
 import br.ufrrj.samu.utils.Util;
 import br.ufrrj.samu.views.LoginFrame;
 import com.formdev.flatlaf.FlatLaf;
@@ -31,8 +31,8 @@ public class SAMU {
     private LoginController loginController;
     private HomeController homeController;
 
-    private StudentService studentService;
-    private SubjectService subjectService;
+    private StudentRepository studentRepository;
+    private SubjectRepository subjectRepository;
 
     static
     {
@@ -57,23 +57,23 @@ public class SAMU {
     }
 
     private SAMU() {
-        subjectService = new SubjectService();
+        subjectRepository = new SubjectRepository();
 
-        studentService = new StudentService();
-        studentService.setSubjectService(subjectService);
+        studentRepository = new StudentRepository();
+        studentRepository.setSubjectService(subjectRepository);
 
-        loginController = new LoginController(studentService);
-        homeController = new HomeController(subjectService, studentService);
+        loginController = new LoginController(studentRepository);
+        homeController = new HomeController(subjectRepository, studentRepository);
 
         loginFrame = new LoginFrame(loginController, this);
     }
 
-    public StudentService getStudentService() {
-        return studentService;
+    public StudentRepository getStudentService() {
+        return studentRepository;
     }
 
-    public SubjectService getSubjectService() {
-        return subjectService;
+    public SubjectRepository getSubjectService() {
+        return subjectRepository;
     }
 
     public static void startSamu() {

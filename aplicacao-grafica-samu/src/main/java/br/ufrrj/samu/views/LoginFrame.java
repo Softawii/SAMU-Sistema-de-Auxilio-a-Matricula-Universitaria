@@ -4,7 +4,7 @@ import br.ufrrj.samu.RoundedCornerBorder;
 import br.ufrrj.samu.SAMU;
 import br.ufrrj.samu.controllers.LoginController;
 import br.ufrrj.samu.controllers.LoginController.LoginStatus;
-import br.ufrrj.samu.services.StudentService;
+import br.ufrrj.samu.repositories.StudentRepository;
 import br.ufrrj.samu.utils.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -211,7 +211,7 @@ public class LoginFrame extends JFrame {
                         JOptionPane.ERROR_MESSAGE);
             } else {
                 this.dispose();
-                StudentService studentService = loginController.getStudentService();
+                StudentRepository studentRepository = loginController.getStudentService();
                 new HomeFrame(username, samu);
             }
         });

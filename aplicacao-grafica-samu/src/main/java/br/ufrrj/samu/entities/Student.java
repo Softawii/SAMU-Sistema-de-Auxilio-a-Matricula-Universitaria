@@ -1,7 +1,5 @@
 package br.ufrrj.samu.entities;
 
-import br.ufrrj.samu.services.SubjectService;
-
 import java.util.ArrayList;
 import java.util.List;
 

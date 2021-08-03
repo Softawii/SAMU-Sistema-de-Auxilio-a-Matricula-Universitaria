@@ -2,7 +2,7 @@ package br.ufrrj.samu.controllers;
 
 import br.ufrrj.samu.entities.Student;
 import br.ufrrj.samu.entities.User;
-import br.ufrrj.samu.services.StudentService;
+import br.ufrrj.samu.repositories.StudentRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,14 +12,14 @@ public class LoginController {
 
     private static final Logger LOGGER = LogManager.getLogger(LoginController.class);
 
-    private StudentService studentService;
+    private StudentRepository studentRepository;
 
-    public LoginController(StudentService studentService) {
-        this.studentService = studentService;
+    public LoginController(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
     }
 
-    public StudentService getStudentService() {
-        return studentService;
+    public StudentRepository getStudentService() {
+        return studentRepository;
     }
 
     /**
@@ -29,7 +29,7 @@ public class LoginController {
      * @return LoginStatus
      */
     public LoginStatus checkPassword(String username, String password) {
-        Optional<Student> userDB = studentService.findStudentByUsername(username);
+        Optional<Student> userDB = studentRepository.findStudentByUsername(username);
 
         if(userDB.isEmpty()) {
             return LoginStatus.UNKNOWN_USER;
