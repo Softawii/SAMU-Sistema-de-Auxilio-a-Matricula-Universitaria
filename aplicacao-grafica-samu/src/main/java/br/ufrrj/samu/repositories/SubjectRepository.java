@@ -16,6 +16,8 @@ public class SubjectRepository {
 
     private static final Logger LOGGER = LogManager.getLogger(SubjectRepository.class);
 
+    private static SubjectRepository instance;
+
     private Connection connection;
 
     static {
@@ -27,7 +29,7 @@ public class SubjectRepository {
         }
     }
 
-    public SubjectRepository() {
+    private SubjectRepository() {
         // INIT SQL
         try {
             LOGGER.debug("Starting connection to database");
@@ -42,9 +44,14 @@ public class SubjectRepository {
         } catch (SQLException | URISyntaxException throwable) {
             LOGGER.warn(throwable);
         }
-
     }
 
+    public static SubjectRepository getInstance() {
+        if (SubjectRepository.instance == null) {
+            SubjectRepository.instance = new SubjectRepository();
+        }
+        return instance;
+    }
 
     private void initDatabase() {
         ScriptRunner runner = new ScriptRunner(connection);

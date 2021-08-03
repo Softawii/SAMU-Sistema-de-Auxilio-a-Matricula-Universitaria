@@ -57,9 +57,9 @@ public class SAMU {
     }
 
     private SAMU() {
-        subjectRepository = new SubjectRepository();
+        subjectRepository = SubjectRepository.getInstance();
 
-        studentRepository = new StudentRepository();
+        studentRepository = StudentRepository.getInstance();
         studentRepository.setSubjectService(subjectRepository);
 
         loginController = new LoginController(studentRepository);

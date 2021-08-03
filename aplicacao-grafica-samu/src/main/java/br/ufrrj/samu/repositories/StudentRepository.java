@@ -18,6 +18,8 @@ public class StudentRepository {
 
     private static final Logger LOGGER = LogManager.getLogger(StudentRepository.class);
 
+    private static StudentRepository instance;
+
     private Connection connection;
 
     private BCryptPasswordEncoder encoder;
@@ -36,7 +38,7 @@ public class StudentRepository {
     /**
      * <b>Precisa</b> que o SubjectService seja definido usando <b>setSubjectService</b>
      */
-    public StudentRepository() {
+    private StudentRepository() {
         try {
             LOGGER.debug("Instantiating BCryptPasswordEncoder");
             encoder = new BCryptPasswordEncoder(4);
@@ -63,6 +65,13 @@ public class StudentRepository {
 
     public BCryptPasswordEncoder getEncoder() {
         return encoder;
+    }
+
+    public static StudentRepository getInstance() {
+        if (StudentRepository.instance == null) {
+            StudentRepository.instance = new StudentRepository();
+        }
+        return instance;
     }
 
     private void initDatabase() {
