@@ -133,21 +133,4 @@ public class SubjectRepository {
 
         return subjects;
     }
-
-    public static void main(String[] args) {
-
-        StudentRepository studentRepository = new StudentRepository();
-        SubjectRepository subjectRepository = new SubjectRepository();
-        studentRepository.setSubjectService(subjectRepository);
-
-        Optional<Student> opStudent = studentRepository.findStudentById(2);
-
-        if(opStudent.isEmpty())
-            return;
-
-        Student student = opStudent.get();
-
-        LOGGER.debug(student);
-        LOGGER.debug(student.getSubjects());
-    }
 }
