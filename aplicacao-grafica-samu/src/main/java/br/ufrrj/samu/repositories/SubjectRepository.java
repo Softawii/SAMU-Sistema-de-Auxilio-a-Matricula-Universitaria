@@ -47,10 +47,16 @@ public class SubjectRepository {
     }
 
     public static SubjectRepository getInstance() {
-        if (SubjectRepository.instance == null) {
-            SubjectRepository.instance = new SubjectRepository();
+        SubjectRepository result = instance;
+        if (result != null) {
+            return result;
         }
-        return instance;
+        synchronized (SubjectRepository.class) {
+            if (SubjectRepository.instance == null) {
+                SubjectRepository.instance = new SubjectRepository();
+            }
+            return instance;
+        }
     }
 
     private void initDatabase() {

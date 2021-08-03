@@ -18,7 +18,7 @@ public class StudentRepository {
 
     private static final Logger LOGGER = LogManager.getLogger(StudentRepository.class);
 
-    private static StudentRepository instance;
+    private static volatile StudentRepository instance;
 
     private Connection connection;
 
@@ -68,10 +68,16 @@ public class StudentRepository {
     }
 
     public static StudentRepository getInstance() {
-        if (StudentRepository.instance == null) {
-            StudentRepository.instance = new StudentRepository();
+        StudentRepository result = instance;
+        if (result != null) {
+            return result;
         }
-        return instance;
+        synchronized (StudentRepository.class) {
+            if (StudentRepository.instance == null) {
+                StudentRepository.instance = new StudentRepository();
+            }
+            return instance;
+        }
     }
 
     private void initDatabase() {
