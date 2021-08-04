@@ -131,6 +131,7 @@ public class UsersRepository {
     }
 
 
+
     // TODO: It will expand to other tables!!!!! PAY ATTENTION IN THAT
     public boolean deleteByUsername(String username) {
         try {
@@ -151,18 +152,129 @@ public class UsersRepository {
         return true;
     }
 
+    public Optional<User> findByUsername(String findName) {
+        try {
+            PreparedStatement findStatement = connection.prepareStatement("SELECT * FROM Users WHERE username=?1");
+            findStatement.setString(1, findName);
+
+            ResultSet findResultSet = findStatement.executeQuery();
+
+            long id = findResultSet.getLong(1);
+            String username = findResultSet.getString(2);
+            String password = findResultSet.getString(3);
+            String name = findResultSet.getString(4);
+            String cpf = findResultSet.getString(5);
+            String address = findResultSet.getString(6);
+            String birthday = findResultSet.getString(7);
+
+            String type = findResultSet.getString(8);
+
+            User user;
+
+            if(type.equals("STUDENT")) {
+                // TODO: We will need to change it when we change the student
+                user = new Student(id, username, password, name, cpf, address, birthday, null, null, null);
+                LOGGER.debug(String.format("Student with id '%d' and username '%s' was found with success", user.getId(), user.getUsername()));
+            } else {
+                user = new User(id, username, password, name, cpf, address, birthday);
+            }
+            return Optional.of(user);
+        } catch (SQLException throwable) {
+            LOGGER.warn(String.format("Student with username '%s' could not be found", findName), throwable);
+            return Optional.empty();
+        }
+    }
+
+    public Optional<User> findByCpf(String findCpf) {
+        try {
+            PreparedStatement findStatement = connection.prepareStatement("SELECT * FROM Users WHERE cpf=?1");
+            findStatement.setString(1, findCpf);
+
+            ResultSet findResultSet = findStatement.executeQuery();
+
+            long id = findResultSet.getLong(1);
+            String username = findResultSet.getString(2);
+            String password = findResultSet.getString(3);
+            String name = findResultSet.getString(4);
+            String cpf = findResultSet.getString(5);
+            String address = findResultSet.getString(6);
+            String birthday = findResultSet.getString(7);
+
+            String type = findResultSet.getString(8);
+
+            User user;
+
+            if(type.equals("STUDENT")) {
+                // TODO: We will need to change it when we change the student
+                user = new Student(id, username, password, name, cpf, address, birthday, null, null, null);
+                LOGGER.debug(String.format("Student with id '%d' and username '%s' was found with success", user.getId(), user.getUsername()));
+            } else {
+                user = new User(id, username, password, name, cpf, address, birthday);
+            }
+            return Optional.of(user);
+        } catch (SQLException throwable) {
+            LOGGER.warn(String.format("Student with username '%s' could not be found", findCpf), throwable);
+            return Optional.empty();
+        }
+    }
+
+    public boolean update(User user) {
+        try {
+            PreparedStatement findStatement = connection.prepareStatement("SELECT * FROM Users WHERE id=?1");
+            findStatement.setLong(1, user.getId());
+
+
+            ResultSet findResultSet = findStatement.executeQuery();
+            findResultSet.getLong(1);
+
+            PreparedStatement updateStatement = connection.prepareStatement("UPDATE Users SET username = ?1, password = ?2, name = ?3, cpf = ?4, address = ?5, birthday = ?6, type = ?7 WHERE id = ?8;");
+            updateStatement.setString(1, user.getUsername());
+            updateStatement.setString(2, user.getPassword());
+            updateStatement.setString(3, user.getName());
+            updateStatement.setString(4, user.getCpf());
+            updateStatement.setString(5, user.getAddress());
+            updateStatement.setString(6, user.getBirthday());
+            updateStatement.setString(7, this.type(user));
+            updateStatement.setLong(8, user.getId());
+
+            updateStatement.executeUpdate();
+            LOGGER.debug(String.format("User with id '%d' and username '%s' was updated", user.getId(), user.getUsername()));
+        } catch (SQLException throwable) {
+            LOGGER.warn(String.format("Student with id '%d' and username '%s' could not be updated", user.getId(), user.getUsername()), throwable);
+            return false;
+        }
+        return true;
+    }
+
     public static void main(String[] args) {
-        StudentRepository ur = StudentRepository.getInstance();
-        //UsersRepository ur = UsersRepository.getInstance();
+        StudentRepository sr = StudentRepository.getInstance();
+        UsersRepository ur = UsersRepository.getInstance();
 
         try {
-            ur.insert(new Student("yananzian", "1234", "Yan Carlos",
+            sr.insert(new Student("yananzian", "1234", "Yan Carlos",
                     "000.000.000-01", "Rua Franca", "27/05/2001",
                     "Ciencia da Computacao", "2019.1", new ArrayList<>()));
 
+            sr.insert(new Student("edueduedu", "1234", "Eduardo",
+                    "000.000.000-02", "Rua Franca", "27/05/2001",
+                    "Ciencia da Computacao", "2019.1", new ArrayList<>()));
 
         } catch (AlreadyExistsException e) {
             e.printStackTrace();
         }
+
+        Optional<User> optionalUser = ur.findByUsername("edueduedu");
+
+
+        optionalUser.ifPresent(LOGGER::debug);
+
+        if(optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setUsername("eduardo");
+            user.setName("Joao");
+
+            ur.update(user);
+        }
+
     }
 }
