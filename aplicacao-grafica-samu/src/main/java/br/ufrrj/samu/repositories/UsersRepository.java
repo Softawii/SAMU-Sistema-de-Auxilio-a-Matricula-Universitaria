@@ -254,7 +254,7 @@ public class UsersRepository {
             sr.insert(new Student("yananzian", "1234", "Yan Carlos",
                     "000.000.000-01", "Rua Franca", "27/05/2001",
                     "Ciencia da Computacao", "2019.1", null, null));
-            
+
         } catch (AlreadyExistsException e) {
             e.printStackTrace();
         }

@@ -5,8 +5,10 @@ public class Lecture {
     private String classRoom;
     private String schedule;
 
+
     private final String code;
     private final Subject subject;
+
 
     public Lecture(String classPlan, String classRoom, String schedule, String code, Subject subject) {
         this.classPlan = classPlan;
