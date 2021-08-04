@@ -28,20 +28,22 @@ public class LoginController {
      * @param password
      * @return LoginStatus
      */
-    public LoginStatus checkPassword(String username, String password) {
-        Optional<Student> userDB = studentRepository.findStudentByUsername(username);
+    public User signIn(String username, String password) {
 
-        if(userDB.isEmpty()) {
-            return LoginStatus.UNKNOWN_USER;
-        } else {
-            User user = userDB.get();
-
-//            if(studentService.getEncoder().matches(password, user.getPassword())) { // criptografado
-            if(password.equals(user.getPassword())) {
-                return LoginStatus.SUCCESS;
-            }
-        }
-        return LoginStatus.WRONG_PASSWORD;
+        return null;
+//        Optional<Student> userDB = studentRepository.findStudentByUsername(username);
+//
+//        if(userDB.isEmpty()) {
+//            return LoginStatus.UNKNOWN_USER;
+//        } else {
+//            User user = userDB.get();
+//
+////            if(studentService.getEncoder().matches(password, user.getPassword())) { // criptografado
+//            if(password.equals(user.getPassword())) {
+//                return LoginStatus.SUCCESS;
+//            }
+//        }
+//        return LoginStatus.WRONG_PASSWORD;
     }
 
     public enum LoginStatus {
