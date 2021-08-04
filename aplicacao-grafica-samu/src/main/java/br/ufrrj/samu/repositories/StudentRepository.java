@@ -47,6 +47,10 @@ public class StudentRepository {
                     "jdbc:sqlite:" +
                             new File(StudentRepository.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toPath().getParent() +
                             "\\database.db");
+
+            connection.setAutoCommit(true);
+            LOGGER.debug("AutoCommit enabled");
+
             LOGGER.warn("Initializing database");
             initDatabase();
 
@@ -80,6 +84,7 @@ public class StudentRepository {
         }
     }
 
+
     private void initDatabase() {
         ScriptRunner runner = new ScriptRunner(connection);
         BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(StudentRepository.class.getClassLoader().getResourceAsStream("database/init.sql"))));
@@ -88,8 +93,10 @@ public class StudentRepository {
     }
 
     public Optional<Student> insertStudent(Student student) {
+
         try {
-            PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO Student (username, password, name, address, courses) VALUES (?1, ?2, ?3, ?4, ?5)");
+            PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO Student(username, password, name, address, course) VALUES(?1, ?2, ?3, ?4, ?5)");
+
             insertStatement.setString(1, student.getUsername());
             insertStatement.setString(2, encoder.encode(student.getPassword()));
             insertStatement.setString(3, student.getName());
@@ -97,9 +104,12 @@ public class StudentRepository {
             insertStatement.setString(5, student.getSubjectsCodes());
 
             insertStatement.executeUpdate();
-            LOGGER.debug(String.format("Student with id %d was inserted to the database", student.getId()));
+
             long id = insertStatement.getGeneratedKeys().getLong(1);
             student.setId(id);
+
+            LOGGER.debug(String.format("Student with id %d was inserted to the database", student.getId()));
+
             return Optional.of(student);
         } catch (SQLException throwable) {
             LOGGER.warn(String.format("Student with id '%d' could not be inserted to the database", student.getId()), throwable);

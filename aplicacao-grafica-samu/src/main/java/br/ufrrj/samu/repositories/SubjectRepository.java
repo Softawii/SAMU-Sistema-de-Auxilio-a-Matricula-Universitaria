@@ -5,7 +5,6 @@ import java.net.URISyntaxException;
 import java.sql.*;
 import java.util.*;
 
-import br.ufrrj.samu.entities.Student;
 import br.ufrrj.samu.entities.Subject;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.logging.log4j.LogManager;
@@ -38,7 +37,10 @@ public class SubjectRepository {
                             new File(SubjectRepository.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toPath().getParent() +
                             "\\database.db");
 
-            //LOGGER.warn("Initializing database");
+            connection.setAutoCommit(true);
+            LOGGER.debug("AutoCommit enabled");
+
+            LOGGER.warn("Initializing database");
             initDatabase();
 
         } catch (SQLException | URISyntaxException throwable) {
@@ -118,7 +120,7 @@ public class SubjectRepository {
 
             // TODO: PreRequisites String to array
             // PREREQUISITES AS A STRING IS A TEMPORARY SOLUTION!!!
-            Subject subject = new Subject(name, description, code, Arrays.stream(prerequisites.split(",")).toList(), schedule);
+            Subject subject = new Subject(name, description, code, Arrays.stream(prerequisites.split(",")).toList());
             LOGGER.debug(String.format("Subject with code '%s' and name '%s' was found with success", subject.getCode(), subject.getName()));
             return Optional.of(subject);
 
