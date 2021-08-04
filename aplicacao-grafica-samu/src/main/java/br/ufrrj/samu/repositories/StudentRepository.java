@@ -1,15 +1,13 @@
 package br.ufrrj.samu.repositories;
 
 import br.ufrrj.samu.entities.Student;
-import br.ufrrj.samu.exceptions.UnknownUserException;
+import br.ufrrj.samu.exceptions.AlreadyExistsException;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStreamReader;
-import java.net.URISyntaxException;
 import java.sql.*;
 import java.util.Objects;
 import java.util.Optional;
@@ -72,7 +70,7 @@ public class StudentRepository {
         runner.runScript(reader);
     }
 
-    public Optional<Student> insert(Student student) throws UnknownUserException.AlreadyExistsException {
+    public Optional<Student> insert(Student student) throws AlreadyExistsException {
 
         UsersRepository uR = UsersRepository.getInstance();
 

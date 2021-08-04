@@ -1,13 +1,12 @@
 package br.ufrrj.samu.repositories;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.sql.*;
 import java.util.*;
 
 import br.ufrrj.samu.entities.Student;
 import br.ufrrj.samu.entities.User;
-import br.ufrrj.samu.exceptions.UnknownUserException;
+import br.ufrrj.samu.exceptions.AlreadyExistsException;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -68,10 +67,6 @@ public class UsersRepository {
         runner.setEscapeProcessing(false);
         runner.runScript(reader);
 
-//        Optional<User> user = this.insert(new Student("yan", "1234", "Yan Carlos",
-//                "000.000.000-01", "Rua Franca", "27/05/2001",
-//                "Ciencia da Computacao", "2019.1", new ArrayList<>()));
-
     }
 
     private String type(User user) {
@@ -81,7 +76,7 @@ public class UsersRepository {
         return "USER";
     }
 
-    public User insert(User user) throws UnknownUserException.AlreadyExistsException {
+    public User insert(User user) throws AlreadyExistsException {
         // We need to specify the error, username and cpf need to be unique
         try (PreparedStatement insertStatement = Repository.connection.prepareStatement("INSERT INTO Users (username, password, name, cpf, address, birthday, type) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)")) {
             insertStatement.setString(1, user.getUsername());
@@ -107,9 +102,9 @@ public class UsersRepository {
             String msg = throwable.getMessage();
 
             if(msg.contains("cpf")) {
-                throw new UnknownUserException.AlreadyExistsException("O CPF ja esta cadastrado", throwable);
+                throw new AlreadyExistsException("O CPF ja esta cadastrado", throwable);
             } else {
-                throw new UnknownUserException.AlreadyExistsException("O Username ja esta cadastrado", throwable);
+                throw new AlreadyExistsException("O Username ja esta cadastrado", throwable);
             }
         }
     }
@@ -166,7 +161,7 @@ public class UsersRepository {
                     "Ciencia da Computacao", "2019.1", new ArrayList<>()));
 
 
-        } catch (UnknownUserException.AlreadyExistsException e) {
+        } catch (AlreadyExistsException e) {
             e.printStackTrace();
         }
     }
