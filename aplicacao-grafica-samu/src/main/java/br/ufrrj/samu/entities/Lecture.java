@@ -36,6 +36,18 @@ public class Lecture {
         return subject;
     }
 
+    public void setClassPlan(String classPlan) {
+        this.classPlan = classPlan;
+    }
+
+    public void setClassRoom(String classRoom) {
+        this.classRoom = classRoom;
+    }
+
+    public void setSchedule(String schedule) {
+        this.schedule = schedule;
+    }
+
     @Override
     public String toString() {
         return "Lecture{" +
