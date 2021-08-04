@@ -68,6 +68,8 @@ public class SubjectRepository {
 
             return Optional.of(subject);
         } catch (SQLException throwable) {
+
+            // TODO: I think we need change this try / catch to a throw AlreadyExists !
             LOGGER.warn(String.format("Subject with code '%s' could not be inserted to the database", subject.getCode()), throwable);
             return Optional.empty();
         }
@@ -103,7 +105,6 @@ public class SubjectRepository {
             String name = findResultSet.getString(2);
             String description = findResultSet.getString(3);
             String prerequisites = findResultSet.getString(4);
-            String schedule = findResultSet.getString(5);
 
             // TODO: PreRequisites String to array
             // PREREQUISITES AS A STRING IS A TEMPORARY SOLUTION!!!

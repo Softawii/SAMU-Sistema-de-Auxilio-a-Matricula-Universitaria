@@ -4,8 +4,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.*;
 
-import br.ufrrj.samu.entities.Student;
-import br.ufrrj.samu.entities.User;
+import br.ufrrj.samu.entities.*;
 import br.ufrrj.samu.exceptions.AlreadyExistsException;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.logging.log4j.LogManager;
@@ -249,28 +248,32 @@ public class UsersRepository {
     public static void main(String[] args) {
         StudentRepository sr = StudentRepository.getInstance();
         UsersRepository ur = UsersRepository.getInstance();
+        SubjectRepository subr = SubjectRepository.getInstance();
+        LectureRepository lr = LectureRepository.getInstance();
+
+        User user = null;
 
         try {
-            sr.insert(new Student("yananzian", "1234", "Yan Carlos",
+            Optional<Student> optu = sr.insert(new Student("yananzian", "1234", "Yan Carlos",
                     "000.000.000-01", "Rua Franca", "27/05/2001",
                     "Ciencia da Computacao", "2019.1", null, null));
 
+            if(optu.isEmpty())
+                return;
+
+            user = optu.get();
+
         } catch (AlreadyExistsException e) {
-            e.printStackTrace();
+            LOGGER.debug(e.getMessage());
         }
 
-        Optional<User> optionalUser = ur.findByUsername("edueduedu");
+        Optional<Subject> sub = subr.findSubjectByCode("DCC01");
 
+        if(sub.isEmpty())
+            return;
 
-        optionalUser.ifPresent(LOGGER::debug);
-
-        if(optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            user.setUsername("eduardo");
-            user.setName("Joao");
-
-            ur.update(user);
-        }
+        lr.insert(new Lecture("O Plano", "13", "ToP10", "10:00-12:00",
+                sub.get(), new Teacher(0, "Braida", "1234"), new ArrayList<>()));
 
     }
 }

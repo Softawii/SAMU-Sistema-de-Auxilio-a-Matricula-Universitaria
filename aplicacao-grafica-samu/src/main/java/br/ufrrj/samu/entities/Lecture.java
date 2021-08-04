@@ -1,5 +1,7 @@
 package br.ufrrj.samu.entities;
 
+import java.util.ArrayList;
+
 public class Lecture {
     private String classPlan;
     private String classRoom;
@@ -9,13 +11,18 @@ public class Lecture {
     private final String code;
     private final Subject subject;
 
+    private Teacher teacher;
 
-    public Lecture(String classPlan, String classRoom, String schedule, String code, Subject subject) {
+    private ArrayList<Student> students;
+
+    public Lecture(String classPlan, String classRoom, String schedule, String code, Subject subject, Teacher teacher, ArrayList<Student> students) {
         this.classPlan = classPlan;
         this.classRoom = classRoom;
         this.schedule = schedule;
         this.code = code;
         this.subject = subject;
+        this.teacher = teacher;
+        this.students = students;
     }
 
     public String getClassPlan() {
@@ -48,6 +55,26 @@ public class Lecture {
 
     public void setSchedule(String schedule) {
         this.schedule = schedule;
+    }
+
+    public Teacher getTeacher() {
+        return teacher;
+    }
+
+    public String getStudentsIds() {
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for(Student student : this.students) {
+            stringBuilder.append(student.getId() + ",");
+        }
+
+        if(!stringBuilder.isEmpty()) {
+            stringBuilder.delete(stringBuilder.length() - 1, stringBuilder.length());
+        }
+
+        return stringBuilder.toString();
+
     }
 
     @Override

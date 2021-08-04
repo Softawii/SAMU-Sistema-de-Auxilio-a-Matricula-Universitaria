@@ -94,6 +94,8 @@ public class StudentRepository {
             insertStatement.close();
             return Optional.of(student);
         } catch (SQLException throwable) {
+
+            // TODO: I think we need change this try / catch to a throw AlreadyExists !
             LOGGER.warn(String.format("Student with id '%d' could not be inserted to the database", student.getId()), throwable);
             return Optional.empty();
         }
