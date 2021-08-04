@@ -5,11 +5,8 @@ import java.util.List;
 
 public class Student extends User {
 
-    private String name;
-    private String address;
     private String course;
     private String semester;
-
     private ArrayList<Subject> subjects;
 
     public Student() {
@@ -17,23 +14,11 @@ public class Student extends User {
     }
 
     public Student(String username, String password, String name, String address, List<Subject> subjects, String course, String semester) {
-        super(username, password);
-        this.name = name;
-        this.address = address;
-        this.course = course;
-        this.semester = semester;
-
-        try {
-            this.subjects = new ArrayList<>(subjects);
-        } catch(NullPointerException e) {
-            this.subjects = new ArrayList<>();
-        }
+        this(0, username, password, name, address, subjects, course, semester);
     }
 
     public Student(long id, String username, String password, String name, String address, List<Subject> subjects, String course, String semester) {
         super(id, username, password);
-        this.name = name;
-        this.address = address;
         this.course = course;
         this.semester = semester;
 
@@ -44,20 +29,20 @@ public class Student extends User {
         }
     }
 
-    public String getName() {
-        return name;
+    public Student(String username, String password, String name, String cpf, String address, String birthday, String course, String semester, ArrayList<Subject> subjects) {
+        this(0, username, password, name, cpf, address, birthday, course, semester, subjects);
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public Student(long id, String username, String password, String name, String cpf, String address, String birthday, String course, String semester, ArrayList<Subject> subjects) {
+        super(id, username, password, name, cpf, address, birthday);
+        this.course = course;
+        this.semester = semester;
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
+        try {
+            this.subjects = new ArrayList<>(subjects);
+        } catch(NullPointerException e) {
+            this.subjects = new ArrayList<>();
+        }
     }
 
     public ArrayList<Subject> getSubjects() {

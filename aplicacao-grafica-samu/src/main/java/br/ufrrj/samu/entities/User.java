@@ -7,13 +7,16 @@ public class User {
     private long id;
     private String username;
     private String password;
+    private String name;
+    private String cpf;
+    private String address;
+    private String birthday;
 
     public User() {
     }
 
     public User(String username, String password) {
-        this.username = username;
-        this.password = password;
+        this(0, username, password);
     }
 
     public User(long id, String username, String password) {
@@ -22,12 +25,42 @@ public class User {
         this.password = password;
     }
 
+    public User(String username, String password, String name, String cpf, String address, String birthday) {
+        this(0, username, password, name, cpf, address, birthday);
+    }
+
+    public User(long id, String username, String password, String name, String cpf, String address, String birthday) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.cpf = cpf;
+        this.address = address;
+        this.birthday = birthday;
+    }
+
     public long getId() {
         return id;
     }
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getBirthday() {
+        return birthday;
     }
 
     public String getUsername() {
@@ -45,6 +78,8 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+
 
     @Override
     public boolean equals(Object o) {
