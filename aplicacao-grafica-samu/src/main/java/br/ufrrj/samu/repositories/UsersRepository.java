@@ -71,7 +71,10 @@ public class UsersRepository {
     private String type(User user) {
         if(user instanceof Student)
             return "STUDENT";
-
+        else if(user instanceof Coordinator)
+            return "COORDINATOR";
+        else if(user instanceof Teacher)
+            return "TEACHER";
         return "USER";
     }
 
@@ -251,29 +254,15 @@ public class UsersRepository {
         SubjectRepository subr = SubjectRepository.getInstance();
         LectureRepository lr = LectureRepository.getInstance();
 
-        User user = null;
-
-        try {
-            Optional<Student> optu = sr.insert(new Student("yananzian", "1234", "Yan Carlos",
-                    "000.000.000-01", "Rua Franca", "27/05/2001",
-                    "Ciencia da Computacao", "2019.1", null, null));
-
-            if(optu.isEmpty())
-                return;
-
-            user = optu.get();
-
-        } catch (AlreadyExistsException e) {
-            LOGGER.debug(e.getMessage());
-        }
 
         Optional<Subject> sub = subr.findSubjectByCode("DCC01");
 
         if(sub.isEmpty())
             return;
+        Subject subject = sub.get();
 
-        lr.insert(new Lecture("O Plano", "13", "ToP10", "10:00-12:00",
-                sub.get(), new Teacher(0, "Braida", "1234"), new ArrayList<>()));
+        lr.insert(new Lecture("O Plano", "13", "10:00-12:00", "ToP10",
+                subject, new Teacher(2, "Braida", "1234"), new ArrayList<>()));
 
     }
 }

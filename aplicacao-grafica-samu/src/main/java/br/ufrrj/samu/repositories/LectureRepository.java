@@ -26,7 +26,7 @@ public class LectureRepository {
     private LectureRepository() {
         // INIT SQL
         try {
-            connection = connection = Repository.connection;
+            connection = Repository.connection;
 
             connection.setAutoCommit(true);
             LOGGER.debug("AutoCommit enabled");
@@ -60,14 +60,18 @@ public class LectureRepository {
     }
 
     public Optional<Lecture> insert(Lecture lecture) {
-        try {
-            PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO Lectures (code, schedule, classRoom, classPlan, subject, teacher, students) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)");
+
+        LOGGER.debug(lecture);
+
+        try (PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO Lectures (code, schedule, classRoom, classPlan, subject, teacher, students) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)")){
+
             insertStatement.setString(1, lecture.getCode());
             insertStatement.setString(2, lecture.getSchedule());
             insertStatement.setString(3, lecture.getClassRoom());
             insertStatement.setString(4, lecture.getClassPlan());
-            insertStatement.setLong(5, lecture.getTeacher().getId());
-            insertStatement.setString(6, lecture.getStudentsIds());
+            insertStatement.setString(5, lecture.getSubject().getCode());
+            insertStatement.setLong(6, lecture.getTeacher().getId());
+            insertStatement.setString(7, lecture.getStudentsIds());
 
             insertStatement.executeUpdate();
             LOGGER.debug(String.format("Lecture with code %s was inserted to the database", lecture.getCode()));

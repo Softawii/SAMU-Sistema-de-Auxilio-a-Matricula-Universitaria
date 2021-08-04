@@ -95,8 +95,8 @@ public class SubjectRepository {
     }
 
     public Optional<Subject> findSubjectByCode(String code) {
-        try {
-            PreparedStatement findStatement = connection.prepareStatement("SELECT * FROM Subjects WHERE code=?1");
+        try (PreparedStatement findStatement = connection.prepareStatement("SELECT * FROM Subjects WHERE code=?1")) {
+
             findStatement.setString(1, code);
 
             ResultSet findResultSet = findStatement.executeQuery();
@@ -106,10 +106,11 @@ public class SubjectRepository {
             String description = findResultSet.getString(3);
             String prerequisites = findResultSet.getString(4);
 
-            // TODO: PreRequisites String to array
-            // PREREQUISITES AS A STRING IS A TEMPORARY SOLUTION!!!
             Subject subject = new Subject(name, description, code, Arrays.stream(prerequisites.split(",")).toList());
             LOGGER.debug(String.format("Subject with code '%s' and name '%s' was found with success", subject.getCode(), subject.getName()));
+
+            findStatement.close();
+
             return Optional.of(subject);
 
         } catch (SQLException throwable) {
