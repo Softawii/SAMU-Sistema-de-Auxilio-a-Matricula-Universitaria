@@ -36,8 +36,6 @@ public class UsersRepository {
             initDatabase();
             LOGGER.warn("Database initialized");
 
-            connection.setAutoCommit(true);
-
         } catch (SQLException throwable) {
             LOGGER.warn(throwable);
         }
@@ -257,9 +255,12 @@ public class UsersRepository {
 
         Optional<Subject> sub = subr.findSubjectByCode("DCC01");
 
+
         if(sub.isEmpty())
             return;
         Subject subject = sub.get();
+
+        LOGGER.debug(subject);
 
         lr.insert(new Lecture("O Plano", "13", "10:00-12:00", "ToP10",
                 subject, new Teacher(2, "Braida", "1234"), new ArrayList<>()));

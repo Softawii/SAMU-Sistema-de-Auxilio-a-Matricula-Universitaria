@@ -73,7 +73,10 @@ public class LectureRepository {
             insertStatement.setLong(6, lecture.getTeacher().getId());
             insertStatement.setString(7, lecture.getStudentsIds());
 
+            // Essa linha de baixo é um bug lixo do krl
+            connection.setAutoCommit(true);
             insertStatement.executeUpdate();
+
             LOGGER.debug(String.format("Lecture with code %s was inserted to the database", lecture.getCode()));
 
             return Optional.of(lecture);

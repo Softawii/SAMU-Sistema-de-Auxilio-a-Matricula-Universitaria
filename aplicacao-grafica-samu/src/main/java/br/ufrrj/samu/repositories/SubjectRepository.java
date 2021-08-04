@@ -22,7 +22,7 @@ public class SubjectRepository {
     private SubjectRepository() {
         // INIT SQL
         try {
-            connection = connection = Repository.connection;
+            connection = Repository.connection;
 
             connection.setAutoCommit(true);
             LOGGER.debug("AutoCommit enabled");

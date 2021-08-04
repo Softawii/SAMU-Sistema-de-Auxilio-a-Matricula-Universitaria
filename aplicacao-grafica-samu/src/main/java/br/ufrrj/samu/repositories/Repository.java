@@ -30,6 +30,8 @@ public class Repository {
                     "jdbc:sqlite:" +
                             new File(Repository.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toPath().getParent() +
                             "\\database.db");
+
+            connection.setAutoCommit(true);
         } catch (SQLException | URISyntaxException throwable) {
             LOGGER.warn(throwable);
         }
