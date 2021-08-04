@@ -173,7 +173,7 @@ public class UsersRepository {
 
             if(type.equals("STUDENT")) {
                 // TODO: We will need to change it when we change the student
-                user = new Student(id, username, password, name, cpf, address, birthday, null, null, null);
+                user = new Student(id, username, password, name, cpf, address, birthday, null, null, null, null);
                 LOGGER.debug(String.format("Student with id '%d' and username '%s' was found with success", user.getId(), user.getUsername()));
             } else {
                 user = new User(id, username, password, name, cpf, address, birthday);
@@ -206,7 +206,7 @@ public class UsersRepository {
 
             if(type.equals("STUDENT")) {
                 // TODO: We will need to change it when we change the student
-                user = new Student(id, username, password, name, cpf, address, birthday, null, null, null);
+                user = new Student(id, username, password, name, cpf, address, birthday, null, null, null, null);
                 LOGGER.debug(String.format("Student with id '%d' and username '%s' was found with success", user.getId(), user.getUsername()));
             } else {
                 user = new User(id, username, password, name, cpf, address, birthday);
@@ -253,12 +253,8 @@ public class UsersRepository {
         try {
             sr.insert(new Student("yananzian", "1234", "Yan Carlos",
                     "000.000.000-01", "Rua Franca", "27/05/2001",
-                    "Ciencia da Computacao", "2019.1", new ArrayList<>()));
-
-            sr.insert(new Student("edueduedu", "1234", "Eduardo",
-                    "000.000.000-02", "Rua Franca", "27/05/2001",
-                    "Ciencia da Computacao", "2019.1", new ArrayList<>()));
-
+                    "Ciencia da Computacao", "2019.1", null, null));
+            
         } catch (AlreadyExistsException e) {
             e.printStackTrace();
         }

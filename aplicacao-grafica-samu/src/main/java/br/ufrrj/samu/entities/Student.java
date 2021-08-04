@@ -9,40 +9,36 @@ public class Student extends User {
     private String semester;
     private ArrayList<Subject> subjects;
 
+    private ArrayList<Lecture> enrollLectures;
+    private ArrayList<Lecture> requestedLectures;
+
     public Student() {
         super();
     }
 
-    public Student(String username, String password, String name, String address, List<Subject> subjects, String course, String semester) {
-        this(0, username, password, name, address, subjects, course, semester);
-    }
-
-    public Student(long id, String username, String password, String name, String address, List<Subject> subjects, String course, String semester) {
-        super(id, username, password);
-        this.course = course;
-        this.semester = semester;
-
-        try {
-            this.subjects = new ArrayList<>(subjects);
-        } catch(NullPointerException e) {
-            this.subjects = new ArrayList<>();
-        }
-    }
-
-    public Student(String username, String password, String name, String cpf, String address, String birthday, String course, String semester, ArrayList<Subject> subjects) {
-        this(0, username, password, name, cpf, address, birthday, course, semester, subjects);
-    }
-
-    public Student(long id, String username, String password, String name, String cpf, String address, String birthday, String course, String semester, ArrayList<Subject> subjects) {
+    public Student(long id, String username, String password, String name, String cpf, String address, String birthday,
+                   String course, String semester, ArrayList<Lecture> enrollLectures, ArrayList<Lecture> requestedLectures) {
         super(id, username, password, name, cpf, address, birthday);
+
         this.course = course;
         this.semester = semester;
 
         try {
-            this.subjects = new ArrayList<>(subjects);
-        } catch(NullPointerException e) {
-            this.subjects = new ArrayList<>();
+            this.enrollLectures = new ArrayList<>(enrollLectures);
+        } catch (Exception e) {
+            this.enrollLectures = new ArrayList<>();
         }
+
+        try {
+            this.requestedLectures = new ArrayList<>(requestedLectures);
+        } catch (Exception e) {
+            this.requestedLectures = new ArrayList<>();
+        }
+    }
+
+    public Student(String username, String password, String name, String cpf, String address, String birthday,
+                   String course, String semester, ArrayList<Lecture> enrollLectures, ArrayList<Lecture> requestedLectures) {
+        this(0, username, password, name, cpf, address, birthday, course, semester, enrollLectures, requestedLectures);
     }
 
     public ArrayList<Subject> getSubjects() {
