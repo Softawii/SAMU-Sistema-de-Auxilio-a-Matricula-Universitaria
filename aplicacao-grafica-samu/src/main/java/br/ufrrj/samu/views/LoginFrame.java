@@ -201,19 +201,19 @@ public class LoginFrame extends JFrame {
             LOGGER.debug("Click sign in button");
             String username = usernameTextField.getText();
             String password = new String(passwordField.getPassword());
-            LoginStatus loginStatus = loginController.checkPassword(username, password);
-            System.out.println("loginStatus: " + loginStatus.getMessage());
-            if (loginStatus != LoginStatus.SUCCESS) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Usuário ou senha inválidos",
-                        "Falha no login",
-                        JOptionPane.ERROR_MESSAGE);
-            } else {
-                this.dispose();
-                StudentRepository studentRepository = loginController.getStudentService();
-                new HomeFrame(username, samu);
-            }
+            loginController.signIn(username, password);
+//            System.out.println("loginStatus: " + loginStatus.getMessage());
+//            if (loginStatus != LoginStatus.SUCCESS) {
+//                JOptionPane.showMessageDialog(
+//                        this,
+//                        "Usuário ou senha inválidos",
+//                        "Falha no login",
+//                        JOptionPane.ERROR_MESSAGE);
+//            } else {
+//                this.dispose();
+//                StudentRepository studentRepository = loginController.getStudentService();
+//                new HomeFrame(username, samu);
+//            }
         });
 
         JLabel samuLabel = new JLabel("SAMU", SwingConstants.CENTER);

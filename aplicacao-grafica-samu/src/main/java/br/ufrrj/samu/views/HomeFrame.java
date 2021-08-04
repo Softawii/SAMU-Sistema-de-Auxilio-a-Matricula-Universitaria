@@ -162,7 +162,7 @@ public class HomeFrame extends JFrame {
             Subject subject = studentSubjects.get(i);
             data[i][0] = subject.getName();
             data[i][1] = subject.getProfessor();
-            data[i][2] = subject.getSchedule();
+            data[i][2] = "--";
         }
 
         coursesTable = new JTable(data, columnNames) {
