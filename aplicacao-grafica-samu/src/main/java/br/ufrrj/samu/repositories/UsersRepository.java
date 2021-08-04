@@ -6,11 +6,12 @@ import java.sql.*;
 import java.util.*;
 
 import br.ufrrj.samu.entities.Student;
-import br.ufrrj.samu.entities.Subject;
 import br.ufrrj.samu.entities.User;
+import br.ufrrj.samu.exceptions.UnknownUserException;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
 public class UsersRepository {
@@ -21,22 +22,15 @@ public class UsersRepository {
 
     private Connection connection;
 
-    static {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            LOGGER.debug("org.sqlite.JDBC class loaded");
-        } catch (ClassNotFoundException e) {
-            LOGGER.warn("org.sqlite.JDBC class could not be loaded", e);
-        }
-    }
+    private BCryptPasswordEncoder encoder;
 
     private UsersRepository() {
         try {
             LOGGER.debug("Starting connection to database");
-            connection = DriverManager.getConnection(
-                    "jdbc:sqlite:" +
-                            new File(UsersRepository.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toPath().getParent() +
-                            "\\database.db");
+
+            connection = Repository.connection;
+
+            encoder = new BCryptPasswordEncoder(4);
 
             connection.setAutoCommit(true);
             LOGGER.debug("AutoCommit enabled");
@@ -46,9 +40,13 @@ public class UsersRepository {
 
             connection.setAutoCommit(true);
 
-        } catch (SQLException | URISyntaxException throwable) {
+        } catch (SQLException throwable) {
             LOGGER.warn(throwable);
         }
+    }
+
+    public BCryptPasswordEncoder getEncoder() {
+        return encoder;
     }
 
     public static UsersRepository getInstance() {
@@ -83,11 +81,11 @@ public class UsersRepository {
         return "USER";
     }
 
-    public Optional<User> insert(User user) {
+    public User insert(User user) throws UnknownUserException.AlreadyExistsException {
         // We need to specify the error, username and cpf need to be unique
-        try (PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO Users (username, password, name, cpf, address, birthday, type) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)")) {
+        try (PreparedStatement insertStatement = Repository.connection.prepareStatement("INSERT INTO Users (username, password, name, cpf, address, birthday, type) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)")) {
             insertStatement.setString(1, user.getUsername());
-            insertStatement.setString(2, user.getPassword());
+            insertStatement.setString(2, encoder.encode(user.getPassword()));
             insertStatement.setString(3, user.getName());
             insertStatement.setString(4, user.getCpf());
             insertStatement.setString(5, user.getAddress());
@@ -101,11 +99,18 @@ public class UsersRepository {
             user.setId(id);
 
             insertStatement.close();
-            return Optional.of(user);
+            return user;
 
         } catch (SQLException throwable) {
             LOGGER.warn(String.format("User with name '%s' could not be inserted to the database", user.getUsername()), throwable);
-            return Optional.empty();
+
+            String msg = throwable.getMessage();
+
+            if(msg.contains("cpf")) {
+                throw new UnknownUserException.AlreadyExistsException("O CPF ja esta cadastrado", throwable);
+            } else {
+                throw new UnknownUserException.AlreadyExistsException("O Username ja esta cadastrado", throwable);
+            }
         }
     }
 
@@ -152,15 +157,17 @@ public class UsersRepository {
     }
 
     public static void main(String[] args) {
-        UsersRepository ur = UsersRepository.getInstance();
+        StudentRepository ur = StudentRepository.getInstance();
+        //UsersRepository ur = UsersRepository.getInstance();
 
-        ur.insert(new Student("yananzian", "1234", "Yan Carlos",
-                "000.000.000-01", "Rua Franca", "27/05/2001",
-                "Ciencia da Computacao", "2019.1", new ArrayList<>()));
-        ur.insert(new Student("eduardo", "1234", "Eduardo",
-                "000.000.000-02", "Rua Campo Grande", "12/04/1001",
-                "Ciencia da Computacao", "2019.1", new ArrayList<>()));
+        try {
+            ur.insert(new Student("yananzian", "1234", "Yan Carlos",
+                    "000.000.000-01", "Rua Franca", "27/05/2001",
+                    "Ciencia da Computacao", "2019.1", new ArrayList<>()));
 
-        ur.deleteByCpf("000.000.000-02");
+
+        } catch (UnknownUserException.AlreadyExistsException e) {
+            e.printStackTrace();
+        }
     }
 }

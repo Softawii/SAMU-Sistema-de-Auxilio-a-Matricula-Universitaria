@@ -19,23 +19,10 @@ public class SubjectRepository {
 
     private Connection connection;
 
-    static {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            LOGGER.debug("org.sqlite.JDBC class loaded");
-        } catch (ClassNotFoundException e) {
-            LOGGER.warn("org.sqlite.JDBC class could not be loaded", e);
-        }
-    }
-
     private SubjectRepository() {
         // INIT SQL
         try {
-            LOGGER.debug("Starting connection to database");
-            connection = DriverManager.getConnection(
-                    "jdbc:sqlite:" +
-                            new File(SubjectRepository.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toPath().getParent() +
-                            "\\database.db");
+            connection = connection = Repository.connection;
 
             connection.setAutoCommit(true);
             LOGGER.debug("AutoCommit enabled");
@@ -43,7 +30,7 @@ public class SubjectRepository {
             LOGGER.warn("Initializing database");
             initDatabase();
 
-        } catch (SQLException | URISyntaxException throwable) {
+        } catch (SQLException throwable) {
             LOGGER.warn(throwable);
         }
     }

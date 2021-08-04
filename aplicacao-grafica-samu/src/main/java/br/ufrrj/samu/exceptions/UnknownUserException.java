@@ -15,4 +15,18 @@ public class UnknownUserException extends Exception {
     public UnknownUserException(Throwable cause) {
         super(cause);
     }
+
+    public static class AlreadyExistsException extends Exception {
+
+        public AlreadyExistsException() {
+        }
+
+        public AlreadyExistsException(String message) {
+            super(message);
+        }
+
+        public AlreadyExistsException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
 }
