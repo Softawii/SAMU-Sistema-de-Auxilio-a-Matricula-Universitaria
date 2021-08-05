@@ -6,6 +6,7 @@ import java.util.*;
 
 import br.ufrrj.samu.entities.*;
 import br.ufrrj.samu.exceptions.AlreadyExistsException;
+import br.ufrrj.samu.exceptions.SubjectNotFoundException;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -252,18 +253,37 @@ public class UsersRepository {
         SubjectRepository subr = SubjectRepository.getInstance();
         LectureRepository lr = LectureRepository.getInstance();
 
+        try {
+            Repository.connection.setAutoCommit(true);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
 
         Optional<Subject> sub = subr.findSubjectByCode("DCC01");
 
+        if(sub.isEmpty()) {
 
-        if(sub.isEmpty())
+            LOGGER.debug("NÃO FOI POSSIVEL ENCONTRAR O SUBJECT.");
+
             return;
-        Subject subject = sub.get();
+        }
 
-        LOGGER.debug(subject);
+        LOGGER.debug(sub.get());
 
-        lr.insert(new Lecture("O Plano", "13", "10:00-12:00", "ToP10",
-                subject, new Teacher(2, "Braida", "1234"), new ArrayList<>()));
+        sub = subr.insert(new Subject("Linguagens de Programacao", "LP", "DCC03", List.of("DCC01")));
+
+
+        LOGGER.debug(sub.get());
+        LOGGER.debug(subr.getSubjectFromStringArray(sub.get().getPrerequisitesList().split(",")));
+
+
+        try {
+            Optional<Lecture> optLect = lr.findByCode("AC120202");
+            optLect.ifPresent(LOGGER::debug);
+
+        } catch (SubjectNotFoundException e) {
+            e.printStackTrace();
+        }
 
     }
 }

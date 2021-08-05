@@ -55,7 +55,7 @@ public class SubjectRepository {
         runner.runScript(reader);
     }
 
-    public Optional<Subject>  insertSubject(Subject subject) {
+    public Optional<Subject> insert(Subject subject) {
         try {
             PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO Subjects (code, name, description, prerequisites) VALUES (?1, ?2, ?3, ?4)");
             insertStatement.setString(1, subject.getCode());
@@ -63,6 +63,8 @@ public class SubjectRepository {
             insertStatement.setString(3, subject.getDescription());
             insertStatement.setString(4, subject.getPrerequisitesList());
 
+//            // POR QUE DEUS?????????? :(
+//            connection.setAutoCommit(true);
             insertStatement.executeUpdate();
             LOGGER.debug(String.format("Subject with code %s was inserted to the database", subject.getCode()));
 
@@ -75,7 +77,7 @@ public class SubjectRepository {
         }
     }
 
-    public boolean deleteSubjectByCode(String code) {
+    public boolean deleteByCode(String code) {
         try {
             PreparedStatement findStatement = connection.prepareStatement("SELECT * FROM Subjects WHERE code=?1");
             findStatement.setString(1, code);
