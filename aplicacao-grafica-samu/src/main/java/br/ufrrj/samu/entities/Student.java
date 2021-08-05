@@ -7,7 +7,6 @@ public class Student extends User {
 
     private String course;
     private String semester;
-    private List<Subject> subjects;
 
     private List<Lecture> enrollLectures;
     private List<Lecture> requestedLectures;
@@ -53,19 +52,6 @@ public class Student extends User {
                    String course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures) {
         this(0, username, password, name, cpf, address, birthday, course, semester, enrollLectures, requestedLectures);
     }
-
-    public List<Subject> getSubjects() {
-        return subjects;
-    }
-
-    public void addSubject(Subject subject) {
-        this.subjects.add(subject);
-    }
-
-    public void removeSubject(Subject subject) {
-        this.subjects.remove(subject);
-    }
-
     public String getCourse() {
         return course;
     }
@@ -82,19 +68,21 @@ public class Student extends User {
         return requestedLectures;
     }
 
-    public String getSubjectsCodes() {
-        // Maybe we can get a better name to this
-        StringBuilder stringBuilder = new StringBuilder();
 
-        for(Subject subject : this.subjects) {
-            stringBuilder.append(subject.getCode() + ",");
-        }
+    public void setCourse(String course) {
+        this.course = course;
+    }
 
-        if(!stringBuilder.isEmpty()) {
-            stringBuilder.delete(stringBuilder.length() - 1, stringBuilder.length());
-        }
+    public void setSemester(String semester) {
+        this.semester = semester;
+    }
 
-        return stringBuilder.toString();
+    public void setEnrollLectures(List<Lecture> enrollLectures) {
+        this.enrollLectures = enrollLectures;
+    }
+
+    public void setRequestedLectures(List<Lecture> requestedLectures) {
+        this.requestedLectures = requestedLectures;
     }
 
     @Override
@@ -103,7 +91,6 @@ public class Student extends User {
                 "user='" + super.toString() + '\'' +
                 ", course='" + course + '\'' +
                 ", semester='" + semester + '\'' +
-                ", subjects=" + subjects +
                 ", enrollLectures=" + enrollLectures +
                 ", requestedLectures=" + requestedLectures +
                 '}';

@@ -122,13 +122,9 @@ public class SubjectRepository {
     }
 
     public List<Subject> getSubjectFromStringArray(String[] subjectsArray) {
-
         ArrayList<Subject> subjects = new ArrayList<>();
-
         for(String subject : subjectsArray) {
-
             Optional<Subject> optSub = this.findSubjectByCode(subject);
-
             if(optSub.isPresent()) {
                 subjects.add(optSub.get());
             } else {
@@ -136,7 +132,6 @@ public class SubjectRepository {
                 // TODO: ok ok?
             }
         }
-
         return subjects;
     }
 }

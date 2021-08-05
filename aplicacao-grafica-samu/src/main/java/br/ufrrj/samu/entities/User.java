@@ -102,6 +102,10 @@ public class User {
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", cpf='" + cpf + '\'' +
+                ", address='" + address + '\'' +
+                ", birthday='" + birthday + '\'' +
                 '}';
     }
 }

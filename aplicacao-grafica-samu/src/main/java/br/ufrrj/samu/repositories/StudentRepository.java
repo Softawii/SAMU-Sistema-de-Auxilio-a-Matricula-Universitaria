@@ -2,8 +2,10 @@ package br.ufrrj.samu.repositories;
 
 import br.ufrrj.samu.entities.Lecture;
 import br.ufrrj.samu.entities.Student;
+import br.ufrrj.samu.entities.Teacher;
+import br.ufrrj.samu.entities.User;
 import br.ufrrj.samu.exceptions.AlreadyExistsException;
-import br.ufrrj.samu.exceptions.SubjectNotFoundException;
+import br.ufrrj.samu.exceptions.WrongRequestedUserType;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,7 +14,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.sql.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class StudentRepository {
 
@@ -118,8 +119,8 @@ public class StudentRepository {
             String enrollLectures = findResultsResultSet.getString(3);
             String course = findResultsResultSet.getString(4);
             String semester = findResultsResultSet.getString(5);
-            List<Lecture> requestedLecturesList = lR.getSubjectFromStringArray(requestedLectures.split(","));
-            List<Lecture> enrollLecturesList = lR.getSubjectFromStringArray(enrollLectures.split(","));
+            List<Lecture> requestedLecturesList = lR.getFromStringArray(requestedLectures.split(","));
+            List<Lecture> enrollLecturesList = lR.getFromStringArray(enrollLectures.split(","));
 
             Student student = new Student(studentId, course, semester, enrollLecturesList, requestedLecturesList);
             LOGGER.debug(String.format("Student with id %d was inserted to the database", student.getId()));
@@ -130,5 +131,31 @@ public class StudentRepository {
             LOGGER.warn(String.format("Student with id '%d' could not be inserted to the database", studentId), throwable);
             return Optional.empty();
         }
+    }
+
+    public List<Student> getFromStringArray(String[] studentsIds) {
+        ArrayList<Student> students = new ArrayList<>();
+        //TODO Gambiarra
+        UsersRepository uR = UsersRepository.getInstance();
+
+        for(String student : studentsIds) {
+            //TODO GAMBIARRA, desfazer futuramente
+            if (student.isEmpty()) {
+                continue;
+            }
+
+            Optional<User> studentObj = null;
+            try {
+                studentObj = uR.findById(Long.parseLong(student));
+                studentObj.ifPresent(user -> {
+                    students.add(((Student) user));
+                });
+            } catch (Exception wrongRequestedUserType) {
+                //TODO parece gambiarra, devo corrigir?
+                LOGGER.warn(wrongRequestedUserType);
+//                wrongRequestedUserType.printStackTrace();
+            }
+        }
+        return students;
     }
 }

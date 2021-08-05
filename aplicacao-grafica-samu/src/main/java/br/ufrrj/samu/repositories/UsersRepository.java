@@ -8,6 +8,7 @@ import br.ufrrj.samu.entities.*;
 import br.ufrrj.samu.exceptions.AlreadyExistsException;
 import br.ufrrj.samu.exceptions.LectureNotFoundException;
 import br.ufrrj.samu.exceptions.SubjectNotFoundException;
+import br.ufrrj.samu.exceptions.WrongRequestedUserType;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -179,6 +180,31 @@ public class UsersRepository {
         }
     }
 
+
+    public Optional<User> findById(long userId) {
+        try {
+            PreparedStatement findStatement = connection.prepareStatement("SELECT * FROM Users WHERE id=?1");
+            findStatement.setLong(1, userId);
+
+            ResultSet findResultSet = findStatement.executeQuery();
+
+            long id = findResultSet.getLong(1);
+            String username = findResultSet.getString(2);
+            String password = findResultSet.getString(3);
+            String name = findResultSet.getString(4);
+            String cpf = findResultSet.getString(5);
+            String address = findResultSet.getString(6);
+            String birthday = findResultSet.getString(7);
+
+            String type = findResultSet.getString(8);
+
+            return Optional.of(this.specifyUserType(id, username, password, name, cpf, address, birthday, type));
+        } catch (SQLException throwable) {
+            LOGGER.warn(String.format("User with id '%d' could not be found", userId), throwable);
+            return Optional.empty();
+        }
+    }
+
     public Optional<User> findByCpf(String findCpf) {
         try {
             PreparedStatement findStatement = connection.prepareStatement("SELECT * FROM Users WHERE cpf=?1");
@@ -208,6 +234,7 @@ public class UsersRepository {
 
         if(type.equals("STUDENT")) {
             StudentRepository sR = StudentRepository.getInstance();
+            //TODO GAMBIARRA
             Student student = sR.findById(id).get();
             user = new Student(id, username, password, name, cpf, address, birthday, student.getCourse(), student.getSemester(), student.getEnrollLectures(), student.getRequestedLectures());
             LOGGER.debug(String.format("Student with id '%d' and username '%s' was found with success", user.getId(), user.getUsername()));
@@ -260,16 +287,50 @@ public class UsersRepository {
             throwables.printStackTrace();
         }
 
+        Optional<Subject> subjectOptional = subr.findSubjectByCode("DCC01");
+
+        Lecture lec = new Lecture("Joao vai falar sobre isso", "ADM2", "5:00-12:00", "CODE02", subjectOptional.get(), null, null);
+
         try {
             sr.insert(new Student("yan", "1234", "Yan Carlos", "000.000.000-01", "Minha Casa",
-                    "27/05/2001", "Ciencia da Computacao", "2019-1", List.of(), List.of()));
+                    "27/05/2001", "Ciencia da Computacao", "2019-1", List.of(lec), List.of()));
+
+            sr.insert(new Student("edu", "1234", "Eduardo Ferro", "000.000.000-02", "Minha Casa",
+                    "27/05/2001", "Ciencia da Computacao", "2019-1", List.of(lec), List.of()));
+
+            sr.insert(new Student("romulo", "1234", "Romulo Menezes", "000.000.000-03", "Minha Casa",
+                    "27/05/2001", "Ciencia da Computacao", "2019-1", List.of(lec), List.of()));
         } catch (AlreadyExistsException e) {
             e.printStackTrace();
         }
 
-        Optional<User> userOptional = ur.findByUsername("yan");
-        Student student = (Student) userOptional.get();
-        System.out.println(student);
+        ArrayList<Student> students = new ArrayList<>();
+        String[] studentsNames = {"yan", "edu", "romulo"};
+
+        for(String un : studentsNames) {
+            Optional<User> userOptional = ur.findByUsername(un);
+
+            if(userOptional.isPresent()) {
+                Student student = (Student) userOptional.get();
+//                System.out.println("nome da classe??-->" + userOptional.get().getClass().getSimpleName());
+                students.add(student);
+            }
+        }
+
+        Teacher teacher = new Teacher(2, "Braida", "1234");
+
+
+        lr.insert(new Lecture("Joao vai falar sobre isso", "ADM2", "5:00-12:00", "CODE02", subjectOptional.get(), teacher, students));
+
+        try {
+            Lecture lecture = lr.findByCode("CODE02");
+            LOGGER.debug(lecture);
+
+        } catch (SubjectNotFoundException e) {
+            e.printStackTrace();
+        } catch (LectureNotFoundException e) {
+            e.printStackTrace();
+        }
 
 //        try {
 //            Repository.connection.setAutoCommit(true);

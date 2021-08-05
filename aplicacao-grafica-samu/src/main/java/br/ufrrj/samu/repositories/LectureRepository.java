@@ -110,6 +110,9 @@ public class LectureRepository {
     }
 
     public Lecture findByCode(String code) throws SubjectNotFoundException, LectureNotFoundException {
+
+        StudentRepository sR = StudentRepository.getInstance();
+
         try (PreparedStatement findStatement = connection.prepareStatement("SELECT * FROM Lectures WHERE code=?1")) {
 
             findStatement.setString(1, code);
@@ -136,8 +139,7 @@ public class LectureRepository {
             Teacher teacher = new Teacher(2, "Braida", "1234");
 
             // Students
-            // TODO: find student
-            ArrayList<Student> students = new ArrayList<>();
+            List<Student> students = sR.getFromStringArray(findResultSet.getString(7).split(","));
 
             Lecture lecture = new Lecture(classPlan, classRoom, schedule, code, subject, teacher, students);
 
@@ -152,7 +154,7 @@ public class LectureRepository {
         }
     }
 
-    public List<Lecture> getSubjectFromStringArray(String[] lectureArray) {
+    public List<Lecture> getFromStringArray(String[] lectureArray) {
         ArrayList<Lecture> lectures = new ArrayList<>();
         for(String lecture : lectureArray) {
             //TODO GAMBIARRA, desfazer futuramente
