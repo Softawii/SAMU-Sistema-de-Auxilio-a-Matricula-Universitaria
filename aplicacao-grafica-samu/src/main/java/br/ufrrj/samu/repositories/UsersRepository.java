@@ -6,6 +6,7 @@ import java.util.*;
 
 import br.ufrrj.samu.entities.*;
 import br.ufrrj.samu.exceptions.AlreadyExistsException;
+import br.ufrrj.samu.exceptions.LectureNotFoundException;
 import br.ufrrj.samu.exceptions.SubjectNotFoundException;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.logging.log4j.LogManager;
@@ -153,6 +154,7 @@ public class UsersRepository {
         return true;
     }
 
+
     public Optional<User> findByUsername(String findName) {
         try {
             PreparedStatement findStatement = connection.prepareStatement("SELECT * FROM Users WHERE username=?1");
@@ -170,16 +172,7 @@ public class UsersRepository {
 
             String type = findResultSet.getString(8);
 
-            User user;
-
-            if(type.equals("STUDENT")) {
-                // TODO: We will need to change it when we change the student
-                user = new Student(id, username, password, name, cpf, address, birthday, null, null, null, null);
-                LOGGER.debug(String.format("Student with id '%d' and username '%s' was found with success", user.getId(), user.getUsername()));
-            } else {
-                user = new User(id, username, password, name, cpf, address, birthday);
-            }
-            return Optional.of(user);
+            return Optional.of(this.specifyUserType(id, username, password, name, cpf, address, birthday, type));
         } catch (SQLException throwable) {
             LOGGER.warn(String.format("Student with username '%s' could not be found", findName), throwable);
             return Optional.empty();
@@ -203,20 +196,28 @@ public class UsersRepository {
 
             String type = findResultSet.getString(8);
 
-            User user;
-
-            if(type.equals("STUDENT")) {
-                // TODO: We will need to change it when we change the student
-                user = new Student(id, username, password, name, cpf, address, birthday, null, null, null, null);
-                LOGGER.debug(String.format("Student with id '%d' and username '%s' was found with success", user.getId(), user.getUsername()));
-            } else {
-                user = new User(id, username, password, name, cpf, address, birthday);
-            }
-            return Optional.of(user);
+            return Optional.of(this.specifyUserType(id, username, password, name, cpf, address, birthday, type));
         } catch (SQLException throwable) {
             LOGGER.warn(String.format("Student with username '%s' could not be found", findCpf), throwable);
             return Optional.empty();
         }
+    }
+
+    private User specifyUserType(long id, String username, String password, String name, String cpf, String address, String birthday, String type) {
+        User user;
+
+        if(type.equals("STUDENT")) {
+            StudentRepository sR = StudentRepository.getInstance();
+            Student student = sR.findById(id).get();
+            user = new Student(id, username, password, name, cpf, address, birthday, student.getCourse(), student.getSemester(), student.getEnrollLectures(), student.getRequestedLectures());
+            LOGGER.debug(String.format("Student with id '%d' and username '%s' was found with success", user.getId(), user.getUsername()));
+        }
+        // TODO: We need to handle with other users types
+        else {
+            user = new User(id, username, password, name, cpf, address, birthday);
+        }
+
+        return user;
     }
 
     public boolean update(User user) {
@@ -259,31 +260,48 @@ public class UsersRepository {
             throwables.printStackTrace();
         }
 
-        Optional<Subject> sub = subr.findSubjectByCode("DCC01");
-
-        if(sub.isEmpty()) {
-
-            LOGGER.debug("NÃO FOI POSSIVEL ENCONTRAR O SUBJECT.");
-
-            return;
-        }
-
-        LOGGER.debug(sub.get());
-
-        sub = subr.insert(new Subject("Linguagens de Programacao", "LP", "DCC03", List.of("DCC01")));
-
-
-        LOGGER.debug(sub.get());
-        LOGGER.debug(subr.getSubjectFromStringArray(sub.get().getPrerequisitesList().split(",")));
-
-
         try {
-            Optional<Lecture> optLect = lr.findByCode("AC120202");
-            optLect.ifPresent(LOGGER::debug);
-
-        } catch (SubjectNotFoundException e) {
+            sr.insert(new Student("yan", "1234", "Yan Carlos", "000.000.000-01", "Minha Casa",
+                    "27/05/2001", "Ciencia da Computacao", "2019-1", List.of(), List.of()));
+        } catch (AlreadyExistsException e) {
             e.printStackTrace();
         }
+
+        Optional<User> userOptional = ur.findByUsername("yan");
+        Student student = (Student) userOptional.get();
+        System.out.println(student);
+
+//        try {
+//            Repository.connection.setAutoCommit(true);
+//        } catch (SQLException throwables) {
+//            throwables.printStackTrace();
+//        }
+//
+//        Optional<Subject> sub = subr.findSubjectByCode("DCC01");
+//
+//        if(sub.isEmpty()) {
+//
+//            LOGGER.debug("NÃO FOI POSSIVEL ENCONTRAR O SUBJECT.");
+//
+//            return;
+//        }
+//
+//        LOGGER.debug(sub.get());
+//
+//        sub = subr.insert(new Subject("Linguagens de Programacao", "LP", "DCC03", List.of("DCC01")));
+//
+//
+//        LOGGER.debug(sub.get());
+//        LOGGER.debug(subr.getSubjectFromStringArray(sub.get().getPrerequisitesList().split(",")));
+//
+//
+//        try {
+//            Lecture lecture = lr.findByCode("AC120202");
+//            LOGGER.debug(lecture);
+//
+//        } catch (SubjectNotFoundException | LectureNotFoundException e) {
+//            e.printStackTrace();
+//        }
 
     }
 }

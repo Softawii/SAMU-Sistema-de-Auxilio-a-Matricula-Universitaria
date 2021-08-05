@@ -6,3 +6,4 @@ CREATE TABLE IF NOT EXISTS Student
     course            VARCHAR,
     semester          VARCHAR
 );
+

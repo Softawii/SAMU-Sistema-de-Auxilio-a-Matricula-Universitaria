@@ -10,3 +10,4 @@ CREATE TABLE IF NOT EXISTS Users
     type     VARCHAR
 );
 
+

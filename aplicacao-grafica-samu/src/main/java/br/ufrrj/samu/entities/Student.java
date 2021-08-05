@@ -7,17 +7,30 @@ public class Student extends User {
 
     private String course;
     private String semester;
-    private ArrayList<Subject> subjects;
+    private List<Subject> subjects;
 
-    private ArrayList<Lecture> enrollLectures;
-    private ArrayList<Lecture> requestedLectures;
+    private List<Lecture> enrollLectures;
+    private List<Lecture> requestedLectures;
 
     public Student() {
         super();
     }
 
+    public Student(long id, String course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures) {
+        this(course, semester, enrollLectures, requestedLectures);
+        super.setId(id);
+    }
+
+    public Student(String course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures) {
+        super();
+        this.course = course;
+        this.semester = semester;
+        this.enrollLectures = enrollLectures;
+        this.requestedLectures = requestedLectures;
+    }
+
     public Student(long id, String username, String password, String name, String cpf, String address, String birthday,
-                   String course, String semester, ArrayList<Lecture> enrollLectures, ArrayList<Lecture> requestedLectures) {
+                   String course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures) {
         super(id, username, password, name, cpf, address, birthday);
 
         this.course = course;
@@ -37,11 +50,11 @@ public class Student extends User {
     }
 
     public Student(String username, String password, String name, String cpf, String address, String birthday,
-                   String course, String semester, ArrayList<Lecture> enrollLectures, ArrayList<Lecture> requestedLectures) {
+                   String course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures) {
         this(0, username, password, name, cpf, address, birthday, course, semester, enrollLectures, requestedLectures);
     }
 
-    public ArrayList<Subject> getSubjects() {
+    public List<Subject> getSubjects() {
         return subjects;
     }
 
@@ -61,6 +74,14 @@ public class Student extends User {
         return semester;
     }
 
+    public List<Lecture> getEnrollLectures() {
+        return enrollLectures;
+    }
+
+    public List<Lecture> getRequestedLectures() {
+        return requestedLectures;
+    }
+
     public String getSubjectsCodes() {
         // Maybe we can get a better name to this
         StringBuilder stringBuilder = new StringBuilder();
@@ -74,5 +95,17 @@ public class Student extends User {
         }
 
         return stringBuilder.toString();
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "user='" + super.toString() + '\'' +
+                ", course='" + course + '\'' +
+                ", semester='" + semester + '\'' +
+                ", subjects=" + subjects +
+                ", enrollLectures=" + enrollLectures +
+                ", requestedLectures=" + requestedLectures +
+                '}';
     }
 }

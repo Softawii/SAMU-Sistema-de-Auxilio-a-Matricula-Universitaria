@@ -4,6 +4,7 @@ import br.ufrrj.samu.entities.Lecture;
 import br.ufrrj.samu.entities.Student;
 import br.ufrrj.samu.entities.Subject;
 import br.ufrrj.samu.entities.Teacher;
+import br.ufrrj.samu.exceptions.LectureNotFoundException;
 import br.ufrrj.samu.exceptions.SubjectNotFoundException;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.logging.log4j.LogManager;
@@ -108,7 +109,7 @@ public class LectureRepository {
         return true;
     }
 
-    public Optional<Lecture> findByCode(String code) throws SubjectNotFoundException {
+    public Lecture findByCode(String code) throws SubjectNotFoundException, LectureNotFoundException {
         try (PreparedStatement findStatement = connection.prepareStatement("SELECT * FROM Lectures WHERE code=?1")) {
 
             findStatement.setString(1, code);
@@ -143,11 +144,28 @@ public class LectureRepository {
             LOGGER.debug(String.format("Lecture with code '%s' and name '%s' was found with success", lecture.getCode(), lecture.getSubject().getName()));
 
 
-            return Optional.of(lecture);
+            return lecture;
 
         } catch (SQLException throwable) {
             LOGGER.warn(String.format("Lecture with code '%s' could not be found", code), throwable);
-            return Optional.empty();
+            throw new LectureNotFoundException("Lecture with code '" + code + "' could not be found");
         }
+    }
+
+    public List<Lecture> getSubjectFromStringArray(String[] lectureArray) {
+        ArrayList<Lecture> lectures = new ArrayList<>();
+        for(String lecture : lectureArray) {
+            //TODO GAMBIARRA, desfazer futuramente
+            if (lecture.isEmpty()) {
+                continue;
+            }
+            try {
+                Lecture lectureObj = this.findByCode(lecture);
+                lectures.add(lectureObj);
+            } catch (SubjectNotFoundException | LectureNotFoundException e) {
+                LOGGER.warn(String.format("We couldn't find the lecture %s so let's throw an exception", lecture), e);
+            }
+        }
+        return lectures;
     }
 }

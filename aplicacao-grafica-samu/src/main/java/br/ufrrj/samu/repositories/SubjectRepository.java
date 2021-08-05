@@ -132,7 +132,7 @@ public class SubjectRepository {
             if(optSub.isPresent()) {
                 subjects.add(optSub.get());
             } else {
-                LOGGER.debug("We couldn't find the subject %s, so let's throw an exception");
+                LOGGER.debug(String.format("We couldn't find the subject %s, so let's throw an exception", subject));
                 // TODO: ok ok?
             }
         }

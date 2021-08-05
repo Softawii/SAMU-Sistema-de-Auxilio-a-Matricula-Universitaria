@@ -1,7 +1,9 @@
 package br.ufrrj.samu.repositories;
 
+import br.ufrrj.samu.entities.Lecture;
 import br.ufrrj.samu.entities.Student;
 import br.ufrrj.samu.exceptions.AlreadyExistsException;
+import br.ufrrj.samu.exceptions.SubjectNotFoundException;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,8 +11,8 @@ import org.apache.logging.log4j.Logger;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.sql.*;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class StudentRepository {
 
@@ -39,6 +41,7 @@ public class StudentRepository {
             LOGGER.warn(throwable);
         }
     }
+
 
     public SubjectRepository getSubjectService() {
         return subjectRepository;
@@ -80,6 +83,7 @@ public class StudentRepository {
         try (PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO Student(id, requestedLectures, enrollLectures, course, semester) VALUES(?1, ?2, ?3, ?4, ?5)")){
 
             insertStatement.setLong(1, student.getId());
+            // TODO: PLEASE CHECK IT
             insertStatement.setString(2, "");
             insertStatement.setString(3, "");
             insertStatement.setString(4, student.getCourse());
@@ -97,6 +101,33 @@ public class StudentRepository {
 
             // TODO: I think we need change this try / catch to a throw AlreadyExists !
             LOGGER.warn(String.format("Student with id '%d' could not be inserted to the database", student.getId()), throwable);
+            return Optional.empty();
+        }
+    }
+
+    public Optional<Student> findById(long studentId) {
+
+        UsersRepository uR = UsersRepository.getInstance();
+        LectureRepository lR = LectureRepository.getInstance();
+
+        try (PreparedStatement findStatement = connection.prepareStatement("SELECT * FROM Student WHERE id=?1")){
+            findStatement.setLong(1, studentId);
+
+            ResultSet findResultsResultSet = findStatement.executeQuery();
+            String requestedLectures = findResultsResultSet.getString(2);
+            String enrollLectures = findResultsResultSet.getString(3);
+            String course = findResultsResultSet.getString(4);
+            String semester = findResultsResultSet.getString(5);
+            List<Lecture> requestedLecturesList = lR.getSubjectFromStringArray(requestedLectures.split(","));
+            List<Lecture> enrollLecturesList = lR.getSubjectFromStringArray(enrollLectures.split(","));
+
+            Student student = new Student(studentId, course, semester, enrollLecturesList, requestedLecturesList);
+            LOGGER.debug(String.format("Student with id %d was inserted to the database", student.getId()));
+
+            return Optional.of(student);
+        } catch (SQLException throwable) {
+            // TODO: I think we need change this try / catch to a throw AlreadyExists !
+            LOGGER.warn(String.format("Student with id '%d' could not be inserted to the database", studentId), throwable);
             return Optional.empty();
         }
     }
