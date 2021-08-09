@@ -83,7 +83,7 @@ RF01 - O sistema deve permitir cadastrar usuários; (RN01, RN09, RN10)
 
 RF02 - O sistema deve permitir cadastrar cursos; (RN02)
 
-RF03 - O sistema deve permitir cadastrar disciplinas e turmas; (RN03)
+RF03 - O sistema deve permitir cadastrar disciplinas; (RN03)
 
 RF04 - O sistema deve permitir que os alunos possam se matricular nas turmas; (RN04)
 
@@ -101,13 +101,15 @@ RF10 - O sistema deve recomendar disciplinas optativas baseado no perfil do alun
 
 RF11 - O sistema deve permitir cadastrar plano de aula em uma turma.
 
+RF12 - O sistema deve permitir cadastrar turmas; (RN11)
+
 ## 2. Regras de Negócio
 
 RN01 - Cada aluno terá as seguintes informações: matrícula, nome, usuário, senha, data de nascimento, endereço, curso;
 
 RN02 - Cada curso terá as seguintes informações: ID, nome do curso, disciplinas obrigatórias, disciplinas optativas por período;
 
-RN03 - Cada disciplina terá as seguintes informações: ID, nome, descrição, plano de aula, alocação de sala, disciplinas pré-requisitadas, relatórios, professor e período letivo;
+RN03 - Cada disciplina terá as seguintes informações: ID, nome, descrição, disciplinas pré-requisitadas;
 
 RN04 - O sistema deve permitir que os alunos possam somente realizar a matrícula nas disciplinas em que os pré-requisitos forem atendidos;
 
@@ -123,6 +125,8 @@ Ex.: uma disciplina com avaliação baixa deve fazer com que seja evitada a reco
 RN09 - Cada coordenador terá as seguintes informações: nome, usuário, senha, data de nascimento, endereço, curso que coordena;
 
 RN10 - Cada professor terá as seguintes informações: nome, usuário, senha, data de nascimento, endereço, turmas que leciona.
+
+RN11 - Cada Turma terá as seguintes informações: disciplina, professor, aluno, período letivo, alocação de sala, plano de aula e relatório;
 
 ## 3. Requisitos Não-Funcionais
 
