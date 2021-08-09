@@ -293,8 +293,6 @@
     - FA-02 - Nenhum professor cadastrado
         1. O caso de uso é redirecionado para o passo 1 de (UC10); 
         2.  O caso de uso retorna ao passo 4 do fluxo principal.
-- Fluxo de exceção:
-    - FE-01 - Em construção...
 
 # 12. Caso de uso: Cadastrar plano de aula (UC12)
 
