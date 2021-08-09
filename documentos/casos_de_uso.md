@@ -240,11 +240,11 @@
 - Pós-condições: O sistema irá gerar um novo professor.
 - Fluxo principal:
     1.  O sistema solicita o nome, data de nascimento e endereço do professor;
-    2.  O administrador do sistema ou coordenador informa o nome, data de nascimento e endereço do novo professor (FE-01, FE-02, FE-03);
+    2.  O ator informa o nome, data de nascimento e endereço do novo professor (FE-01, FE-02, FE-03);
     3.  O sistema informa a lista de cursos que o professor pode lecionar;
-    4.  O administrador do sistema ou coordenador seleciona um curso na lista (FA-01);
-    5.  O sistema gera uma senha padrão e exibe as informações para o administrador do sistema ou coordenador confirmar;
-    6.  O administrador do sistema ou coordenador confirma as informações;
+    4.  O ator seleciona um curso na lista (FA-01);
+    5.  O sistema gera uma senha padrão e exibe as informações para o ator confirmar;
+    6.  O ator confirma as informações;
     7.  Fim do caso de uso.
 - Fluxos Alternativos:
     - FA-01 - Cadastrar novo curso:
@@ -266,7 +266,7 @@
 - Ator: Coordenador.
 - Visão geral: Permite criar uma turma.
 - Referências cruzadas:
-    - Requisitos: RF03.
+    - Requisitos: RF12.
     - Caso relacionado: Fazer login (UC08).
 - Pré-condição: Coordenador ter feito login no sistema. (RF08).
 - Pós-condições: O sistema irá gerar uma nova turma.
