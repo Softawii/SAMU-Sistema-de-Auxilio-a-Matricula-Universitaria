@@ -10,10 +10,10 @@
 - Pré-condição: Coordenador ter feito login no sistema (RF08).
 - Pós-condições: O sistema irá gerar um novo aluno.
 - Fluxo principal:
-    1.  O sistema solicita o nome e endereço do
+    1.  O sistema solicita o nome, data de nascimento e endereço do
         aluno;
-    2.  O coordenador informa o nome e endereço do
-        aluno (FE-01, FE-02);
+    2.  O coordenador informa o nome, data de nascimento e endereço do
+        aluno (FE-01, FE-02, FE-03);
     3.  O sistema informa a lista de cursos ao qual o aluno
         pode cursar;
     4.  O coordenador seleciona um curso na lista;
@@ -30,6 +30,9 @@
     - FE-02 - CEP inválido:
         1.  O sistema informa que o CEP é inválido;
         2.  O caso de uso retorna ao passo 1 do fluxo principal.
+    - FE-03 - Data de nascimento inválida:
+        1. O sistema informa que a data de nascimento é inválida;
+        2. O caso de uso retorna ao passo 1 do fluxo principal.
 
 # 2. Caso de uso: Cadastrar coordenador (UC02).
 
@@ -41,41 +44,36 @@
 - Pré-condição: Administrador do sistema ter feito login no sistema. (RF08)
 - Pós-condições: O sistema irá gerar um novo coordenador.
 - Fluxo principal:
-    1.  O sistema solicita o nome e endereço do coordenador;
-    2.  O administrador do sistema informa o nome e endereço do novo coordenador (FE-01, FE-02);
-    3.  O sistema informa a lista de cursos que o coordenador pode coordenar;
-    4.  O administrador do sistema seleciona um curso na lista (FA-01);
-    5.  O sistema gera uma senha padrão e exibe as informações para o coordenador confirmar;
-    6.  O administrador do sistema confirma as informações;
-    7.  Fim do caso de uso.
+    1.  O sistema exibe uma lista de professores do curso e solicita que escolha um professor  (FA-01);
+    2.  O administrador do sistema seleciona um professor da lista;
+    3.  O sistema sistema exibe as informações do professor selecionado para o administrador do sistema confirmar;
+    4.  O administrador do sistema confirma a escolha (FE-01);
+    5. Fim do caso de uso.
 - Fluxos Alternativos:
-    - FA-01 - Cadastrar novo curso:
-        1.  O caso de uso é redirecionado para o passo 1 de (UC03);
-        2.  O caso de uso retorna ao passo 4 do fluxo principal.
-    - Fluxo de exceção:
-        - FE-01 - Coordenador já cadastrado:
-            1.  O sistema informa que o coordenador já foi cadastrado;
-            2.  Fim do caso de uso.
-    - FE-02 - CEP inválido:
-        1.  O sistema informa que o CEP é inválido;
+    - FA-01 - Nenhum professor cadastrado:
+        1.  O caso de uso é redirecionado para o passo 1 de (UC10);
         2.  O caso de uso retorna ao passo 1 do fluxo principal.
+    - Fluxo de exceção:
+        - FE-01 - Professor já está cadastrado como coordenador:
+            1.  O sistema informa que o professor já foi cadastrado como coordenador;
+            2.  Fim do caso de uso.
 
 # 3. Caso de uso: Cadastrar curso (UC03).
-- Ator: Coordenador.
+- Ator: Administrador do sistema.
 - Visão geral: Permite cadastrar um novo curso.
 - Referências cruzadas:
     - Requisitos: RF02.
     - Caso relacionado: Fazer login (UC08).
-- Pré-condição: Coordenador ter feito login no sistema (RF08).
+- Pré-condição: administrador do sistema ter feito login no sistema (RF08).
 - Pós-condições: O sistema irá gerar um novo curso.
 - Fluxo principal:
     1.  O sistema solicita o nome do curso;
-    2.  O coordenador informa o nome do curso (FE-01);
+    2.  O administrador do sistema informa o nome do curso (FE-01);
     3.  O sistema exibe uma lista de disciplinas obrigatórias e optativas;
     4.  O sistema solicita as disciplinas obrigatórias e optativas;
-    5.  O coordenador seleciona as disciplinas obrigatórias e optativas da lista (FA-01);
-    6.  O sistema gera um ID e exibe as informações para o coordenador confirmar;
-    7.  O coordenador confirma as informações;
+    5.  O administrador do sistema seleciona as disciplinas obrigatórias e optativas da lista (FA-01);
+    6.  O sistema gera um ID e exibe as informações para o administrador do sistema confirmar;
+    7.  O administrador do sistema confirma as informações;
     8.  Fim do caso de uso.
 - Fluxo Alternativo:
     - FA-01 - Disciplina não cadastrada
@@ -96,23 +94,18 @@
 - Pós-condições: O sistema irá gerar uma nova disciplina.
 - Fluxo principal:
     1.  O sistema solicita o nome e descrição da disciplina;
-    2.  O coordenador informa o nome da disciplina (FE-01);
-    3.  O sistema solicita o plano de aula;
-    4.  O coordenador informa o plano de aula;
-    5.  O sistema exibe uma lista de disciplinas;
-    6.  O sistema solicita as disciplinas pré-requisitadas;
-    7.  O coordenador informa as disciplinas pré-requisitadas.(FA-01);
-    8.  O sistema solicita o professor da disciplina;
-    9.  O coordenador informa o professor da disciplina;
-    10. O sistema solicita o período relativo da disciplina;
-    11. O coordenador informa o período relativo da disciplina;
-    12. O sistema gera um ID e procura uma sala para alocar a disciplina e exibe as informações para o coordenador confirmar;
-    13. O coordenador confirma as informações;
-    14. Fim do caso de uso.
+    2.  O coordenador informa o nome e descrição da disciplina (FE-01);
+    3.  O sistema exibe uma lista e solicita as disciplinas pré-requisitadas;
+    4.  O coordenador informa as disciplinas pré-requisitadas.(FA-01, FA-02);
+    5.  O sistema gera um ID e exibe as informações para o coordenador confirmar; 
+    6.  O coordenador confirma as informações;
+    7.  Fim do caso de uso.
 - Fluxo Alternativo:
     - FA-01 - Disciplina não cadastrada
         1.  O caso de uso é redirecionado para o passo 1 de UC04;
-        2.  O caso de uso retorna ao passo 7 do fluxo principal.
+        2.  O caso de uso retorna ao passo 4 do fluxo principal.
+    - FA-02 - Disciplina não possui nenhum pré-requisito
+        1.  O caso de uso é redirecionado para o passo 5 do fluxo principal.
 - Fluxo de exceção:
     - FE-01 - Disciplina já cadastrada
         1.  O sistema informa que a disciplina já foi cadastrada;
@@ -167,7 +160,7 @@
 - Fluxo de exceção:
     - Não há.
 
-# 7. Caso de uso: Gerar relatório (UC 07).
+# 7. Caso de uso: Gerar relatório (UC07).
 - Ator: Coordenador.
 - Visão geral: Permite que o coordenador do curso gere relatórios.
 - Referências cruzadas:
@@ -235,3 +228,90 @@
     - FE-01 - Nenhuma estrela colocada
         1.  O sistema informa que não foi colocada nenhuma estrela;
         2.  O caso de uso retorna ao passo 1 do fluxo principal.
+
+# 10. Caso de uso: Cadastrar professor (UC10).
+
+- Ator: Administrador do sistema ou coordenador.
+- Visão geral: Permite cadastrar o professor em um curso.
+- Referências cruzadas:
+    - Requisitos: RF01.
+    - Caso relacionado: Fazer login (UC08).
+- Pré-condição: Administrador do sistema ou coordenador ter feito login no sistema. (RF08)
+- Pós-condições: O sistema irá gerar um novo professor.
+- Fluxo principal:
+    1.  O sistema solicita o nome, data de nascimento e endereço do professor;
+    2.  O ator informa o nome, data de nascimento e endereço do novo professor (FE-01, FE-02, FE-03);
+    3.  O sistema informa a lista de cursos que o professor pode lecionar;
+    4.  O ator seleciona um curso na lista (FA-01);
+    5.  O sistema gera uma senha padrão e exibe as informações para o ator confirmar;
+    6.  O ator confirma as informações;
+    7.  Fim do caso de uso.
+- Fluxos Alternativos:
+    - FA-01 - Cadastrar novo curso:
+        1.  O caso de uso é redirecionado para o passo 1 de (UC03);
+        2.  O caso de uso retorna ao passo 4 do fluxo principal.
+- Fluxo de exceção:
+    - FE-01 - Professor já cadastrado:
+         1.  O sistema informa que o professor já foi cadastrado;
+         2.  Fim do caso de uso.
+    - FE-02 - CEP inválido:
+        1.  O sistema informa que o CEP é inválido;
+        2.  O caso de uso retorna ao passo 1 do fluxo principal.
+    - FE-03 - Data de nascimento inválida:
+        1. O sistema informa que a data de nascimento é inválida;
+        2. O caso de uso retorna ao passo 1 do fluxo principal.
+
+# 11. Caso de uso: Cadastrar turma (UC11)
+
+- Ator: Coordenador.
+- Visão geral: Permite criar uma turma.
+- Referências cruzadas:
+    - Requisitos: RF12.
+    - Caso relacionado: Fazer login (UC08).
+- Pré-condição: Coordenador ter feito login no sistema. (RF08).
+- Pós-condições: O sistema irá gerar uma nova turma.
+- Fluxo principal:
+    1.  O sistema exibe uma lista e solicita a escolha da disciplina (FA-01);
+    2.  O coordenador seleciona a disciplina;
+    3.  O sistema exibe uma lista e solicita a escolha de um professor (FA-02);
+    4.  O coordenador seleciona o professor;
+    5.  O sistema solicita o período letivo da turma; 
+    6.  O coordenador informa qual é o período letivo;
+    7.  O sistema solicita o número de alunos da turma;
+    8.  O coordenador informa o número de alunos;
+    9.  O sistema solicita hora e data das aulas da turma;
+    10. O Coordenador informa hora e data das aulas;
+    11. O sistema solicita uma sala para alocar a turma;
+    12. O coordenador informa a sala para a alocação. 
+    13. O sistema exibe as informações para o coordenador confirmar;
+    14. O coordenador confirma as informações;
+    15. Fim do caso de uso.
+- Fluxo Alternativo:
+    - FA-01 - Nenhuma disciplina cadastrada
+        1.  O caso de uso é redirecionado para o passo 1 de (UC04);
+        2.  O caso de uso retorna ao passo 2 do fluxo principal.
+    - FA-02 - Nenhum professor cadastrado
+        1. O caso de uso é redirecionado para o passo 1 de (UC10); 
+        2.  O caso de uso retorna ao passo 4 do fluxo principal.
+
+# 12. Caso de uso: Cadastrar plano de aula (UC12)
+
+- Ator: Professor.
+- Visão geral: Permite cadastrar o plano de aula em uma turma.
+- Referencias cruzadas: 
+    - Requisitos: RF11.
+    - Caso relacionado: Fazer login (UC08).
+- Pré-condição: Professor ter feito login no sistema. (RF08).
+- Pós-condições: O sistema irá cadastrar uma plano de aula em uma turma.
+- Fluxo principal:
+    1. O sistema exibe uma lista e solicita a escolha de uma turma (FA-01);
+    2. O professor seleciona a turma;
+    3. O sistema solicita o plano de aula;
+    4. O professor informa o plano de aula;
+    5. O sistema exibe as informações para o professor confirmar;
+    6. O professor confirmar as informações;
+    7. Fim do caso de uso.
+- Fluxo Alternativo:
+    - FA-01 - Professor não leciona em nenhuma turma
+        1. Fim do caso de uso.
+

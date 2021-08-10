@@ -79,15 +79,15 @@ Prototipação evolutiva - Foi usado especialmente pelo feedback, para confirmar
 
 ## 1.  Requisitos Funcionais
 
-RF01 - O sistema deve permitir cadastrar usuários; (RN01, RN11)
+RF01 - O sistema deve permitir cadastrar usuários; (RN01, RN09, RN10)
 
 RF02 - O sistema deve permitir cadastrar cursos; (RN02)
 
 RF03 - O sistema deve permitir cadastrar disciplinas; (RN03)
 
-RF04 - O sistema deve permitir que os alunos possam se matricular nas disciplinas; (RN04)
+RF04 - O sistema deve permitir que os alunos possam se matricular nas turmas; (RN04)
 
-RF05 - O sistema deve permitir que o aluno avalie sua experiência nas disciplinas;
+RF05 - O sistema deve permitir que o aluno avalie sua experiência nas turmas;
 
 RF06 - O sistema deve gerar um perfil de cada aluno para inferir suas preferências; (RN08)
 
@@ -97,15 +97,19 @@ RF08 - O sistema deve permitir que o usuário acesse a plataforma a partir do no
 
 RF09 - O sistema deve permitir que o coordenador do curso gere relatórios; (RN06, RN07)
 
-RF10 - O sistema deve recomendar disciplinas optativas baseado no perfil do aluno. (RF06, RN05)
+RF10 - O sistema deve recomendar disciplinas optativas baseado no perfil do aluno; (RF06, RN05)
+
+RF11 - O sistema deve permitir cadastrar plano de aula em uma turma.
+
+RF12 - O sistema deve permitir cadastrar turmas; (RN11)
 
 ## 2. Regras de Negócio
 
-RN01 - Cada aluno terá as seguintes informações: matrícula, nome, usuário, senha, endereço, curso;
+RN01 - Cada aluno terá as seguintes informações: matrícula, nome, usuário, senha, data de nascimento, endereço, curso;
 
 RN02 - Cada curso terá as seguintes informações: ID, nome do curso, disciplinas obrigatórias, disciplinas optativas por período;
 
-RN03 - Cada disciplina terá as seguintes informações: ID, nome, descrição, plano de aula, alocação de sala, disciplinas pré-requisitadas, relatórios, professor e período letivo;
+RN03 - Cada disciplina terá as seguintes informações: ID, nome, descrição, disciplinas pré-requisitadas;
 
 RN04 - O sistema deve permitir que os alunos possam somente realizar a matrícula nas disciplinas em que os pré-requisitos forem atendidos;
 
@@ -118,9 +122,11 @@ RN07 - O sistema deve permitir que o Relatório das Disciplinas informe se o nú
 RN08 - O perfil dos alunos é definido a partir das suas avaliações em disciplinas cursadas. Baseado nessas avaliações, serão definidas as áreas favoritas e indesejadas pelo aluno.  
 Ex.: uma disciplina com avaliação baixa deve fazer com que seja evitada a recomendação de disciplinas similares ou a própria disciplina avaliada pelo aluno, caso as disciplinas não sejam obrigatórias;
 
-RN09 - Para se matricular em disciplinas o aluno deve fornecer seu perfil, que consiste em informações básicas como renda familiar, endereço e número de telefone para contato; 
+RN09 - Cada coordenador terá as seguintes informações: nome, usuário, senha, data de nascimento, endereço, curso que coordena;
 
-RN10 - Cada coordenador terá as seguintes informações: nome, usuário, senha, endereço, curso que coordena;
+RN10 - Cada professor terá as seguintes informações: nome, usuário, senha, data de nascimento, endereço, turmas que leciona.
+
+RN11 - Cada Turma terá as seguintes informações: disciplina, professor, aluno, período letivo, alocação de sala, plano de aula e relatório;
 
 ## 3. Requisitos Não-Funcionais
 
