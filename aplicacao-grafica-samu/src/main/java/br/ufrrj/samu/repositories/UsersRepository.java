@@ -26,22 +26,11 @@ public class UsersRepository {
     private BCryptPasswordEncoder encoder;
 
     private UsersRepository() {
-        try {
-            LOGGER.debug("Starting connection to database");
+        LOGGER.debug("Starting connection to database");
 
-            connection = Repository.connection;
+        connection = Repository.connection;
 
-            encoder = new BCryptPasswordEncoder(4);
-
-            connection.setAutoCommit(true);
-            LOGGER.debug("AutoCommit enabled");
-
-            initDatabase();
-            LOGGER.warn("Database initialized");
-
-        } catch (SQLException throwable) {
-            LOGGER.warn(throwable);
-        }
+        encoder = new BCryptPasswordEncoder(4);
     }
 
     public BCryptPasswordEncoder getEncoder() {
@@ -59,14 +48,6 @@ public class UsersRepository {
             }
             return instance;
         }
-    }
-
-    private void initDatabase() {
-        ScriptRunner runner = new ScriptRunner(connection);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(StudentRepository.class.getClassLoader().getResourceAsStream("database/initUsers.sql"))));
-        runner.setEscapeProcessing(false);
-        runner.runScript(reader);
-
     }
 
     private String type(User user) {

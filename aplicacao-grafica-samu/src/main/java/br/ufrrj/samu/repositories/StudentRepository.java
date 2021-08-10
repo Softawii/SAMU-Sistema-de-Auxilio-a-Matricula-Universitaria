@@ -29,18 +29,7 @@ public class StudentRepository {
      * <b>Precisa</b> que o SubjectService seja definido usando <b>setSubjectService</b>
      */
     private StudentRepository() {
-        try {
-            connection = connection = Repository.connection;
-
-            connection.setAutoCommit(true);
-            LOGGER.debug("AutoCommit enabled");
-
-            LOGGER.warn("Initializing database");
-            initDatabase();
-
-        } catch (SQLException throwable) {
-            LOGGER.warn(throwable);
-        }
+        connection = connection = Repository.connection;
     }
 
 
@@ -64,14 +53,6 @@ public class StudentRepository {
             }
             return instance;
         }
-    }
-
-
-    private void initDatabase() {
-        ScriptRunner runner = new ScriptRunner(connection);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(StudentRepository.class.getClassLoader().getResourceAsStream("database/initStudent.sql"))));
-        runner.setEscapeProcessing(false);
-        runner.runScript(reader);
     }
 
     public Optional<Student> insert(Student student) throws AlreadyExistsException {

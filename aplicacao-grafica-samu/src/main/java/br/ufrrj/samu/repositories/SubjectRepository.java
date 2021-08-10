@@ -21,18 +21,7 @@ public class SubjectRepository {
 
     private SubjectRepository() {
         // INIT SQL
-        try {
-            connection = Repository.connection;
-
-            connection.setAutoCommit(true);
-            LOGGER.debug("AutoCommit enabled");
-
-            LOGGER.warn("Initializing database");
-            initDatabase();
-
-        } catch (SQLException throwable) {
-            LOGGER.warn(throwable);
-        }
+        connection = Repository.connection;
     }
 
     public static SubjectRepository getInstance() {
@@ -46,13 +35,6 @@ public class SubjectRepository {
             }
             return instance;
         }
-    }
-
-    private void initDatabase() {
-        ScriptRunner runner = new ScriptRunner(connection);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(StudentRepository.class.getClassLoader().getResourceAsStream("database/initSubjects.sql"))));
-        runner.setEscapeProcessing(false);
-        runner.runScript(reader);
     }
 
     public Optional<Subject> insert(Subject subject) {

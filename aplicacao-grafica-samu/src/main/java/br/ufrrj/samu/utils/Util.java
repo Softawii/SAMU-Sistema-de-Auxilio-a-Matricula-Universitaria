@@ -1,19 +1,26 @@
 package br.ufrrj.samu.utils;
 
 import br.ufrrj.samu.SAMU;
+import br.ufrrj.samu.repositories.Repository;
+import br.ufrrj.samu.repositories.StudentRepository;
 import com.formdev.flatlaf.*;
 import com.formdev.flatlaf.intellijthemes.FlatAllIJThemes;
+import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 import java.awt.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Map;
+import java.io.*;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
@@ -29,6 +36,39 @@ public class Util {
     public static boolean isDarkMode = false;
 
     private static final Logger LOGGER = LogManager.getLogger(Util.class);
+
+    private static final Properties PROPERTIES = new Properties();
+
+    static {
+        try {
+            Path currentPath = new File(Util.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toPath().getParent();
+            Path propertiesPath = Paths.get(currentPath.toString(), File.separator, ".properties");
+
+            //If .properties file exists
+            if (propertiesPath.toFile().isFile()) {
+                PROPERTIES.load(Files.newInputStream(propertiesPath));
+                boolean isFirstRun = Boolean.parseBoolean(((String) PROPERTIES.get("first-run")));
+                if (isFirstRun) {
+                    initDatabase();
+                    PROPERTIES.put("first-run", Boolean.toString(false));
+                    PROPERTIES.store(Files.newOutputStream(propertiesPath), null);
+                }
+            } else {
+                boolean success = propertiesPath.toFile().createNewFile();
+                if (success) {
+                    PROPERTIES.load(Files.newInputStream(propertiesPath));
+                    PROPERTIES.put("first-run", Boolean.toString(false));
+                    initDatabase();
+                    PROPERTIES.store(Files.newOutputStream(propertiesPath), null);
+                } else {
+                    //failed to create file
+                }
+            }
+
+        } catch (URISyntaxException | IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     static
     {
@@ -123,6 +163,30 @@ public class Util {
             LOGGER.warn(e);
         }
         return sansationFont;
+    }
+
+    private static void initDatabase() {
+
+        BufferedReader lecturesReader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(StudentRepository.class.getClassLoader().getResourceAsStream("database/initLectures.sql"))));
+        BufferedReader studentReader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(StudentRepository.class.getClassLoader().getResourceAsStream("database/initStudent.sql"))));
+        BufferedReader subjectsReader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(StudentRepository.class.getClassLoader().getResourceAsStream("database/initSubjects.sql"))));
+        BufferedReader usersReader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(StudentRepository.class.getClassLoader().getResourceAsStream("database/initUsers.sql"))));
+        try (lecturesReader; studentReader; subjectsReader; usersReader;
+             Connection connection = DriverManager.getConnection(
+                "jdbc:sqlite:" +
+                        new File(Repository.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toPath().getParent() +
+                        "\\database.db")) {
+            connection.setAutoCommit(true);
+            ScriptRunner runner = new ScriptRunner(connection);
+            runner.setEscapeProcessing(false);
+
+            runner.runScript(lecturesReader);
+            runner.runScript(studentReader);
+            runner.runScript(subjectsReader);
+            runner.runScript(usersReader);
+        } catch (SQLException | URISyntaxException | IOException throwables) {
+            throwables.printStackTrace();
+        }
     }
 
 }

@@ -29,18 +29,7 @@ public class LectureRepository {
 
     private LectureRepository() {
         // INIT SQL
-        try {
-            connection = Repository.connection;
-
-            connection.setAutoCommit(true);
-            LOGGER.debug("AutoCommit enabled");
-
-            LOGGER.warn("Initializing database");
-            initDatabase();
-
-        } catch (SQLException throwable) {
-            LOGGER.warn(throwable);
-        }
+        connection = Repository.connection;
     }
 
     public static LectureRepository getInstance() {
@@ -54,13 +43,6 @@ public class LectureRepository {
             }
             return instance;
         }
-    }
-
-    private void initDatabase() {
-        ScriptRunner runner = new ScriptRunner(connection);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(StudentRepository.class.getClassLoader().getResourceAsStream("database/initLectures.sql"))));
-        runner.setEscapeProcessing(false);
-        runner.runScript(reader);
     }
 
     public Optional<Lecture> insert(Lecture lecture) {
