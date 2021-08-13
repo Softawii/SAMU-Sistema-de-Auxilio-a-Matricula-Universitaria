@@ -58,6 +58,7 @@ public class StudentRepository {
         }
     }
 
+    // Should only be called to insert new students
     public Optional<Student> insert(Student student) throws AlreadyExistsException {
 
         // It's throwing exceptions
@@ -118,8 +119,14 @@ public class StudentRepository {
         }
     }
 
-    public Optional<Student> findById(long studentId) {
+    public Optional<Student> findById(long studentId) throws WrongRequestedUserType {
+        Optional<User> userOptional = USERS_REPOSITORY.findById(studentId);
 
+        if (userOptional.isEmpty()) {
+            return Optional.empty();
+        } else if (!(userOptional.get() instanceof Student)) {
+            throw new WrongRequestedUserType(String.format("Requested User with id '%d' is not a Student", studentId));
+        }
         try (PreparedStatement findStatement = connection.prepareStatement("SELECT * FROM Student WHERE id=?1")){
             findStatement.setLong(1, studentId);
 
@@ -131,7 +138,14 @@ public class StudentRepository {
             List<Lecture> requestedLecturesList = LECTURE_REPOSITORY.getFromStringArray(requestedLectures.split(","));
             List<Lecture> enrollLecturesList = LECTURE_REPOSITORY.getFromStringArray(enrollLectures.split(","));
 
+            User user = userOptional.get();
             Student student = new Student(studentId, course, semester, enrollLecturesList, requestedLecturesList);
+            student.setUsername(user.getUsername());
+            student.setPassword(user.getPassword());
+            student.setName(user.getName());
+            student.setCpf(user.getCpf());
+            student.setAddress(user.getAddress());
+            student.setBirthday(user.getBirthday());
             LOGGER.debug(String.format("Student with id %d was found to the database", student.getId()));
 
             return Optional.of(student);

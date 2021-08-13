@@ -214,8 +214,7 @@ public class UsersRepository {
         if(type.equals("STUDENT")) {
             StudentRepository sR = StudentRepository.getInstance();
             //TODO GAMBIARRA
-            Student student = sR.findById(id).get();
-            user = new Student(id, username, password, name, cpf, address, birthday, student.getCourse(), student.getSemester(), student.getEnrollLectures(), student.getRequestedLectures());
+            user = new Student(id, username, password, name, cpf, address, birthday, null, null, null, null);
             LOGGER.debug(String.format("Student with id '%d' and username '%s' was found with success", user.getId(), user.getUsername()));
         }
         // TODO: We need to handle with other users types
