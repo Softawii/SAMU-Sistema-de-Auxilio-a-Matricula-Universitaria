@@ -1,8 +1,9 @@
 package br.ufrrj.samu.utils;
 
 import br.ufrrj.samu.SAMU;
-import br.ufrrj.samu.repositories.Repository;
-import br.ufrrj.samu.repositories.StudentRepository;
+import br.ufrrj.samu.entities.Student;
+import br.ufrrj.samu.exceptions.AlreadyExistsException;
+import br.ufrrj.samu.repositories.*;
 import com.formdev.flatlaf.*;
 import com.formdev.flatlaf.intellijthemes.FlatAllIJThemes;
 import org.apache.ibatis.jdbc.ScriptRunner;
@@ -21,6 +22,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
@@ -186,6 +188,28 @@ public class Util {
             runner.runScript(usersReader);
         } catch (SQLException | URISyntaxException | IOException throwables) {
             throwables.printStackTrace();
+        }
+
+        // Init interno
+        StudentRepository sr = StudentRepository.getInstance();
+        UsersRepository ur = UsersRepository.getInstance();
+        SubjectRepository subr = SubjectRepository.getInstance();
+        LectureRepository lr = LectureRepository.getInstance();
+
+        try {
+            sr.insert(new Student("yan", "1234", "Yan Carlos", "000.000.000-01", "Minha Casa",
+                    "27/05/2001", "Ciencia da Computacao", "2019-1", List.of(), List.of()));
+
+            sr.insert(new Student("edu", "1234", "Eduardo Ferro", "000.000.000-02", "Minha Casa",
+                    "27/05/2001", "Ciencia da Computacao", "2019-1", List.of(), List.of()));
+
+            sr.insert(new Student("romulo", "1234", "Romulo Menezes", "000.000.000-03", "Minha Casa",
+                    "27/05/2001", "Ciencia da Computacao", "2019-1", List.of(), List.of()));
+
+            sr.insert(new Student("mateus", "1234", "Mateus Campello", "000.000.000-04", "Minha Casa",
+                    "27/05/2001", "Ciencia da Computacao", "2019-1", List.of(), List.of()));
+        } catch (AlreadyExistsException e) {
+            e.printStackTrace();
         }
     }
 
