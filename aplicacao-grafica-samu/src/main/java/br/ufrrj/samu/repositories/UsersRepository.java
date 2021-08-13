@@ -5,10 +5,7 @@ import java.sql.*;
 import java.util.*;
 
 import br.ufrrj.samu.entities.*;
-import br.ufrrj.samu.exceptions.AlreadyExistsException;
-import br.ufrrj.samu.exceptions.LectureNotFoundException;
-import br.ufrrj.samu.exceptions.SubjectNotFoundException;
-import br.ufrrj.samu.exceptions.WrongRequestedUserType;
+import br.ufrrj.samu.exceptions.*;
 import br.ufrrj.samu.utils.Util;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.logging.log4j.LogManager;
@@ -229,7 +226,7 @@ public class UsersRepository {
         return user;
     }
 
-    public boolean update(User user) {
+    public boolean update(User user) throws CouldNotUpdateUserException {
         try {
             PreparedStatement findStatement = connection.prepareStatement("SELECT * FROM Users WHERE id=?1");
             findStatement.setLong(1, user.getId());
@@ -251,8 +248,8 @@ public class UsersRepository {
             updateStatement.executeUpdate();
             LOGGER.debug(String.format("User with id '%d' and username '%s' was updated", user.getId(), user.getUsername()));
         } catch (SQLException throwable) {
-            LOGGER.warn(String.format("Student with id '%d' and username '%s' could not be updated", user.getId(), user.getUsername()), throwable);
-            return false;
+            LOGGER.warn(String.format("User with id '%d' and username '%s' could not be updated", user.getId(), user.getUsername()), throwable);
+            throw new CouldNotUpdateUserException(String.format("Could not update User with id '%d' ", user.getId()), throwable, user.getId());
         }
         return true;
     }

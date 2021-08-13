@@ -5,6 +5,7 @@ import br.ufrrj.samu.entities.Student;
 import br.ufrrj.samu.entities.Teacher;
 import br.ufrrj.samu.entities.User;
 import br.ufrrj.samu.exceptions.AlreadyExistsException;
+import br.ufrrj.samu.exceptions.CouldNotUpdateUserException;
 import br.ufrrj.samu.exceptions.WrongRequestedUserType;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.logging.log4j.LogManager;
@@ -24,6 +25,8 @@ public class StudentRepository {
     private Connection connection;
 
     private SubjectRepository subjectRepository;
+    private final UsersRepository USERS_REPOSITORY = UsersRepository.getInstance();
+    public final LectureRepository LECTURE_REPOSITORY = LectureRepository.getInstance();
 
     /**
      * <b>Precisa</b> que o SubjectService seja definido usando <b>setSubjectService</b>
@@ -57,10 +60,8 @@ public class StudentRepository {
 
     public Optional<Student> insert(Student student) throws AlreadyExistsException {
 
-        UsersRepository uR = UsersRepository.getInstance();
-
         // It's throwing exceptions
-        student = (Student) uR.insert(student);
+        student = (Student) USERS_REPOSITORY.insert(student);
 
         try (PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO Student(id, requestedLectures, enrollLectures, course, semester) VALUES(?1, ?2, ?3, ?4, ?5)")){
 
@@ -87,10 +88,37 @@ public class StudentRepository {
         }
     }
 
-    public Optional<Student> findById(long studentId) {
+    public Student update(Student student) throws CouldNotUpdateUserException {
 
-        UsersRepository uR = UsersRepository.getInstance();
-        LectureRepository lR = LectureRepository.getInstance();
+        // Throws 'CouldNotUpdateUserException' if unable to update user
+        try {
+            USERS_REPOSITORY.update(student);
+        } catch (CouldNotUpdateUserException e) {
+            throw new CouldNotUpdateUserException(String.format("Could not update Student with id '%d' ", e.getUserId()), e, e.getUserId());
+        }
+
+        try (PreparedStatement insertStatement = connection.prepareStatement("UPDATE Student SET requestedLectures=?2, enrollLectures=?3, course=?4, semester=?5 WHERE id=?1")){
+            insertStatement.setLong(1, student.getId());
+            insertStatement.setString(2, "");
+            insertStatement.setString(3, "");
+            insertStatement.setString(4, student.getCourse());
+            insertStatement.setString(5, student.getSemester());
+
+            insertStatement.executeUpdate();
+
+            long id = insertStatement.getGeneratedKeys().getLong(1);
+            student.setId(id);
+            LOGGER.debug(String.format("Student with id %d was updated", student.getId()));
+
+            insertStatement.close();
+            return student;
+        } catch (SQLException throwable) {
+            LOGGER.warn(String.format("Student with id '%d' could not be updated", student.getId()), throwable);
+            throw new CouldNotUpdateUserException(String.format("Could not update Student with id '%d' ", student.getId()), throwable, student.getId());
+        }
+    }
+
+    public Optional<Student> findById(long studentId) {
 
         try (PreparedStatement findStatement = connection.prepareStatement("SELECT * FROM Student WHERE id=?1")){
             findStatement.setLong(1, studentId);
@@ -100,8 +128,8 @@ public class StudentRepository {
             String enrollLectures = findResultsResultSet.getString(3);
             String course = findResultsResultSet.getString(4);
             String semester = findResultsResultSet.getString(5);
-            List<Lecture> requestedLecturesList = lR.getFromStringArray(requestedLectures.split(","));
-            List<Lecture> enrollLecturesList = lR.getFromStringArray(enrollLectures.split(","));
+            List<Lecture> requestedLecturesList = LECTURE_REPOSITORY.getFromStringArray(requestedLectures.split(","));
+            List<Lecture> enrollLecturesList = LECTURE_REPOSITORY.getFromStringArray(enrollLectures.split(","));
 
             Student student = new Student(studentId, course, semester, enrollLecturesList, requestedLecturesList);
             LOGGER.debug(String.format("Student with id %d was found to the database", student.getId()));
@@ -116,8 +144,6 @@ public class StudentRepository {
 
     public List<String> getFromStringArray(String[] studentsIds) {
         ArrayList<String> students = new ArrayList<>();
-        //TODO Gambiarra
-        UsersRepository uR = UsersRepository.getInstance();
 
         for(String student : studentsIds) {
             //TODO GAMBIARRA, desfazer futuramente
@@ -127,7 +153,7 @@ public class StudentRepository {
 
             Optional<User> studentObj = null;
             try {
-                studentObj = uR.findById(Long.parseLong(student));
+                studentObj = USERS_REPOSITORY.findById(Long.parseLong(student));
                 studentObj.ifPresent(user -> {
                     students.add((Long.toString(user.getId())));
                 });
