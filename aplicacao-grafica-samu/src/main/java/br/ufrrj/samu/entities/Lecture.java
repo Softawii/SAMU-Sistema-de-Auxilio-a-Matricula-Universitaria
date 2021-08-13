@@ -14,9 +14,9 @@ public class Lecture {
 
     private Teacher teacher;
 
-    private List<Student> students;
+    private List<String> students;
 
-    public Lecture(String classPlan, String classRoom, String schedule, String code, Subject subject, Teacher teacher, List<Student> students) {
+    public Lecture(String classPlan, String classRoom, String schedule, String code, Subject subject, Teacher teacher, List<String> students) {
         this.classPlan = classPlan;
         this.classRoom = classRoom;
         this.schedule = schedule;
@@ -66,8 +66,8 @@ public class Lecture {
 
         StringBuilder stringBuilder = new StringBuilder();
 
-        for(Student student : this.students) {
-            stringBuilder.append(student.getId() + ",");
+        for(String student : this.students) {
+            stringBuilder.append(student + ",");
         }
 
         if(!stringBuilder.isEmpty()) {
@@ -76,6 +76,10 @@ public class Lecture {
 
         return stringBuilder.toString();
 
+    }
+
+    public List<String> getStudents() {
+        return students;
     }
 
     @Override

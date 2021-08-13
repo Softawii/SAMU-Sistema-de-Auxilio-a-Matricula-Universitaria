@@ -9,6 +9,7 @@ import br.ufrrj.samu.exceptions.AlreadyExistsException;
 import br.ufrrj.samu.exceptions.LectureNotFoundException;
 import br.ufrrj.samu.exceptions.SubjectNotFoundException;
 import br.ufrrj.samu.exceptions.WrongRequestedUserType;
+import br.ufrrj.samu.utils.Util;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -257,93 +258,32 @@ public class UsersRepository {
     }
 
     public static void main(String[] args) {
+        new Util();
+
         StudentRepository sr = StudentRepository.getInstance();
         UsersRepository ur = UsersRepository.getInstance();
         SubjectRepository subr = SubjectRepository.getInstance();
         LectureRepository lr = LectureRepository.getInstance();
 
-        try {
-            Repository.connection.setAutoCommit(true);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-
-        Optional<Subject> subjectOptional = subr.findSubjectByCode("DCC01");
-
-        Lecture lec = new Lecture("Joao vai falar sobre isso", "ADM2", "5:00-12:00", "CODE02", subjectOptional.get(), null, null);
+        Lecture lecture;
 
         try {
-            sr.insert(new Student("yan", "1234", "Yan Carlos", "000.000.000-01", "Minha Casa",
-                    "27/05/2001", "Ciencia da Computacao", "2019-1", List.of(lec), List.of()));
-
-            sr.insert(new Student("edu", "1234", "Eduardo Ferro", "000.000.000-02", "Minha Casa",
-                    "27/05/2001", "Ciencia da Computacao", "2019-1", List.of(lec), List.of()));
-
-            sr.insert(new Student("romulo", "1234", "Romulo Menezes", "000.000.000-03", "Minha Casa",
-                    "27/05/2001", "Ciencia da Computacao", "2019-1", List.of(lec), List.of()));
-        } catch (AlreadyExistsException e) {
-            e.printStackTrace();
+            lecture = lr.findByCode("CODE02");
+        } catch (SubjectNotFoundException | LectureNotFoundException e) {
+            LOGGER.debug(e.getMessage());
+            return;
         }
 
-        ArrayList<Student> students = new ArrayList<>();
-        String[] studentsNames = {"yan", "edu", "romulo"};
+        LOGGER.debug(lecture);
 
-        for(String un : studentsNames) {
-            Optional<User> userOptional = ur.findByUsername(un);
+        for(String code : lecture.getStudents()) {
+            Optional<User> std = ur.findById(Long.parseLong(code));
 
-            if(userOptional.isPresent()) {
-                Student student = (Student) userOptional.get();
-//                System.out.println("nome da classe??-->" + userOptional.get().getClass().getSimpleName());
-                students.add(student);
-            }
+            std.ifPresent(user -> {
+                Student student = (Student) user;
+                student.addEnrollLectures(lecture);
+                LOGGER.debug(student);
+            });
         }
-
-        Teacher teacher = new Teacher(2, "Braida", "1234");
-
-
-        lr.insert(new Lecture("Joao vai falar sobre isso", "ADM2", "5:00-12:00", "CODE02", subjectOptional.get(), teacher, students));
-
-        try {
-            Lecture lecture = lr.findByCode("CODE02");
-            LOGGER.debug(lecture);
-
-        } catch (SubjectNotFoundException e) {
-            e.printStackTrace();
-        } catch (LectureNotFoundException e) {
-            e.printStackTrace();
-        }
-
-//        try {
-//            Repository.connection.setAutoCommit(true);
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        }
-//
-//        Optional<Subject> sub = subr.findSubjectByCode("DCC01");
-//
-//        if(sub.isEmpty()) {
-//
-//            LOGGER.debug("NÃO FOI POSSIVEL ENCONTRAR O SUBJECT.");
-//
-//            return;
-//        }
-//
-//        LOGGER.debug(sub.get());
-//
-//        sub = subr.insert(new Subject("Linguagens de Programacao", "LP", "DCC03", List.of("DCC01")));
-//
-//
-//        LOGGER.debug(sub.get());
-//        LOGGER.debug(subr.getSubjectFromStringArray(sub.get().getPrerequisitesList().split(",")));
-//
-//
-//        try {
-//            Lecture lecture = lr.findByCode("AC120202");
-//            LOGGER.debug(lecture);
-//
-//        } catch (SubjectNotFoundException | LectureNotFoundException e) {
-//            e.printStackTrace();
-//        }
-
     }
 }

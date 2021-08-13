@@ -121,7 +121,7 @@ public class LectureRepository {
             Teacher teacher = new Teacher(2, "Braida", "1234");
 
             // Students
-            List<Student> students = sR.getFromStringArray(findResultSet.getString(7).split(","));
+            List<String> students = sR.getFromStringArray(findResultSet.getString(7).split(","));
 
             Lecture lecture = new Lecture(classPlan, classRoom, schedule, code, subject, teacher, students);
 

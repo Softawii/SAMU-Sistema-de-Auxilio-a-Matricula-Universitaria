@@ -68,6 +68,9 @@ public class Student extends User {
         return requestedLectures;
     }
 
+    public void addEnrollLectures(Lecture lecture) { this.enrollLectures.add(lecture); }
+
+    public void addRequestedLectures(Lecture lecture) { this.requestedLectures.add(lecture); }
 
     public void setCourse(String course) {
         this.course = course;
@@ -95,4 +98,5 @@ public class Student extends User {
                 ", requestedLectures=" + requestedLectures +
                 '}';
     }
+
 }

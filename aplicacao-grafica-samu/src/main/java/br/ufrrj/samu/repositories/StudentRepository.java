@@ -104,7 +104,7 @@ public class StudentRepository {
             List<Lecture> enrollLecturesList = lR.getFromStringArray(enrollLectures.split(","));
 
             Student student = new Student(studentId, course, semester, enrollLecturesList, requestedLecturesList);
-            LOGGER.debug(String.format("Student with id %d was inserted to the database", student.getId()));
+            LOGGER.debug(String.format("Student with id %d was found to the database", student.getId()));
 
             return Optional.of(student);
         } catch (SQLException throwable) {
@@ -114,8 +114,8 @@ public class StudentRepository {
         }
     }
 
-    public List<Student> getFromStringArray(String[] studentsIds) {
-        ArrayList<Student> students = new ArrayList<>();
+    public List<String> getFromStringArray(String[] studentsIds) {
+        ArrayList<String> students = new ArrayList<>();
         //TODO Gambiarra
         UsersRepository uR = UsersRepository.getInstance();
 
@@ -129,7 +129,7 @@ public class StudentRepository {
             try {
                 studentObj = uR.findById(Long.parseLong(student));
                 studentObj.ifPresent(user -> {
-                    students.add(((Student) user));
+                    students.add((Long.toString(user.getId())));
                 });
             } catch (Exception wrongRequestedUserType) {
                 //TODO parece gambiarra, devo corrigir?
