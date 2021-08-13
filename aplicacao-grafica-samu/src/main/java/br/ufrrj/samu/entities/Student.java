@@ -2,6 +2,7 @@ package br.ufrrj.samu.entities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Student extends User {
 
@@ -66,6 +67,14 @@ public class Student extends User {
 
     public List<Lecture> getRequestedLectures() {
         return requestedLectures;
+    }
+
+    public Optional<String> getEnrollLecturesIds() {
+        return enrollLectures.stream().map(Lecture::getCode).reduce((s1, s2) -> s1 + "," + s2);
+    }
+
+    public Optional<String> getRequestedLecturesIds() {
+        return requestedLectures.stream().map(Lecture::getCode).reduce((s1, s2) -> s1 + "," + s2);
     }
 
     public void addEnrollLectures(Lecture lecture) { this.enrollLectures.add(lecture); }

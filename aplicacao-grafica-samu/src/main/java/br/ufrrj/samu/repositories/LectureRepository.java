@@ -6,6 +6,8 @@ import br.ufrrj.samu.entities.Subject;
 import br.ufrrj.samu.entities.Teacher;
 import br.ufrrj.samu.exceptions.LectureNotFoundException;
 import br.ufrrj.samu.exceptions.SubjectNotFoundException;
+import br.ufrrj.samu.exceptions.TeacherNotFoundException;
+import br.ufrrj.samu.exceptions.WrongRequestedUserTypeException;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -91,12 +93,11 @@ public class LectureRepository {
         return true;
     }
 
-    public Lecture findByCode(String code) throws SubjectNotFoundException, LectureNotFoundException {
-
-        StudentRepository sR = StudentRepository.getInstance();
-
+    public Lecture findByCode(String code) throws SubjectNotFoundException, LectureNotFoundException, TeacherNotFoundException, WrongRequestedUserTypeException {
+        StudentRepository STUDENT_REPOSITORY = StudentRepository.getInstance();
+        TeacherRepository TEACHER_REPOSITORY = TeacherRepository.getInstance();
+        SubjectRepository SUBJECT_REPOSITORY = SubjectRepository.getInstance();
         try (PreparedStatement findStatement = connection.prepareStatement("SELECT * FROM Lectures WHERE code=?1")) {
-
             findStatement.setString(1, code);
             ResultSet findResultSet = findStatement.executeQuery();
 
@@ -104,35 +105,29 @@ public class LectureRepository {
             String schedule = findResultSet.getString(2);
             String classRoom = findResultSet.getString(3);
             String classPlan = findResultSet.getString(4);
-
-            // Subject relacionada
-            SubjectRepository sr = SubjectRepository.getInstance();
-
             String subjectCode = findResultSet.getString(5);
-
-            Optional<Subject> optSub = sr.findSubjectByCode(subjectCode);
-
-            if(optSub.isEmpty())
-                throw new SubjectNotFoundException("Subject '" + subjectCode + "' not found.");
-
-            Subject subject = optSub.get();
-
-            // TODO: Teacher
-            Teacher teacher = new Teacher(2, "Braida", "1234");
+            long teacherId = findResultSet.getLong(6);
 
             // Students
-            List<String> students = sR.getFromStringArray(findResultSet.getString(7).split(","));
+            List<String> students = STUDENT_REPOSITORY.getFromStringArray(findResultSet.getString(7).split(","));
+
+            // Subject relacionada
+            Optional<Subject> optSub = SUBJECT_REPOSITORY.findSubjectByCode(subjectCode);
+
+            if(optSub.isEmpty()) {
+                throw new SubjectNotFoundException("Subject '" + subjectCode + "' not found.");
+            }
+
+            Subject subject = optSub.get();
+            Teacher teacher = TEACHER_REPOSITORY.findById(teacherId);
 
             Lecture lecture = new Lecture(classPlan, classRoom, schedule, code, subject, teacher, students);
 
             LOGGER.debug(String.format("Lecture with code '%s' and name '%s' was found with success", lecture.getCode(), lecture.getSubject().getName()));
-
-
             return lecture;
-
         } catch (SQLException throwable) {
             LOGGER.warn(String.format("Lecture with code '%s' could not be found", code), throwable);
-            throw new LectureNotFoundException("Lecture with code '" + code + "' could not be found");
+            throw new LectureNotFoundException("Lecture with code '" + code + "' could not be found", throwable);
         }
     }
 
@@ -146,7 +141,7 @@ public class LectureRepository {
             try {
                 Lecture lectureObj = this.findByCode(lecture);
                 lectures.add(lectureObj);
-            } catch (SubjectNotFoundException | LectureNotFoundException e) {
+            } catch (SubjectNotFoundException | LectureNotFoundException | TeacherNotFoundException | WrongRequestedUserTypeException e) {
                 LOGGER.warn(String.format("We couldn't find the lecture %s so let's throw an exception", lecture), e);
             }
         }

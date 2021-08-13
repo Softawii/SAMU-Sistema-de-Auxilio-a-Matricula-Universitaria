@@ -51,8 +51,6 @@ public class UsersRepository {
     private String type(User user) {
         if(user instanceof Student)
             return "STUDENT";
-        else if(user instanceof Coordinator)
-            return "COORDINATOR";
         else if(user instanceof Teacher)
             return "TEACHER";
         return "USER";
@@ -254,32 +252,32 @@ public class UsersRepository {
     }
 
     public static void main(String[] args) {
-        new Util();
-
-        StudentRepository sr = StudentRepository.getInstance();
-        UsersRepository ur = UsersRepository.getInstance();
-        SubjectRepository subr = SubjectRepository.getInstance();
-        LectureRepository lr = LectureRepository.getInstance();
-
-        Lecture lecture;
-
-        try {
-            lecture = lr.findByCode("CODE02");
-        } catch (SubjectNotFoundException | LectureNotFoundException e) {
-            LOGGER.debug(e.getMessage());
-            return;
-        }
-
-        LOGGER.debug(lecture);
-
-        for(String code : lecture.getStudents()) {
-            Optional<User> std = ur.findById(Long.parseLong(code));
-
-            std.ifPresent(user -> {
-                Student student = (Student) user;
-                student.addEnrollLectures(lecture);
-                LOGGER.debug(student);
-            });
-        }
+//        new Util();
+//
+//        StudentRepository sr = StudentRepository.getInstance();
+//        UsersRepository ur = UsersRepository.getInstance();
+//        SubjectRepository subr = SubjectRepository.getInstance();
+//        LectureRepository lr = LectureRepository.getInstance();
+//
+//        Lecture lecture;
+//
+//        try {
+//            lecture = lr.findByCode("CODE02");
+//        } catch (SubjectNotFoundException | LectureNotFoundException e) {
+//            LOGGER.debug(e.getMessage());
+//            return;
+//        }
+//
+//        LOGGER.debug(lecture);
+//
+//        for(String code : lecture.getStudents()) {
+//            Optional<User> std = ur.findById(Long.parseLong(code));
+//
+//            std.ifPresent(user -> {
+//                Student student = (Student) user;
+//                student.addEnrollLectures(lecture);
+//                LOGGER.debug(student);
+//            });
+//        }
     }
 }

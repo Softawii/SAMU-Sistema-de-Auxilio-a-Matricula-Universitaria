@@ -2,17 +2,13 @@ package br.ufrrj.samu.repositories;
 
 import br.ufrrj.samu.entities.Lecture;
 import br.ufrrj.samu.entities.Student;
-import br.ufrrj.samu.entities.Teacher;
 import br.ufrrj.samu.entities.User;
 import br.ufrrj.samu.exceptions.AlreadyExistsException;
 import br.ufrrj.samu.exceptions.CouldNotUpdateUserException;
-import br.ufrrj.samu.exceptions.WrongRequestedUserType;
-import org.apache.ibatis.jdbc.ScriptRunner;
+import br.ufrrj.samu.exceptions.WrongRequestedUserTypeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.sql.*;
 import java.util.*;
 
@@ -25,19 +21,12 @@ public class StudentRepository {
     private Connection connection;
 
     private SubjectRepository subjectRepository;
-    private final UsersRepository USERS_REPOSITORY = UsersRepository.getInstance();
-    public final LectureRepository LECTURE_REPOSITORY = LectureRepository.getInstance();
 
     /**
      * <b>Precisa</b> que o SubjectService seja definido usando <b>setSubjectService</b>
      */
     private StudentRepository() {
         connection = connection = Repository.connection;
-    }
-
-
-    public SubjectRepository getSubjectService() {
-        return subjectRepository;
     }
 
     public void setSubjectService(SubjectRepository subjectRepository) {
@@ -60,7 +49,7 @@ public class StudentRepository {
 
     // Should only be called to insert new students
     public Optional<Student> insert(Student student) throws AlreadyExistsException {
-
+        UsersRepository USERS_REPOSITORY = UsersRepository.getInstance();
         // It's throwing exceptions
         student = (Student) USERS_REPOSITORY.insert(student);
 
@@ -68,8 +57,8 @@ public class StudentRepository {
 
             insertStatement.setLong(1, student.getId());
             // TODO: PLEASE CHECK IT
-            insertStatement.setString(2, "");
-            insertStatement.setString(3, "");
+            insertStatement.setString(2, Lecture.parseListOfLecture(student.getEnrollLectures()));
+            insertStatement.setString(3, Lecture.parseListOfLecture(student.getRequestedLectures()));
             insertStatement.setString(4, student.getCourse());
             insertStatement.setString(5, student.getSemester());
 
@@ -90,7 +79,7 @@ public class StudentRepository {
     }
 
     public Student update(Student student) throws CouldNotUpdateUserException {
-
+        UsersRepository USERS_REPOSITORY = UsersRepository.getInstance();
         // Throws 'CouldNotUpdateUserException' if unable to update user
         try {
             USERS_REPOSITORY.update(student);
@@ -100,8 +89,8 @@ public class StudentRepository {
 
         try (PreparedStatement insertStatement = connection.prepareStatement("UPDATE Student SET requestedLectures=?2, enrollLectures=?3, course=?4, semester=?5 WHERE id=?1")){
             insertStatement.setLong(1, student.getId());
-            insertStatement.setString(2, "");
-            insertStatement.setString(3, "");
+            insertStatement.setString(2, Lecture.parseListOfLecture(student.getEnrollLectures()));
+            insertStatement.setString(3, Lecture.parseListOfLecture(student.getRequestedLectures()));
             insertStatement.setString(4, student.getCourse());
             insertStatement.setString(5, student.getSemester());
 
@@ -119,13 +108,15 @@ public class StudentRepository {
         }
     }
 
-    public Optional<Student> findById(long studentId) throws WrongRequestedUserType {
+    public Optional<Student> findById(long studentId) throws WrongRequestedUserTypeException, SQLException {
+        UsersRepository USERS_REPOSITORY = UsersRepository.getInstance();
+        LectureRepository LECTURE_REPOSITORY = LectureRepository.getInstance();
         Optional<User> userOptional = USERS_REPOSITORY.findById(studentId);
 
         if (userOptional.isEmpty()) {
             return Optional.empty();
         } else if (!(userOptional.get() instanceof Student)) {
-            throw new WrongRequestedUserType(String.format("Requested User with id '%d' is not a Student", studentId));
+            throw new WrongRequestedUserTypeException(String.format("Requested User with id '%d' is not a Student", studentId));
         }
         try (PreparedStatement findStatement = connection.prepareStatement("SELECT * FROM Student WHERE id=?1")){
             findStatement.setLong(1, studentId);
@@ -151,12 +142,13 @@ public class StudentRepository {
             return Optional.of(student);
         } catch (SQLException throwable) {
             // TODO: I think we need change this try / catch to a throw AlreadyExists !
-            LOGGER.warn(String.format("Student with id '%d' could not be inserted to the database", studentId), throwable);
-            return Optional.empty();
+            LOGGER.warn(String.format("Student with id '%d' could not be found", studentId), throwable);
+            throw new SQLException(String.format("Student with id '%d' could not be found", studentId));
         }
     }
 
     public List<String> getFromStringArray(String[] studentsIds) {
+        UsersRepository USERS_REPOSITORY = UsersRepository.getInstance();
         ArrayList<String> students = new ArrayList<>();
 
         for(String student : studentsIds) {

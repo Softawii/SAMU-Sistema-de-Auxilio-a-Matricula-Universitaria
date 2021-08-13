@@ -1,6 +1,5 @@
 package br.ufrrj.samu.entities;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Lecture {
@@ -24,6 +23,13 @@ public class Lecture {
         this.subject = subject;
         this.teacher = teacher;
         this.students = students;
+    }
+
+    public static String parseListOfLecture(List<Lecture> lecture) {
+        return lecture.stream()
+                .map(Lecture::getCode)
+                .reduce((s1, s2) -> s1 + "," + s2)
+                .orElse("");
     }
 
     public String getClassPlan() {
@@ -63,23 +69,21 @@ public class Lecture {
     }
 
     public String getStudentsIds() {
-
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for(String student : this.students) {
-            stringBuilder.append(student + ",");
-        }
-
-        if(!stringBuilder.isEmpty()) {
-            stringBuilder.delete(stringBuilder.length() - 1, stringBuilder.length());
-        }
-
-        return stringBuilder.toString();
-
+        return students.stream()
+                .reduce((s1, s2) -> s1 + "," + s2)
+                .orElse("");
     }
 
     public List<String> getStudents() {
         return students;
+    }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
+    }
+
+    public void setStudents(List<String> students) {
+        this.students = students;
     }
 
     @Override
