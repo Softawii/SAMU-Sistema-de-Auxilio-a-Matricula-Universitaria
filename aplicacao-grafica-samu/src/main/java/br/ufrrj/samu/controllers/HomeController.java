@@ -1,23 +1,25 @@
 package br.ufrrj.samu.controllers;
 
 import br.ufrrj.samu.entities.Student;
-import br.ufrrj.samu.entities.Subject;
+import br.ufrrj.samu.entities.User;
 import br.ufrrj.samu.exceptions.WrongRequestedUserTypeException;
 import br.ufrrj.samu.repositories.StudentRepository;
 import br.ufrrj.samu.repositories.SubjectRepository;
+import br.ufrrj.samu.repositories.UsersRepository;
 
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Optional;
 
 public class HomeController {
 
     private SubjectRepository subjectRepository;
     private StudentRepository studentRepository;
+    private UsersRepository usersRepository;
 
-    public HomeController(SubjectRepository subjectRepository, StudentRepository studentRepository) {
-        this.subjectRepository = subjectRepository;
-        this.studentRepository = studentRepository;
+    public HomeController() {
+        this.subjectRepository = SubjectRepository.getInstance();
+        this.studentRepository = StudentRepository.getInstance();
+        this.usersRepository = UsersRepository.getInstance();
     }
 
     public Student getStudent(long userId) {
@@ -30,5 +32,9 @@ public class HomeController {
         }
 
         return studentOptional.get();
+    }
+
+    public Optional<User> getTeacher(long teacherId) {
+        return usersRepository.findById(teacherId);
     }
 }

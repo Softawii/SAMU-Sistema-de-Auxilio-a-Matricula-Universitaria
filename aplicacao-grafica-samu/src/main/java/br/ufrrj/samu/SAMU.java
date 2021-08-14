@@ -66,7 +66,7 @@ public class SAMU {
         studentRepository.setSubjectService(subjectRepository);
 
         loginController = new LoginController();
-        homeController = new HomeController(subjectRepository, studentRepository);
+        homeController = new HomeController();
 
         loginFrame = new LoginFrame(loginController, this);
     }

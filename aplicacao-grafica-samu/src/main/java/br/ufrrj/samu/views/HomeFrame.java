@@ -5,7 +5,6 @@ import br.ufrrj.samu.controllers.HomeController;
 import br.ufrrj.samu.entities.Lecture;
 import br.ufrrj.samu.entities.Student;
 import br.ufrrj.samu.entities.User;
-import br.ufrrj.samu.repositories.UsersRepository;
 import br.ufrrj.samu.utils.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,8 +14,11 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static br.ufrrj.samu.utils.Util.centreWindow;
 import static java.util.Objects.requireNonNull;
@@ -31,15 +33,20 @@ public class HomeFrame extends JFrame {
 
     JPanel mainJPanel;
 
-    JTable coursesTable;
+    JTable lecturesTable;
 
     private HomeController homeController;
 
     private Student student;
+    private JScrollPane scrollPane;
+    private JButton logoutButton;
+    private JButton avaliarDisciplinasButton;
+    private JButton realizarMatriculaButton;
 
     public HomeFrame(long userId, SAMU samu) throws HeadlessException {
         super();
         frameInit();
+        sim();
         homeController = samu.getHomeController();
         this.student = homeController.getStudent(userId);
 
@@ -110,14 +117,25 @@ public class HomeFrame extends JFrame {
         gridConstraints.anchor = GridBagConstraints.FIRST_LINE_START;
 
         gridConstraints.gridy = 7;
-        userInfoPanel.add(new JButton("Disciplinas Matriculadas"), gridConstraints);
+        realizarMatriculaButton = new JButton("Realizar Matr\u00EDcula");
+        realizarMatriculaButton.setFocusable(false);
+        realizarMatriculaButton.setFont(realizarMatriculaButton.getFont().deriveFont(15f));
+        userInfoPanel.add(realizarMatriculaButton, gridConstraints);
 
         gridConstraints.gridy = 8;
-        userInfoPanel.add(new JButton("Disciplinas Dispon\u00EDveis"), gridConstraints);
+        avaliarDisciplinasButton = new JButton("Avaliar Disciplinas");
+        avaliarDisciplinasButton.setFocusable(false);
+        avaliarDisciplinasButton.setEnabled(false);
+        avaliarDisciplinasButton.setFont(avaliarDisciplinasButton.getFont().deriveFont(15f));
+        userInfoPanel.add(avaliarDisciplinasButton, gridConstraints);
 
         gridConstraints.gridy = 9;
         gridConstraints.weighty = 2.0;
-        userInfoPanel.add(new JButton("Matriz Curricular"), gridConstraints);
+        logoutButton = new JButton("Logout");
+        logoutButton.setFocusable(false);
+        logoutButton.setEnabled(false);
+        logoutButton.setFont(logoutButton.getFont().deriveFont(15f));
+        userInfoPanel.add(logoutButton, gridConstraints);
 
         mainJPanel.add(userInfoPanel, BorderLayout.WEST);
     }
@@ -126,14 +144,13 @@ public class HomeFrame extends JFrame {
         JPanel rightSidePanel = new JPanel();
         rightSidePanel.setLayout(new GridBagLayout());
 
-
         JPanel tableJPanel = new JPanel();
         tableJPanel.setLayout(new BorderLayout());
 
         GridBagConstraints gridConstraints = new GridBagConstraints();
-        JScrollPane table = coursesTable();
+        initLecturesTable();
 
-        tableJPanel.add(table, BorderLayout.CENTER);
+        tableJPanel.add(scrollPane, BorderLayout.CENTER);
 
         gridConstraints.gridx = 2;
         gridConstraints.gridy = 1;
@@ -157,7 +174,7 @@ public class HomeFrame extends JFrame {
     }
 
 
-    public JScrollPane coursesTable() {
+    public void initLecturesTable() {
 
         LOGGER.debug("Student Info:" + student);
 
@@ -167,22 +184,19 @@ public class HomeFrame extends JFrame {
         //List<Lecture> studentSubjects = student.getEnrollLectures();
         List<Lecture> studentSubjects = student.getRequestedLectures();
 
-        UsersRepository usersRepository = UsersRepository.getInstance();
-
         Object[][] data = new Object[studentSubjects.size()][columnNames.length];
         for (int i = 0; i < studentSubjects.size(); i++) {
             Lecture lecture = studentSubjects.get(i);
             data[i][0] = lecture.getSubject().getName();
-
-            Optional<User> teacher = usersRepository.findById(lecture.getTeacher());
+            Optional<User> teacher = homeController.getTeacher(lecture.getTeacher());
 
             data[i][1] = teacher.isPresent() ? teacher.get().getName() : "Unknown 404";//PEGAR O PROF PELO ID
-            data[i][2] = "--";
+            data[i][2] = lecture.getSchedule();
 
-            LOGGER.debug("[Table] Inserting in line %d: %s %ld %s", i, data[i][0], data[i][1], data[i][2]);
+            LOGGER.debug(String.format("[Table] Inserting in line %d: %s %s %s", i, data[i][0], data[i][1], data[i][2]));
         }
 
-        coursesTable = new JTable(data, columnNames) {
+        lecturesTable = new JTable(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return column == 4;
@@ -212,35 +226,34 @@ public class HomeFrame extends JFrame {
 //                }
 //            }
 //        });
-        coursesTable.setColumnSelectionAllowed(true);
-        coursesTable.setShowGrid(false);
-        coursesTable.addMouseMotionListener(new MouseAdapter() {
+        lecturesTable.setColumnSelectionAllowed(true);
+        lecturesTable.setShowGrid(false);
+        lecturesTable.addMouseMotionListener(new MouseAdapter() {
             public void mouseMoved(MouseEvent e) {
-                int row = coursesTable.rowAtPoint(e.getPoint());
-                int col = coursesTable.columnAtPoint(e.getPoint());
+                int row = lecturesTable.rowAtPoint(e.getPoint());
+                int col = lecturesTable.columnAtPoint(e.getPoint());
                 if (row > -1 && col > -1) {
-                    Object value = coursesTable.getValueAt(row, col);
+                    Object value = lecturesTable.getValueAt(row, col);
                     if (null != value && !"".equals(value)) {
-                        coursesTable.setToolTipText(value.toString());// floating display cell content
+                        lecturesTable.setToolTipText(value.toString());// floating display cell content
                     } else {
-                        coursesTable.setToolTipText(null);
+                        lecturesTable.setToolTipText(null);
                     }
                 }
             }
         });
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        coursesTable.setDefaultRenderer(String.class, centerRenderer);
-        coursesTable.setFont(coursesTable.getFont().deriveFont(18f));
-        coursesTable.setRowHeight(coursesTable.getFont().getSize() * 4);
-        coursesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        coursesTable.getTableHeader().setReorderingAllowed(false);
-        coursesTable.setCellSelectionEnabled(false);
-        coursesTable.setDragEnabled(false);
-        coursesTable.setFillsViewportHeight(true);
+        lecturesTable.setDefaultRenderer(String.class, centerRenderer);
+        lecturesTable.setFont(lecturesTable.getFont().deriveFont(18f));
+        lecturesTable.setRowHeight(lecturesTable.getFont().getSize() * 4);
+        lecturesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        lecturesTable.getTableHeader().setReorderingAllowed(false);
+        lecturesTable.setCellSelectionEnabled(false);
+        lecturesTable.setDragEnabled(false);
+        lecturesTable.setFillsViewportHeight(true);
 
-        JScrollPane scrollPane = new JScrollPane(coursesTable);
-        return scrollPane;
+        scrollPane = new JScrollPane(lecturesTable);
     }
 
     public static void resizeColumnsWidth(JTable table, Dimension dimension) {
@@ -250,6 +263,18 @@ public class HomeFrame extends JFrame {
         for (int columnIndex = 1; columnIndex < table.getColumnCount(); columnIndex++) {
             columnModel.getColumn(columnIndex).setPreferredWidth((int) (dimension.getWidth() * ((1.0 - namePercentage) / 2)));
         }
+    }
+
+    public void sim() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime ahead = now.plusSeconds(30);
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                avaliarDisciplinasButton.setEnabled(true);
+            }
+        }, 10 * 1000);
     }
 
     @Override
@@ -269,8 +294,8 @@ public class HomeFrame extends JFrame {
         });
         this.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent evt) {
-                if (coursesTable != null) {
-                    resizeColumnsWidth(coursesTable, coursesTable.getSize());
+                if (lecturesTable != null) {
+                    resizeColumnsWidth(lecturesTable, lecturesTable.getSize());
                 }
             }
         });

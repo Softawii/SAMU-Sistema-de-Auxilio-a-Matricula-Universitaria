@@ -2,7 +2,6 @@ package br.ufrrj.samu.repositories;
 
 import br.ufrrj.samu.entities.Lecture;
 import br.ufrrj.samu.entities.Student;
-import br.ufrrj.samu.entities.Teacher;
 import br.ufrrj.samu.entities.User;
 import br.ufrrj.samu.exceptions.AlreadyExistsException;
 import br.ufrrj.samu.exceptions.CouldNotUpdateUserException;
@@ -10,8 +9,13 @@ import br.ufrrj.samu.exceptions.WrongRequestedUserTypeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class StudentRepository {
 
