@@ -2,6 +2,7 @@ package br.ufrrj.samu.repositories;
 
 import br.ufrrj.samu.entities.Lecture;
 import br.ufrrj.samu.entities.Student;
+import br.ufrrj.samu.entities.Teacher;
 import br.ufrrj.samu.entities.User;
 import br.ufrrj.samu.exceptions.AlreadyExistsException;
 import br.ufrrj.samu.exceptions.CouldNotUpdateUserException;

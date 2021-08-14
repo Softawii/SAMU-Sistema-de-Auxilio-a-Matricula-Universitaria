@@ -3,10 +3,7 @@ package br.ufrrj.samu.repositories;
 import br.ufrrj.samu.entities.Lecture;
 import br.ufrrj.samu.entities.Teacher;
 import br.ufrrj.samu.entities.User;
-import br.ufrrj.samu.exceptions.AlreadyExistsException;
-import br.ufrrj.samu.exceptions.CouldNotUpdateUserException;
-import br.ufrrj.samu.exceptions.TeacherNotFoundException;
-import br.ufrrj.samu.exceptions.WrongRequestedUserTypeException;
+import br.ufrrj.samu.exceptions.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -49,10 +46,11 @@ public class TeacherRepository {
         // It's throwing exceptions
         teacher = (Teacher) USERS_REPOSITORY.insert(teacher);
 
-        try (PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO Teachers (lectures, course) VALUES (?1, ?2)")){
+        try (PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO Teachers (id, lectures, course) VALUES (?1, ?2, ?3)")){
 
-            insertStatement.setString(1, teacher.getLecturesIds().orElse(""));
-            insertStatement.setString(2, teacher.getCourse());
+            insertStatement.setLong(1, teacher.getId());
+            insertStatement.setString(2, teacher.getLecturesIds().orElse(""));
+            insertStatement.setString(3, teacher.getCourse());
 
             insertStatement.executeUpdate();
 
@@ -110,7 +108,8 @@ public class TeacherRepository {
             ResultSet findResultsResultSet = findStatement.executeQuery();
             String lectures = findResultsResultSet.getString(1);
             String course = findResultsResultSet.getString(2);
-            List<Lecture> lecturesList = LECTURE_REPOSITORY.getFromStringArray(lectures.split(","));
+            //aqui porra
+            List<Lecture> lecturesList = LECTURE_REPOSITORY.findByTeacher(teacherId);
 
             User user = userOptional.get();
             Teacher teacher = new Teacher(lecturesList, course);
@@ -123,10 +122,10 @@ public class TeacherRepository {
             LOGGER.debug(String.format("Student with id %d was found to the database", teacher.getId()));
 
             return teacher;
-        } catch (SQLException throwable) {
-            // TODO: I think we need change this try / catch to a throw AlreadyExists !
-            LOGGER.warn(String.format("Student with id '%d' could not be found", teacherId), throwable);
-            throw new SQLException(String.format("Student with id '%d' could not be found", teacherId));
+        } catch (SQLException | SubjectNotFoundException | LectureNotFoundException e) {
+            // TODO: I think we need change this try / catch to sth else
+            LOGGER.warn(String.format("Teacher with id '%d' could not be found", teacherId), e);
+            throw new SQLException(String.format("Teacher with id '%d' could not be found", teacherId), e);
         }
     }
 }

@@ -229,33 +229,29 @@ public class Util {
 
 
             // Lectures and Teachers
-            Teacher teacher = new Teacher("brunoD", "12345", "Bruno Dembogurski", "000.000.000-10", "Casa segura", "01/01/1995",  new ArrayList<>(), "curso");
+            Teacher teacher = teacherRepository.insert(new Teacher("brunoD", "12345", "Bruno Dembogurski", "000.000.000-10", "Casa segura", "01/01/1995",  new ArrayList<>(), "curso"));
             Lecture lecture = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM01", subject5, null,  new ArrayList<>());
             lecture.setTeacher(teacher);
             teacher.addLecture(lecture);
             lectureRepository.insert(lecture);
-            teacherRepository.insert(teacher);
 
-            Teacher teacher1 = new Teacher("camila", "12345", "Camila Lacerda", "000.000.000-11", "Casa segura", "01/01/1995",  new ArrayList<>(), "curso");
+            Teacher teacher1 = teacherRepository.insert(new Teacher("camila", "12345", "Camila Lacerda", "000.000.000-11", "Casa segura", "01/01/1995", new ArrayList<>(), "curso"));
             Lecture lecture1 = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM02", subject, null,  new ArrayList<>());
             lecture1.setTeacher(teacher1);
             teacher1.addLecture(lecture1);
             lectureRepository.insert(lecture1);
-            teacherRepository.insert(teacher1);
 
-            Teacher teacher2 = new Teacher("ligia", "12345", "Ligia Passos", "000.000.000-12", "Casa segura", "01/01/1995",  new ArrayList<>(), "curso");
+            Teacher teacher2 = teacherRepository.insert(new Teacher("ligia", "12345", "Ligia Passos", "000.000.000-12", "Casa segura", "01/01/1995",  new ArrayList<>(), "curso"));
             Lecture lecture2 = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM03", subject6, null,  new ArrayList<>());
             lecture2.setTeacher(teacher2);
             teacher2.addLecture(lecture2);
             lectureRepository.insert(lecture2);
-            teacherRepository.insert(teacher2);
 
-            Teacher teacher3 = new Teacher("braida", "12345", "Filipe Braida", "000.000.000-13", "Casa segura", "01/01/1995",  new ArrayList<>(), "curso");
+            Teacher teacher3 = teacherRepository.insert(new Teacher("braida", "12345", "Filipe Braida", "000.000.000-13", "Casa segura", "01/01/1995", new ArrayList<>(), "curso"));
             Lecture lecture3 = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM04", subject7, null,  new ArrayList<>());
             lecture3.setTeacher(teacher3);
             teacher3.addLecture(lecture3);
             lectureRepository.insert(lecture3);
-            teacherRepository.insert(teacher3);
 
             // Students
             studentRepository.insert(new Student("yan", "1234", "Yan Charlos", "000.000.000-01", "Minha Casa", "27/05/2001", "That ass", "2019-1",  new ArrayList<>(),  new ArrayList<>()));

@@ -1,13 +1,10 @@
 package br.ufrrj.samu.repositories;
 
-import java.io.*;
 import java.sql.*;
 import java.util.*;
 
 import br.ufrrj.samu.entities.*;
 import br.ufrrj.samu.exceptions.*;
-import br.ufrrj.samu.utils.Util;
-import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -214,8 +211,10 @@ public class UsersRepository {
             //TODO GAMBIARRA
             user = new Student(id, username, password, name, cpf, address, birthday, null, null, null, null);
             LOGGER.debug(String.format("Student with id '%d' and username '%s' was found with success", user.getId(), user.getUsername()));
+        } else if (type.equals("TEACHER")) {
+            user = new Teacher(id, username, password, name, cpf, address, birthday, null, null);
         }
-        // TODO: We need to handle with other users types
+        // TODO: We WONT handle with other users types
         else {
             user = new User(id, username, password, name, cpf, address, birthday);
         }

@@ -92,11 +92,7 @@ public class SubjectRepository {
 
             Subject subject = new Subject(name, description, code, Arrays.stream(prerequisites.split(",")).toList());
             LOGGER.debug(String.format("Subject with code '%s' and name '%s' was found with success", subject.getCode(), subject.getName()));
-
-            findStatement.close();
-
             return Optional.of(subject);
-
         } catch (SQLException throwable) {
             LOGGER.warn(String.format("Subject with code '%s' could not be found", code), throwable);
             return Optional.empty();

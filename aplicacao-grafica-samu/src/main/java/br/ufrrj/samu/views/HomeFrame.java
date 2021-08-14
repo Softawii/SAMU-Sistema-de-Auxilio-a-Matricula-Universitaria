@@ -2,8 +2,8 @@ package br.ufrrj.samu.views;
 
 import br.ufrrj.samu.SAMU;
 import br.ufrrj.samu.controllers.HomeController;
+import br.ufrrj.samu.entities.Lecture;
 import br.ufrrj.samu.entities.Student;
-import br.ufrrj.samu.entities.Subject;
 import br.ufrrj.samu.utils.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,11 +34,11 @@ public class HomeFrame extends JFrame {
 
     private Student student;
 
-    public HomeFrame(String username, SAMU samu) throws HeadlessException {
+    public HomeFrame(long userId, SAMU samu) throws HeadlessException {
         super();
         frameInit();
         homeController = samu.getHomeController();
-        student = homeController.getStudent(username);
+        this.student = homeController.getStudent(userId);
 
         mainJPanel = new JPanel();
         mainJPanel.setLayout(new BorderLayout());
@@ -156,12 +156,12 @@ public class HomeFrame extends JFrame {
 
     public JScrollPane coursesTable() {
         String[] columnNames = {"Nome da Disciplina", "Professor", "Hor\u00E1rio"};
-        List<Subject> studentSubjects = homeController.getStudentSubjects(student.getUsername());
+        List<Lecture> studentSubjects = student.getEnrollLectures();
         Object[][] data = new Object[studentSubjects.size()][columnNames.length];
         for (int i = 0; i < studentSubjects.size(); i++) {
-            Subject subject = studentSubjects.get(i);
-            data[i][0] = subject.getName();
-            data[i][1] = subject.getProfessor();
+            Lecture lecture = studentSubjects.get(i);
+            data[i][0] = lecture.getSubject().getName();
+            data[i][1] = lecture.getTeacher();//PEGAR O PROF PELO ID
             data[i][2] = "--";
         }
 

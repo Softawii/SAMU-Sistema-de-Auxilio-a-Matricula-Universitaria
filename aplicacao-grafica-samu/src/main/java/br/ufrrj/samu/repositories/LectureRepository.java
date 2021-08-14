@@ -1,19 +1,15 @@
 package br.ufrrj.samu.repositories;
 
 import br.ufrrj.samu.entities.Lecture;
-import br.ufrrj.samu.entities.Student;
 import br.ufrrj.samu.entities.Subject;
 import br.ufrrj.samu.entities.Teacher;
 import br.ufrrj.samu.exceptions.LectureNotFoundException;
 import br.ufrrj.samu.exceptions.SubjectNotFoundException;
 import br.ufrrj.samu.exceptions.TeacherNotFoundException;
 import br.ufrrj.samu.exceptions.WrongRequestedUserTypeException;
-import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -109,7 +105,8 @@ public class LectureRepository {
             long teacherId = findResultSet.getLong(6);
 
             // Students
-            List<String> students = STUDENT_REPOSITORY.getFromStringArray(findResultSet.getString(7).split(","));
+            String studentIds = findResultSet.getString(7);
+            List<String> students = STUDENT_REPOSITORY.getFromStringArray(studentIds.split(","));
 
             // Subject relacionada
             Optional<Subject> optSub = SUBJECT_REPOSITORY.findSubjectByCode(subjectCode);
@@ -131,6 +128,50 @@ public class LectureRepository {
         }
     }
 
+    //todo não sei se tá 100%
+    public List<Lecture> findByTeacher(long teacherId) throws SubjectNotFoundException, LectureNotFoundException, TeacherNotFoundException, WrongRequestedUserTypeException {
+        StudentRepository STUDENT_REPOSITORY = StudentRepository.getInstance();
+        TeacherRepository TEACHER_REPOSITORY = TeacherRepository.getInstance();
+        SubjectRepository SUBJECT_REPOSITORY = SubjectRepository.getInstance();
+        try (PreparedStatement findStatement = connection.prepareStatement("SELECT * FROM Lectures WHERE teacher=?1")) {
+            findStatement.setLong(1, teacherId);
+            ResultSet findResultSet = findStatement.executeQuery();
+
+            List<Lecture> lectureList = new ArrayList<>();
+            while (findResultSet.next()) {
+                // Strings importantes
+                String code = findResultSet.getString(1);
+                String schedule = findResultSet.getString(2);
+                String classRoom = findResultSet.getString(3);
+                String classPlan = findResultSet.getString(4);
+                String subjectCode = findResultSet.getString(5);
+
+                // Students
+                String studentIds = findResultSet.getString(7);
+                List<String> students = STUDENT_REPOSITORY.getFromStringArray(studentIds.split(","));
+
+                // Subject relacionada
+                Optional<Subject> optSub = SUBJECT_REPOSITORY.findSubjectByCode(subjectCode);
+
+                if(optSub.isEmpty()) {
+                    throw new SubjectNotFoundException("Subject '" + subjectCode + "' not found.");
+                }
+
+                Subject subject = optSub.get();
+                Teacher teacher = TEACHER_REPOSITORY.findById(teacherId);
+
+                Lecture lecture = new Lecture(classPlan, classRoom, schedule, code, subject, teacher, students);
+                lectureList.add(lecture);
+                LOGGER.debug(String.format("Lecture with code '%s' and name '%s' was found with success", lecture.getCode(), lecture.getSubject().getName()));
+            }
+            return lectureList;
+        } catch (SQLException throwable) {
+            LOGGER.warn(String.format("Lecture with code '%s' could not be found", teacherId), throwable);
+            throw new LectureNotFoundException("Lecture with code '" + teacherId + "' could not be found", throwable);
+        }
+    }
+
+    //desgraça ta no lectureArray
     public List<Lecture> getFromStringArray(String[] lectureArray) {
         ArrayList<Lecture> lectures = new ArrayList<>();
         for(String lecture : lectureArray) {
