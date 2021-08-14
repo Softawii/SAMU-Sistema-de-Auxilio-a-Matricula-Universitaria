@@ -52,7 +52,7 @@ public class LectureRepository {
             insertStatement.setString(3, lecture.getClassRoom());
             insertStatement.setString(4, lecture.getClassPlan());
             insertStatement.setString(5, lecture.getSubject().getCode());
-            insertStatement.setLong(6, lecture.getTeacher().getId());
+            insertStatement.setLong(6, lecture.getTeacher());
             insertStatement.setString(7, lecture.getStudentsIds());
 
             // Essa linha de baixo é um bug lixo do krl
@@ -116,9 +116,8 @@ public class LectureRepository {
             }
 
             Subject subject = optSub.get();
-            Teacher teacher = TEACHER_REPOSITORY.findById(teacherId);
 
-            Lecture lecture = new Lecture(classPlan, classRoom, schedule, code, subject, teacher, students);
+            Lecture lecture = new Lecture(classPlan, classRoom, schedule, code, subject, teacherId, students);
 
             LOGGER.debug(String.format("Lecture with code '%s' and name '%s' was found with success", lecture.getCode(), lecture.getSubject().getName()));
             return lecture;
@@ -158,9 +157,8 @@ public class LectureRepository {
                 }
 
                 Subject subject = optSub.get();
-                Teacher teacher = TEACHER_REPOSITORY.findById(teacherId);
 
-                Lecture lecture = new Lecture(classPlan, classRoom, schedule, code, subject, teacher, students);
+                Lecture lecture = new Lecture(classPlan, classRoom, schedule, code, subject, teacherId, students);
                 lectureList.add(lecture);
                 LOGGER.debug(String.format("Lecture with code '%s' and name '%s' was found with success", lecture.getCode(), lecture.getSubject().getName()));
             }

@@ -226,30 +226,28 @@ public class Util {
             Subject subject4 = new Subject("Algebra Linear Computacional", "Algoritmos para operacoes basicas entre vetores e matrizes.", "DTL04", List.of("DTL02"));
             subjectRepository.insert(subject4);
 
-
-
             // Lectures and Teachers
             Teacher teacher = teacherRepository.insert(new Teacher("brunoD", "12345", "Bruno Dembogurski", "000.000.000-10", "Casa segura", "01/01/1995",  new ArrayList<>(), "curso"));
             Lecture lecture = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM01", subject5, null,  new ArrayList<>());
-            lecture.setTeacher(teacher);
+            lecture.setTeacher(teacher.getId());
             teacher.addLecture(lecture);
             lectureRepository.insert(lecture);
 
             Teacher teacher1 = teacherRepository.insert(new Teacher("camila", "12345", "Camila Lacerda", "000.000.000-11", "Casa segura", "01/01/1995", new ArrayList<>(), "curso"));
             Lecture lecture1 = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM02", subject, null,  new ArrayList<>());
-            lecture1.setTeacher(teacher1);
+            lecture1.setTeacher(teacher1.getId());
             teacher1.addLecture(lecture1);
             lectureRepository.insert(lecture1);
 
             Teacher teacher2 = teacherRepository.insert(new Teacher("ligia", "12345", "Ligia Passos", "000.000.000-12", "Casa segura", "01/01/1995",  new ArrayList<>(), "curso"));
             Lecture lecture2 = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM03", subject6, null,  new ArrayList<>());
-            lecture2.setTeacher(teacher2);
+            lecture2.setTeacher(teacher2.getId());
             teacher2.addLecture(lecture2);
             lectureRepository.insert(lecture2);
 
             Teacher teacher3 = teacherRepository.insert(new Teacher("braida", "12345", "Filipe Braida", "000.000.000-13", "Casa segura", "01/01/1995", new ArrayList<>(), "curso"));
             Lecture lecture3 = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM04", subject7, null,  new ArrayList<>());
-            lecture3.setTeacher(teacher3);
+            lecture3.setTeacher(teacher3.getId());
             teacher3.addLecture(lecture3);
             lectureRepository.insert(lecture3);
 
