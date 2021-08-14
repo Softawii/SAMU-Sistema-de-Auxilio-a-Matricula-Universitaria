@@ -2,8 +2,10 @@ package br.ufrrj.samu.views;
 
 import br.ufrrj.samu.SAMU;
 import br.ufrrj.samu.controllers.HomeController;
+import br.ufrrj.samu.entities.Lecture;
 import br.ufrrj.samu.entities.Student;
-import br.ufrrj.samu.entities.Subject;
+import br.ufrrj.samu.entities.User;
+import br.ufrrj.samu.repositories.UsersRepository;
 import br.ufrrj.samu.utils.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,6 +16,7 @@ import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
+import java.util.Optional;
 
 import static br.ufrrj.samu.utils.Util.centreWindow;
 import static java.util.Objects.requireNonNull;
@@ -34,11 +37,11 @@ public class HomeFrame extends JFrame {
 
     private Student student;
 
-    public HomeFrame(String username, SAMU samu) throws HeadlessException {
+    public HomeFrame(long userId, SAMU samu) throws HeadlessException {
         super();
         frameInit();
         homeController = samu.getHomeController();
-        student = homeController.getStudent(username);
+        this.student = homeController.getStudent(userId);
 
         mainJPanel = new JPanel();
         mainJPanel.setLayout(new BorderLayout());
@@ -155,14 +158,28 @@ public class HomeFrame extends JFrame {
 
 
     public JScrollPane coursesTable() {
+
+        LOGGER.debug("Student Info:" + student);
+
         String[] columnNames = {"Nome da Disciplina", "Professor", "Hor\u00E1rio"};
-        List<Subject> studentSubjects = homeController.getStudentSubjects(student.getUsername());
+
+        // TODO: TEMPORARY!!!!!!!!!!!!! We need to get enroll lectures instead of requested or maybe both
+        //List<Lecture> studentSubjects = student.getEnrollLectures();
+        List<Lecture> studentSubjects = student.getRequestedLectures();
+
+        UsersRepository usersRepository = UsersRepository.getInstance();
+
         Object[][] data = new Object[studentSubjects.size()][columnNames.length];
         for (int i = 0; i < studentSubjects.size(); i++) {
-            Subject subject = studentSubjects.get(i);
-            data[i][0] = subject.getName();
-            data[i][1] = subject.getProfessor();
-            data[i][2] = subject.getSchedule();
+            Lecture lecture = studentSubjects.get(i);
+            data[i][0] = lecture.getSubject().getName();
+
+            Optional<User> teacher = usersRepository.findById(lecture.getTeacher());
+
+            data[i][1] = teacher.isPresent() ? teacher.get().getName() : "Unknown 404";//PEGAR O PROF PELO ID
+            data[i][2] = "--";
+
+            LOGGER.debug("[Table] Inserting in line %d: %s %ld %s", i, data[i][0], data[i][1], data[i][2]);
         }
 
         coursesTable = new JTable(data, columnNames) {
@@ -259,10 +276,6 @@ public class HomeFrame extends JFrame {
         });
         centreWindow(this);
 //        this.setResizable(false);
-    }
-
-    public static void main(String[] args) {
-//        new HomeFrame();
     }
 
 }

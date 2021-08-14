@@ -3,8 +3,12 @@ package br.ufrrj.samu.views;
 import br.ufrrj.samu.RoundedCornerBorder;
 import br.ufrrj.samu.SAMU;
 import br.ufrrj.samu.controllers.LoginController;
-import br.ufrrj.samu.controllers.LoginController.LoginStatus;
-import br.ufrrj.samu.services.StudentService;
+import br.ufrrj.samu.entities.Student;
+import br.ufrrj.samu.entities.Teacher;
+import br.ufrrj.samu.entities.User;
+import br.ufrrj.samu.exceptions.PasswordNotMatchesException;
+import br.ufrrj.samu.exceptions.UnknownUserException;
+import br.ufrrj.samu.repositories.StudentRepository;
 import br.ufrrj.samu.utils.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -201,18 +205,25 @@ public class LoginFrame extends JFrame {
             LOGGER.debug("Click sign in button");
             String username = usernameTextField.getText();
             String password = new String(passwordField.getPassword());
-            LoginStatus loginStatus = loginController.checkPassword(username, password);
-            System.out.println("loginStatus: " + loginStatus.getMessage());
-            if (loginStatus != LoginStatus.SUCCESS) {
+            try {
+                User user = loginController.signIn(username, password);
+                if (user instanceof Student) {
+                    this.dispose();
+                    new HomeFrame(user.getId(), samu);
+                } else {
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Tipo de acesso de usuário ainda não implementado",
+                            "Falha no login",
+                            JOptionPane.WARNING_MESSAGE);
+                }
+            } catch (UnknownUserException | PasswordNotMatchesException ex) {
+                ex.printStackTrace();
                 JOptionPane.showMessageDialog(
                         this,
                         "Usuário ou senha inválidos",
                         "Falha no login",
                         JOptionPane.ERROR_MESSAGE);
-            } else {
-                this.dispose();
-                StudentService studentService = loginController.getStudentService();
-                new HomeFrame(username, samu);
             }
         });
 

@@ -1,11 +1,9 @@
 package br.ufrrj.samu.entities;
 
-import br.ufrrj.samu.services.SubjectService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class Subject {
@@ -15,24 +13,20 @@ public class Subject {
     private String name;
     private String description;
     private String code;
-    private String schedule;
-
     private ArrayList<String> prerequisites;
 
 
-    public Subject(String name, String description, String code, String schedule) {
+    public Subject(String name, String description, String code) {
         this.name = name;
         this.description = description;
         this.code = code;
-        this.schedule = schedule;
         this.prerequisites = new ArrayList<>();
     }
 
-    public Subject(String name, String description, String code, List<String> prerequisite, String schedule) {
+    public Subject(String name, String description, String code, List<String> prerequisite) {
         this.name = name;
         this.description = description;
         this.code = code;
-        this.schedule = schedule;
 
         // IDK if is better to create than copy the old arraylist
         this.prerequisites = new ArrayList<>(prerequisite);
@@ -76,10 +70,6 @@ public class Subject {
 
     public String getProfessor() {
         return "Filipe Braida do Carmo";
-    }
-
-    public String getSchedule() {
-        return schedule;
     }
 
     //TODO: Maybe in the future we need to get prereqs informations (like name) maybe a method to do this would be a good thing

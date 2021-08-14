@@ -1,79 +1,58 @@
 package br.ufrrj.samu.entities;
 
-import br.ufrrj.samu.services.SubjectService;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Student extends User {
 
-    private String name;
-    private String address;
     private String course;
     private String semester;
 
-    private ArrayList<Subject> subjects;
+    private List<Lecture> enrollLectures;
+    private List<Lecture> requestedLectures;
 
     public Student() {
         super();
     }
 
-    public Student(String username, String password, String name, String address, List<Subject> subjects, String course, String semester) {
-        super(username, password);
-        this.name = name;
-        this.address = address;
+    public Student(long id, String course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures) {
+        this(course, semester, enrollLectures, requestedLectures);
+        super.setId(id);
+    }
+
+    public Student(String course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures) {
+        super();
+        this.course = course;
+        this.semester = semester;
+        this.enrollLectures = enrollLectures;
+        this.requestedLectures = requestedLectures;
+    }
+
+    public Student(long id, String username, String password, String name, String cpf, String address, String birthday,
+                   String course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures) {
+        super(id, username, password, name, cpf, address, birthday);
+
         this.course = course;
         this.semester = semester;
 
         try {
-            this.subjects = new ArrayList<>(subjects);
-        } catch(NullPointerException e) {
-            this.subjects = new ArrayList<>();
+            this.enrollLectures = new ArrayList<>(enrollLectures);
+        } catch (Exception e) {
+            this.enrollLectures = new ArrayList<>();
         }
-    }
-
-    public Student(long id, String username, String password, String name, String address, List<Subject> subjects, String course, String semester) {
-        super(id, username, password);
-        this.name = name;
-        this.address = address;
-        this.course = course;
-        this.semester = semester;
 
         try {
-            this.subjects = new ArrayList<>(subjects);
-        } catch(NullPointerException e) {
-            this.subjects = new ArrayList<>();
+            this.requestedLectures = new ArrayList<>(requestedLectures);
+        } catch (Exception e) {
+            this.requestedLectures = new ArrayList<>();
         }
     }
 
-    public String getName() {
-        return name;
+    public Student(String username, String password, String name, String cpf, String address, String birthday,
+                   String course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures) {
+        this(0, username, password, name, cpf, address, birthday, course, semester, enrollLectures, requestedLectures);
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public ArrayList<Subject> getSubjects() {
-        return subjects;
-    }
-
-    public void addSubject(Subject subject) {
-        this.subjects.add(subject);
-    }
-
-    public void removeSubject(Subject subject) {
-        this.subjects.remove(subject);
-    }
-
     public String getCourse() {
         return course;
     }
@@ -82,18 +61,51 @@ public class Student extends User {
         return semester;
     }
 
-    public String getSubjectsCodes() {
-        // Maybe we can get a better name to this
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for(Subject subject : this.subjects) {
-            stringBuilder.append(subject.getCode() + ",");
-        }
-
-        if(!stringBuilder.isEmpty()) {
-            stringBuilder.delete(stringBuilder.length() - 1, stringBuilder.length());
-        }
-
-        return stringBuilder.toString();
+    public List<Lecture> getEnrollLectures() {
+        return enrollLectures;
     }
+
+    public List<Lecture> getRequestedLectures() {
+        return requestedLectures;
+    }
+
+    public Optional<String> getEnrollLecturesIds() {
+        return enrollLectures.stream().map(Lecture::getCode).reduce((s1, s2) -> s1 + "," + s2);
+    }
+
+    public Optional<String> getRequestedLecturesIds() {
+        return requestedLectures.stream().map(Lecture::getCode).reduce((s1, s2) -> s1 + "," + s2);
+    }
+
+    public void addEnrollLectures(Lecture lecture) { this.enrollLectures.add(lecture); }
+
+    public void addRequestedLectures(Lecture lecture) { this.requestedLectures.add(lecture); }
+
+    public void setCourse(String course) {
+        this.course = course;
+    }
+
+    public void setSemester(String semester) {
+        this.semester = semester;
+    }
+
+    public void setEnrollLectures(List<Lecture> enrollLectures) {
+        this.enrollLectures = enrollLectures;
+    }
+
+    public void setRequestedLectures(List<Lecture> requestedLectures) {
+        this.requestedLectures = requestedLectures;
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "user='" + super.toString() + '\'' +
+                ", course='" + course + '\'' +
+                ", semester='" + semester + '\'' +
+                ", enrollLectures=" + enrollLectures +
+                ", requestedLectures=" + requestedLectures +
+                '}';
+    }
+
 }

@@ -1,8 +1,9 @@
 package br.ufrrj.samu.controllers;
 
-import br.ufrrj.samu.entities.Student;
 import br.ufrrj.samu.entities.User;
-import br.ufrrj.samu.services.StudentService;
+import br.ufrrj.samu.exceptions.PasswordNotMatchesException;
+import br.ufrrj.samu.exceptions.UnknownUserException;
+import br.ufrrj.samu.repositories.UsersRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,51 +13,19 @@ public class LoginController {
 
     private static final Logger LOGGER = LogManager.getLogger(LoginController.class);
 
-    private StudentService studentService;
+    public User signIn(String username, String password) throws UnknownUserException, PasswordNotMatchesException {
+        UsersRepository usersRepository = UsersRepository.getInstance();
+        Optional<User> optionalUser = usersRepository.findByUsername(username);
 
-    public LoginController(StudentService studentService) {
-        this.studentService = studentService;
-    }
-
-    public StudentService getStudentService() {
-        return studentService;
-    }
-
-    /**
-     * Verifica se usuário e senha inseridos são válidos
-     * @param username
-     * @param password
-     * @return LoginStatus
-     */
-    public LoginStatus checkPassword(String username, String password) {
-        Optional<Student> userDB = studentService.findStudentByUsername(username);
-
-        if(userDB.isEmpty()) {
-            return LoginStatus.UNKNOWN_USER;
+        if(optionalUser.isEmpty()) {
+            throw new UnknownUserException();
         } else {
-            User user = userDB.get();
+            User user = optionalUser.get();
 
-//            if(studentService.getEncoder().matches(password, user.getPassword())) { // criptografado
-            if(password.equals(user.getPassword())) {
-                return LoginStatus.SUCCESS;
+            if(usersRepository.getEncoder().matches(password, user.getPassword())) { // criptografado
+                return user;
             }
         }
-        return LoginStatus.WRONG_PASSWORD;
-    }
-
-    public enum LoginStatus {
-        WRONG_PASSWORD("Senha inválida"),
-        UNKNOWN_USER("Usuário desconhecido"),
-        SUCCESS("Sucesso");
-
-        private String message;
-
-        LoginStatus(String message) {
-            this.message = message;
-        }
-
-        public String getMessage() {
-            return message;
-        }
+        throw new PasswordNotMatchesException();
     }
 }
