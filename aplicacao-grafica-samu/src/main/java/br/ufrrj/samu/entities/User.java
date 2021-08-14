@@ -4,7 +4,6 @@ import java.util.Objects;
 
 public class User {
 
-    private long id;
     private String username;
     private String password;
     private String name;
@@ -16,35 +15,17 @@ public class User {
     }
 
     public User(String username, String password) {
-        this(0, username, password);
-    }
-
-    public User(long id, String username, String password) {
-        this.id = id;
         this.username = username;
         this.password = password;
     }
 
     public User(String username, String password, String name, String cpf, String address, String birthday) {
-        this(0, username, password, name, cpf, address, birthday);
-    }
-
-    public User(long id, String username, String password, String name, String cpf, String address, String birthday) {
-        this.id = id;
         this.username = username;
         this.password = password;
         this.name = name;
         this.cpf = cpf;
         this.address = address;
         this.birthday = birthday;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -111,13 +92,30 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
+                "username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
                 ", cpf='" + cpf + '\'' +
                 ", address='" + address + '\'' +
                 ", birthday='" + birthday + '\'' +
                 '}';
+    }
+
+    enum Type {
+        STUDENT("Student"),
+        TEACHER("Teacher"),
+        COORDINATOR("Coordinator"),
+        ADMINISTRATOR("Administrator"),
+        OTHER("Other");
+
+        private String name;
+
+        Type(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 }

@@ -24,12 +24,6 @@ public class Teacher extends User {
         this.course = course;
     }
 
-    public Teacher(long id, String username, String password, String name, String cpf, String address, String birthday, List<Lecture> lectures, String course) {
-        super(id, username, password, name, cpf, address, birthday);
-        this.lectures = lectures;
-        this.course = course;
-    }
-
     public List<Lecture> getLectures() {
         return lectures;
     }
@@ -57,8 +51,7 @@ public class Teacher extends User {
     @Override
     public String toString() {
         return "Teacher{" +
-                "user=" + super.toString() +
-                ", lectures='" + lectures + '\'' +
+                ", lectures='" + lectures.stream().map(Lecture::getCode) + '\'' +
                 ", course='" + course + '\'' +
                 '}';
     }

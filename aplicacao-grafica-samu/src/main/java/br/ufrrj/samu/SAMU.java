@@ -1,10 +1,6 @@
 package br.ufrrj.samu;
 
-import br.ufrrj.samu.controllers.HomeController;
-import br.ufrrj.samu.controllers.LoginController;
-import br.ufrrj.samu.repositories.StudentRepository;
-import br.ufrrj.samu.repositories.SubjectRepository;
-import br.ufrrj.samu.repositories.UsersRepository;
+import br.ufrrj.samu.controllers.SystemController;
 import br.ufrrj.samu.utils.Util;
 import br.ufrrj.samu.views.LoginFrame;
 import com.formdev.flatlaf.FlatLaf;
@@ -29,12 +25,7 @@ public class SAMU {
 
     private final LoginFrame loginFrame;
 
-    private LoginController loginController;
-    private HomeController homeController;
-
-    private UsersRepository usersRepository;
-    private StudentRepository studentRepository;
-    private SubjectRepository subjectRepository;
+    private SystemController systemController;
 
     static
     {
@@ -59,32 +50,13 @@ public class SAMU {
     }
 
     private SAMU() {
-        subjectRepository = SubjectRepository.getInstance();
-        usersRepository = UsersRepository.getInstance();
 
-        studentRepository = StudentRepository.getInstance();
-        studentRepository.setSubjectService(subjectRepository);
-
-        loginController = new LoginController();
-        homeController = new HomeController();
-
-        loginFrame = new LoginFrame(loginController, this);
-    }
-
-    public StudentRepository getStudentService() {
-        return studentRepository;
-    }
-
-    public SubjectRepository getSubjectService() {
-        return subjectRepository;
+        systemController = new SystemController();
+        loginFrame = new LoginFrame(systemController, this);
     }
 
     public static void startSamu() {
         LOGGER.info("Starting SAMU GUI");
         SwingUtilities.invokeLater(SAMU::new);
-    }
-
-    public HomeController getHomeController() {
-        return this.homeController;
     }
 }

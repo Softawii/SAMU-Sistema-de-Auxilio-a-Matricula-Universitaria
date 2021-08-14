@@ -52,6 +52,9 @@ public class Subject {
         this.description = description;
     }
 
+    public ArrayList<String> getPrerequisites() {
+        return prerequisites;
+    }
 
     public String getPrerequisitesList() {
 

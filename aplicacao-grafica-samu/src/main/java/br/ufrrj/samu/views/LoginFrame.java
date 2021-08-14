@@ -2,13 +2,11 @@ package br.ufrrj.samu.views;
 
 import br.ufrrj.samu.RoundedCornerBorder;
 import br.ufrrj.samu.SAMU;
-import br.ufrrj.samu.controllers.LoginController;
+import br.ufrrj.samu.controllers.SystemController;
 import br.ufrrj.samu.entities.Student;
-import br.ufrrj.samu.entities.Teacher;
 import br.ufrrj.samu.entities.User;
 import br.ufrrj.samu.exceptions.PasswordNotMatchesException;
 import br.ufrrj.samu.exceptions.UnknownUserException;
-import br.ufrrj.samu.repositories.StudentRepository;
 import br.ufrrj.samu.utils.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,13 +35,13 @@ public class LoginFrame extends JFrame {
     JButton signupJButton;
     JButton signinJButton;
 
-    private LoginController loginController;
+    private SystemController loginController;
 
     private String frameTitle = "SAMU - Sistema de Aux\u00EDlio a Matr\u00EDcula Universit\u00E1ria";
     private int width = 450+10;
     private int height = 500+30;
 
-    public LoginFrame(LoginController loginController, SAMU samu) {
+    public LoginFrame(SystemController loginController, SAMU samu) {
         super();
         frameInit();
         this.loginController = loginController;
@@ -209,7 +207,7 @@ public class LoginFrame extends JFrame {
                 User user = loginController.signIn(username, password);
                 if (user instanceof Student) {
                     this.dispose();
-                    new HomeFrame(user.getId(), samu);
+                    new HomeFrame(((Student) user), samu);
                 } else {
                     JOptionPane.showMessageDialog(
                             this,

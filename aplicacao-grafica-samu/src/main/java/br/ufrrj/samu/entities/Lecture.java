@@ -7,15 +7,14 @@ public class Lecture {
     private String classRoom;
     private String schedule;
 
-
     private final String code;
     private final Subject subject;
 
-    private Long teacher;
+    private Teacher teacher;
 
     private List<String> students;
 
-    public Lecture(String classPlan, String classRoom, String schedule, String code, Subject subject, Long teacher, List<String> students) {
+    public Lecture(String classPlan, String classRoom, String schedule, String code, Subject subject, Teacher teacher, List<String> students) {
         this.classPlan = classPlan;
         this.classRoom = classRoom;
         this.schedule = schedule;
@@ -64,7 +63,7 @@ public class Lecture {
         this.schedule = schedule;
     }
 
-    public Long getTeacher() {
+    public Teacher getTeacher() {
         return teacher;
     }
 
@@ -78,7 +77,7 @@ public class Lecture {
         return students;
     }
 
-    public void setTeacher(Long teacher) {
+    public void setTeacher(Teacher teacher) {
         this.teacher = teacher;
     }
 

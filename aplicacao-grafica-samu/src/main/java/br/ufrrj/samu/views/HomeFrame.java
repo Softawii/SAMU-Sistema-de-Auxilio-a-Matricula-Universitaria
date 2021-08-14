@@ -1,10 +1,8 @@
 package br.ufrrj.samu.views;
 
 import br.ufrrj.samu.SAMU;
-import br.ufrrj.samu.controllers.HomeController;
 import br.ufrrj.samu.entities.Lecture;
 import br.ufrrj.samu.entities.Student;
-import br.ufrrj.samu.entities.User;
 import br.ufrrj.samu.utils.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,7 +14,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -35,20 +32,17 @@ public class HomeFrame extends JFrame {
 
     JTable lecturesTable;
 
-    private HomeController homeController;
-
     private Student student;
     private JScrollPane scrollPane;
     private JButton logoutButton;
     private JButton avaliarDisciplinasButton;
     private JButton realizarMatriculaButton;
 
-    public HomeFrame(long userId, SAMU samu) throws HeadlessException {
+    public HomeFrame(Student student, SAMU samu) throws HeadlessException {
         super();
         frameInit();
         sim();
-        homeController = samu.getHomeController();
-        this.student = homeController.getStudent(userId);
+        this.student = student;
 
         mainJPanel = new JPanel();
         mainJPanel.setLayout(new BorderLayout());
@@ -75,7 +69,7 @@ public class HomeFrame extends JFrame {
         userImage.setIcon(new ImageIcon(requireNonNull(this.getClass().getClassLoader().getResource("images/userImage.png"))));
 
         JLabel username = new JLabel("Nome: " + student.getName());
-        JLabel enrollment = new JLabel("Matr\u00EDcula: " + String.format("%05d",student.getId()));
+        JLabel enrollment = new JLabel("Matr\u00EDcula: " + String.format("%s",student.getCpf()));
         JLabel course = new JLabel("Curso: " + student.getCourse());
         JLabel semester = new JLabel("Entrou: " + student.getSemester());
 
@@ -180,17 +174,14 @@ public class HomeFrame extends JFrame {
 
         String[] columnNames = {"Nome da Disciplina", "Professor", "Hor\u00E1rio"};
 
-        // TODO: TEMPORARY!!!!!!!!!!!!! We need to get enroll lectures instead of requested or maybe both
-        //List<Lecture> studentSubjects = student.getEnrollLectures();
-        List<Lecture> studentSubjects = student.getRequestedLectures();
+        List<Lecture> enrollLectures = student.getEnrollLectures();
+//        List<Lecture> studentSubjects = student.getRequestedLectures();
 
-        Object[][] data = new Object[studentSubjects.size()][columnNames.length];
-        for (int i = 0; i < studentSubjects.size(); i++) {
-            Lecture lecture = studentSubjects.get(i);
+        Object[][] data = new Object[enrollLectures.size()][columnNames.length];
+        for (int i = 0; i < enrollLectures.size(); i++) {
+            Lecture lecture = enrollLectures.get(i);
             data[i][0] = lecture.getSubject().getName();
-            Optional<User> teacher = homeController.getTeacher(lecture.getTeacher());
-
-            data[i][1] = teacher.isPresent() ? teacher.get().getName() : "Unknown 404";//PEGAR O PROF PELO ID
+            data[i][1] = lecture.getTeacher().getName();
             data[i][2] = lecture.getSchedule();
 
             LOGGER.debug(String.format("[Table] Inserting in line %d: %s %s %s", i, data[i][0], data[i][1], data[i][2]));
