@@ -1,7 +1,8 @@
 CREATE TABLE IF NOT EXISTS Teachers
 (
+    id       INTEGER UNIQUE,
     lectures VARCHAR,
-    course VARCHAR
+    course   VARCHAR
 );
 
 CREATE TABLE IF NOT EXISTS Lectures
