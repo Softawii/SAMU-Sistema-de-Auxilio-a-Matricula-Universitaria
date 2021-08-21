@@ -30,13 +30,13 @@ public class HomeFrame extends JFrame {
 
     JPanel mainJPanel;
 
-    JTable lecturesTable;
+    JTable requestedTable;
 
     private Student student;
-    private JScrollPane scrollPane;
     private JButton logoutButton;
     private JButton avaliarDisciplinasButton;
     private JButton realizarMatriculaButton;
+    private JTabbedPane tabbedPane;
 
     public HomeFrame(Student student, SAMU samu) throws HeadlessException {
         super();
@@ -70,7 +70,7 @@ public class HomeFrame extends JFrame {
 
         JLabel username = new JLabel("Nome: " + student.getName());
         JLabel enrollment = new JLabel("Matr\u00EDcula: " + String.format("%s",student.getCpf()));
-        JLabel course = new JLabel("Curso: " + student.getCourse());
+        JLabel course = new JLabel("Curso: " + student.getCourse().getName());
         JLabel semester = new JLabel("Entrou: " + student.getSemester());
 
         GridBagConstraints gridConstraints = new GridBagConstraints();
@@ -142,9 +142,16 @@ public class HomeFrame extends JFrame {
         tableJPanel.setLayout(new BorderLayout());
 
         GridBagConstraints gridConstraints = new GridBagConstraints();
-        initLecturesTable();
+        JScrollPane scrollPaneEnrollLecture = initEnrollLecturesTable();
+        JScrollPane scrollPaneRequestedLectures = initRequestedLectures();
+        JScrollPane scrollPaneConcludedLectures = initConcludedSubjects();
 
-        tableJPanel.add(scrollPane, BorderLayout.CENTER);
+        tabbedPane = new JTabbedPane();
+        tabbedPane.addTab("Turmas Matriculadas", scrollPaneEnrollLecture);
+        tabbedPane.addTab("Turmas Pr\u00E9-Matriculadas", scrollPaneRequestedLectures);
+        tabbedPane.addTab("Disciplinas Conclu\u00EDdas", scrollPaneConcludedLectures);
+
+        tableJPanel.add(tabbedPane, BorderLayout.CENTER);
 
         gridConstraints.gridx = 2;
         gridConstraints.gridy = 1;
@@ -167,8 +174,73 @@ public class HomeFrame extends JFrame {
         mainJPanel.add(rightSidePanel, BorderLayout.CENTER);
     }
 
+    private JScrollPane initConcludedSubjects() {
 
-    public void initLecturesTable() {
+        return null;
+    }
+
+    private JScrollPane initRequestedLectures() {
+        String[] columnNames = {"Nome da Disciplina", "Professor", "Hor\u00E1rio"};
+
+        List<Lecture> requestedLectures = student.getRequestedLectures();
+
+        Object[][] data = new Object[requestedLectures.size()][columnNames.length];
+        for (int i = 0; i < requestedLectures.size(); i++) {
+            Lecture lecture = requestedLectures.get(i);
+            data[i][0] = lecture.getSubject().getName();
+            data[i][1] = lecture.getTeacher().getName();
+            data[i][2] = lecture.getSchedule();
+
+            LOGGER.debug(String.format("[Table] Inserting requested lecture in line %d: %s %s %s", i, data[i][0], data[i][1], data[i][2]));
+        }
+
+        requestedTable = new JTable(data, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 4;
+            }
+
+            @Override
+            public Class<?> getColumnClass(int column) {
+                return String.class;
+            }
+
+            @Override
+            protected void createDefaultRenderers() {
+                super.createDefaultRenderers();
+            }
+        };
+        requestedTable.setColumnSelectionAllowed(true);
+        requestedTable.setShowGrid(false);
+        requestedTable.addMouseMotionListener(new MouseAdapter() {
+            public void mouseMoved(MouseEvent e) {
+                int row = requestedTable.rowAtPoint(e.getPoint());
+                int col = requestedTable.columnAtPoint(e.getPoint());
+                if (row > -1 && col > -1) {
+                    Object value = requestedTable.getValueAt(row, col);
+                    if (null != value && !"".equals(value)) {
+                        requestedTable.setToolTipText(value.toString());// floating display cell content
+                    } else {
+                        requestedTable.setToolTipText(null);
+                    }
+                }
+            }
+        });
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        requestedTable.setDefaultRenderer(String.class, centerRenderer);
+        requestedTable.setFont(requestedTable.getFont().deriveFont(18f));
+        requestedTable.setRowHeight(requestedTable.getFont().getSize() * 4);
+        requestedTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        requestedTable.getTableHeader().setReorderingAllowed(false);
+        requestedTable.setCellSelectionEnabled(false);
+        requestedTable.setDragEnabled(false);
+        requestedTable.setFillsViewportHeight(true);
+
+        return new JScrollPane(requestedTable);
+    }
+
+    private JScrollPane initEnrollLecturesTable() {
 
         LOGGER.debug("Student Info:" + student);
 
@@ -184,10 +256,10 @@ public class HomeFrame extends JFrame {
             data[i][1] = lecture.getTeacher().getName();
             data[i][2] = lecture.getSchedule();
 
-            LOGGER.debug(String.format("[Table] Inserting in line %d: %s %s %s", i, data[i][0], data[i][1], data[i][2]));
+            LOGGER.debug(String.format("[Table] Inserting enroll lecture in line %d: %s %s %s", i, data[i][0], data[i][1], data[i][2]));
         }
 
-        lecturesTable = new JTable(data, columnNames) {
+        requestedTable = new JTable(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return column == 4;
@@ -217,34 +289,34 @@ public class HomeFrame extends JFrame {
 //                }
 //            }
 //        });
-        lecturesTable.setColumnSelectionAllowed(true);
-        lecturesTable.setShowGrid(false);
-        lecturesTable.addMouseMotionListener(new MouseAdapter() {
+        requestedTable.setColumnSelectionAllowed(true);
+        requestedTable.setShowGrid(false);
+        requestedTable.addMouseMotionListener(new MouseAdapter() {
             public void mouseMoved(MouseEvent e) {
-                int row = lecturesTable.rowAtPoint(e.getPoint());
-                int col = lecturesTable.columnAtPoint(e.getPoint());
+                int row = requestedTable.rowAtPoint(e.getPoint());
+                int col = requestedTable.columnAtPoint(e.getPoint());
                 if (row > -1 && col > -1) {
-                    Object value = lecturesTable.getValueAt(row, col);
+                    Object value = requestedTable.getValueAt(row, col);
                     if (null != value && !"".equals(value)) {
-                        lecturesTable.setToolTipText(value.toString());// floating display cell content
+                        requestedTable.setToolTipText(value.toString());// floating display cell content
                     } else {
-                        lecturesTable.setToolTipText(null);
+                        requestedTable.setToolTipText(null);
                     }
                 }
             }
         });
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        lecturesTable.setDefaultRenderer(String.class, centerRenderer);
-        lecturesTable.setFont(lecturesTable.getFont().deriveFont(18f));
-        lecturesTable.setRowHeight(lecturesTable.getFont().getSize() * 4);
-        lecturesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        lecturesTable.getTableHeader().setReorderingAllowed(false);
-        lecturesTable.setCellSelectionEnabled(false);
-        lecturesTable.setDragEnabled(false);
-        lecturesTable.setFillsViewportHeight(true);
+        requestedTable.setDefaultRenderer(String.class, centerRenderer);
+        requestedTable.setFont(requestedTable.getFont().deriveFont(18f));
+        requestedTable.setRowHeight(requestedTable.getFont().getSize() * 4);
+        requestedTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        requestedTable.getTableHeader().setReorderingAllowed(false);
+        requestedTable.setCellSelectionEnabled(false);
+        requestedTable.setDragEnabled(false);
+        requestedTable.setFillsViewportHeight(true);
 
-        scrollPane = new JScrollPane(lecturesTable);
+        return new JScrollPane(requestedTable);
     }
 
     public static void resizeColumnsWidth(JTable table, Dimension dimension) {
@@ -285,8 +357,8 @@ public class HomeFrame extends JFrame {
         });
         this.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent evt) {
-                if (lecturesTable != null) {
-                    resizeColumnsWidth(lecturesTable, lecturesTable.getSize());
+                if (requestedTable != null) {
+                    resizeColumnsWidth(requestedTable, requestedTable.getSize());
                 }
             }
         });
