@@ -12,10 +12,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.*;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import static br.ufrrj.samu.utils.Util.centreWindow;
 import static java.util.Objects.requireNonNull;
@@ -41,7 +38,6 @@ public class HomeFrame extends JFrame {
     public HomeFrame(Student student, SAMU samu) throws HeadlessException {
         super();
         frameInit();
-        sim();
         this.student = student;
 
         mainJPanel = new JPanel();
@@ -119,8 +115,11 @@ public class HomeFrame extends JFrame {
         gridConstraints.gridy = 8;
         avaliarDisciplinasButton = new JButton("Avaliar Disciplinas");
         avaliarDisciplinasButton.setFocusable(false);
-        avaliarDisciplinasButton.setEnabled(false);
+        avaliarDisciplinasButton.setEnabled(true);
         avaliarDisciplinasButton.setFont(avaliarDisciplinasButton.getFont().deriveFont(15f));
+        avaliarDisciplinasButton.addActionListener(e -> {
+            new EvaluationFrame();
+        });
         userInfoPanel.add(avaliarDisciplinasButton, gridConstraints);
 
         gridConstraints.gridy = 9;
@@ -247,7 +246,6 @@ public class HomeFrame extends JFrame {
         String[] columnNames = {"Nome da Disciplina", "Professor", "Hor\u00E1rio"};
 
         List<Lecture> enrollLectures = student.getEnrollLectures();
-//        List<Lecture> studentSubjects = student.getRequestedLectures();
 
         Object[][] data = new Object[enrollLectures.size()][columnNames.length];
         for (int i = 0; i < enrollLectures.size(); i++) {
@@ -326,18 +324,6 @@ public class HomeFrame extends JFrame {
         for (int columnIndex = 1; columnIndex < table.getColumnCount(); columnIndex++) {
             columnModel.getColumn(columnIndex).setPreferredWidth((int) (dimension.getWidth() * ((1.0 - namePercentage) / 2)));
         }
-    }
-
-    public void sim() {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime ahead = now.plusSeconds(30);
-
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                avaliarDisciplinasButton.setEnabled(true);
-            }
-        }, 10 * 1000);
     }
 
     @Override

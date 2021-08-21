@@ -80,13 +80,13 @@ public class User {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User user1 = (User) o;
-        return username.equals(user1.username) && password.equals(user1.password);
+        User user = (User) o;
+        return cpf.equals(user.cpf);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(username, password);
+        return Objects.hash(cpf);
     }
 
     @Override

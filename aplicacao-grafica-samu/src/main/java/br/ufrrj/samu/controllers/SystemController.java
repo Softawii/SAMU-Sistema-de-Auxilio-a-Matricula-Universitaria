@@ -26,10 +26,24 @@ public class SystemController {
 
     public List<User> userList;
 
-    public SystemController() {
+    private SystemController() {
         this.userList = new ArrayList<>();
         this.currentPeriod = new Period();
         initDatabase();
+    }
+
+    private static volatile SystemController instance;
+    public static SystemController getInstance() {
+        SystemController result = instance;
+        if (result != null) {
+            return result;
+        }
+        synchronized(SystemController.class) {
+            if (instance == null) {
+                instance = new SystemController();
+            }
+            return instance;
+        }
     }
 
     public User signIn(String username, String password) throws UnknownUserException, PasswordNotMatchesException {
@@ -44,6 +58,19 @@ public class SystemController {
             }
         }
         throw new UnknownUserException();
+    }
+
+    public List<Lecture> requestEnrollLectures() {
+        // TODO Gambiarra? Talvez, mas isso só ocorreria se um estudante estivesse logado - edu
+        return ((Student) currentUser).getEnrollLectures();
+    }
+
+    public void evaluateLecture(Lecture lecture, int rate) {
+        lecture.evaluate((Student) currentUser, rate);
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
     }
 
     private void initDatabase() {

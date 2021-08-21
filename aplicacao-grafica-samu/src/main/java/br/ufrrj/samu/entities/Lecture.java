@@ -1,6 +1,9 @@
 package br.ufrrj.samu.entities;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.OptionalDouble;
 
 public class Lecture {
     private String classPlan;
@@ -14,6 +17,8 @@ public class Lecture {
 
     private List<String> students;
 
+    private Evaluator evaluator;
+
     public Lecture(String classPlan, String classRoom, String schedule, String code, Subject subject, Teacher teacher, List<String> students) {
         this.classPlan = classPlan;
         this.classRoom = classRoom;
@@ -22,6 +27,7 @@ public class Lecture {
         this.subject = subject;
         this.teacher = teacher;
         this.students = students;
+        this.evaluator = new Evaluator();
     }
 
     public static String parseListOfLecture(List<Lecture> lecture) {
@@ -67,6 +73,18 @@ public class Lecture {
         return teacher;
     }
 
+    public void evaluate(Student student, int rate) {
+        evaluator.evaluate(student, rate);
+    }
+
+    public boolean hasAlreadyEvaluated(Student student) {
+        return evaluator.hasAlreadyEvaluated(student);
+    }
+
+    public double getAverage() {
+        return evaluator.calculateAverage();
+    }
+
     public String getStudentsIds() {
         return students.stream()
                 .reduce((s1, s2) -> s1 + "," + s2)
@@ -96,5 +114,26 @@ public class Lecture {
                 ", teacher=" + teacher +
                 ", students=" + students +
                 '}';
+    }
+
+    class Evaluator {
+        private Map<Student, Integer> rates;
+
+        public Evaluator() {
+            this.rates = new HashMap<>();
+        }
+
+        public void evaluate(Student student, int rate) {
+            rates.put(student, rate);
+        }
+
+        public double calculateAverage() {
+            OptionalDouble average = rates.values().stream().mapToInt(Integer::intValue).average();
+            return average.orElse(-1);
+        }
+
+        public boolean hasAlreadyEvaluated(Student student) {
+            return rates.containsKey(student);
+        }
     }
 }

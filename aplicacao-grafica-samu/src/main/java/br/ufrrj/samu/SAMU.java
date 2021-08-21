@@ -51,7 +51,7 @@ public class SAMU {
 
     private SAMU() {
 
-        systemController = new SystemController();
+        systemController = SystemController.getInstance();
         loginFrame = new LoginFrame(systemController, this);
     }
 
