@@ -1,10 +1,6 @@
 package br.ufrrj.samu.utils;
 
 import br.ufrrj.samu.SAMU;
-import br.ufrrj.samu.entities.Lecture;
-import br.ufrrj.samu.entities.Student;
-import br.ufrrj.samu.entities.Subject;
-import br.ufrrj.samu.entities.Teacher;
 import com.formdev.flatlaf.*;
 import com.formdev.flatlaf.intellijthemes.FlatAllIJThemes;
 import org.apache.logging.log4j.LogManager;
@@ -20,8 +16,10 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
@@ -50,7 +48,7 @@ public class Util {
                 PROPERTIES.load(Files.newInputStream(propertiesPath));
                 boolean isFirstRun = Boolean.parseBoolean(((String) PROPERTIES.get("first-run")));
                 if (isFirstRun) {
-                    initDatabase();
+//                    initDatabase();
                     PROPERTIES.put("first-run", Boolean.toString(false));
                     PROPERTIES.store(Files.newOutputStream(propertiesPath), null);
                 }
@@ -59,7 +57,7 @@ public class Util {
                 if (success) {
                     PROPERTIES.load(Files.newInputStream(propertiesPath));
                     PROPERTIES.put("first-run", Boolean.toString(false));
-                    initDatabase();
+//                    initDatabase();
                     PROPERTIES.store(Files.newOutputStream(propertiesPath), null);
                 } else {
                     //failed to create file
@@ -164,60 +162,6 @@ public class Util {
             LOGGER.warn(e);
         }
         return sansationFont;
-    }
-
-    private static void initDatabase() {
-        // Subjects
-        // DTL
-        Subject subject = new Subject("Geometria Analitica", "Estudo sobre matrizes, determinantes e sistemas. Vetores. Retas e planos. Curvas. Superficies.", "DTL00", List.of(""));
-        Subject subject1 = new Subject("Calculo I", "\tFuncoes de uma variavel real. Graficos. Limites e continuidade. A derivada e sua aplicacao.", "DTL01", List.of(""));
-        Subject subject2 = new Subject("Algebra Linear", "Sistemas de equacoes lineares. Espacos vetoriais. Transformacoes lineares.", "DTL02", List.of("DTL00"));
-        Subject subject3 = new Subject("Calculo II", "Estudo sobre Integrais.", "DTL03", List.of("DTL01"));
-        Subject subject4 = new Subject("Algebra Linear Computacional", "Algoritmos para operacoes basicas entre vetores e matrizes.", "DTL04", List.of("DTL02"));
-
-        // DCC
-        Subject subject5 = new Subject("Computadores e Sociedade", "Estudos dos Aspectos Sociais, Economicos, Legais e Profissionais de Computaçao.", "DCC00", List.of(""));
-        Subject subject6 = new Subject("Matematica Discreta para Computacao", "Logica Matematica.", "DCC01", List.of(""));
-        Subject subject7 = new Subject("Programacao Estruturada", "Estudo sobre as estruturas de um programa, as declaracoes e os principais comandos.", "DCC02", List.of(""));
-        Subject subject8 = new Subject("Introducao a Ciencia da Computacao", "Introducao sobre a area de computacao. Estudo sobre conversao de bases, hardware e software basico.", "DCC03", List.of(""));
-        Subject subject9 = new Subject("Circuitos Digitais", "Estudo sobre a algebra de Boole. Circuitos Aritmeticos e Circuitos Sequenciais.", "DCC04", List.of(""));
-        Subject subject10 = new Subject("Logica para Computacao", "Relacoes semanticas entre conectivos da Logica Proposicional. Logica de Predicados.", "DCC05", List.of(""));
-        Subject subject11 = new Subject("Engenharia de Software", "Estudos sobre os processos, gerenciamento, planejamento, metricas e testes de um software.", "DCC06", List.of(""));
-        Subject subject12 = new Subject("Estrutura de Dados I", "Complexidade de Algoritmos. Estudo sobre as Listas lineares e encadeadas. Algoritmos de Ordenacao. Arvores Binarias e muito mais!", "DCC07", List.of("DCC02"));
-        Subject subject13 = new Subject("Arquitetura de Computadores I", "Introducao a organizacao de computadores. Instrucoes e linguagens de maquina.", "DCC08", List.of("DCC04"));
-        Subject subject14 = new Subject("Linguagens Formais e Automatos", "Muita materia complexa.", "DCC09", List.of(""));
-        Subject subject15 = new Subject("Modelagem e Projeto de Software", "Modelagem de Casos de Uso. Modelagem de Classes. Modelagem de Interacoes, de Estados e de Atividades. Projeto de Software. Pratica de estudo de caso.", "DCC10", List.of("DCC06"));
-        Subject subject16 = new Subject("Programacao Orientada a Objetos", "Estudo sobre Classe e Objeto, Encapsulamento, Heranca, Polimorfismo.", "DCC11", List.of("DCC02"));
-        Subject subject17 = new Subject("Grafos e Algoritmos", "Estudo sobre os variados tipos de grafos e muitos algorimos para a analise desses grafos.", "DCC12", List.of(""));
-
-
-        // Lectures and Teachers
-        Teacher teacher = new Teacher("brunoD", "12345", "Bruno Dembogurski", "000.000.000-10", "Casa segura", "01/01/1995", new ArrayList<>(), "curso");
-        Lecture lecture = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM01", subject5, null,  new ArrayList<>());
-//            lecture.setTeacher(teacher.getId());
-        teacher.addLecture(lecture);
-
-        Teacher teacher1 = new Teacher("camila", "12345", "Camila Lacerda", "000.000.000-11", "Casa segura", "01/01/1995", new ArrayList<>(), "curso");
-        Lecture lecture1 = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM02", subject, null,  new ArrayList<>());
-//            lecture1.setTeacher(teacher1.getId());
-        teacher1.addLecture(lecture1);
-
-        Teacher teacher2 = new Teacher("ligia", "12345", "Ligia Passos", "000.000.000-12", "Casa segura", "01/01/1995",  new ArrayList<>(), "curso");
-        Lecture lecture2 = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM03", subject6, null,  new ArrayList<>());
-//            lecture2.setTeacher(teacher2.getId());
-        teacher2.addLecture(lecture2);
-
-        Teacher teacher3 = new Teacher("braida", "12345", "Filipe Braida", "000.000.000-13", "Casa segura", "01/01/1995", new ArrayList<>(), "curso");
-        Lecture lecture3 = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM04", subject7, null,  new ArrayList<>());
-//            lecture3.setTeacher(teacher3.getId());
-        teacher3.addLecture(lecture3);
-
-        // Students
-        Student student = new Student("yan", "1234", "Yan Charlos", "000.000.000-01", "Minha Casa", "27/05/2001", "That ass", "2019-1", new ArrayList<>(), new ArrayList<>());
-        Student student1 = new Student("edu", "1234", "Eduardo Ferro", "000.000.000-02", "Minha Casa", "27/05/2001", "Ciencia da Computacao", "2019-1", new ArrayList<>(), new ArrayList<>());
-        Student student2 = new Student("romulo", "1234", "Romulo Menezes", "000.000.000-03", "Minha Casa", "27/05/2001", "Administração", "2019-1", new ArrayList<>(), new ArrayList<>());
-        Student student3 = new Student("vasilo", "1234", "Mateus Campello", "000.000.000-04", "Minha Casa", "27/05/2001", "Direito", "2019-1", List.of(lecture, lecture1, lecture2, lecture3), new ArrayList<>());
-        Student student4 = new Student("slindin", "1ns3rtS3qu3nc1@2021LG", "Vikthour López", "000.000.000-05", "Minha Casa", "27/05/2001", "Ciencia da Computacao", "2019-1", new ArrayList<>(), new ArrayList<>());
     }
 
 }

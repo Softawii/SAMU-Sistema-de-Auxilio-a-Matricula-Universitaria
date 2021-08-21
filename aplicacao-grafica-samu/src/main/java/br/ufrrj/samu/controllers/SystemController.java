@@ -36,7 +36,7 @@ public class SystemController {
         for (User user : userList) {
             if (user.getUsername().equals(username)) {
                 if (user.getPassword().equals(password)) {
-                    currentUser = user;;
+                    currentUser = user;
                     return user;
                 } else {
                     throw new PasswordNotMatchesException();
@@ -69,6 +69,14 @@ public class SystemController {
         Subject subject16 = new Subject("Programacao Orientada a Objetos", "Estudo sobre Classe e Objeto, Encapsulamento, Heranca, Polimorfismo.", "DCC11", List.of("DCC02"));
         Subject subject17 = new Subject("Grafos e Algoritmos", "Estudo sobre os variados tipos de grafos e muitos algorimos para a analise desses grafos.", "DCC12", List.of(""));
 
+        // Empty :DD,
+        List<Subject> optionalCSSubjects = List.of();
+        List<Subject> coreCSSubjects = List.of(
+                subject, subject1, subject2, subject3, subject4, subject5, subject6, subject7, subject8,
+                subject9, subject10, subject11, subject12, subject13, subject14, subject15, subject16, subject17
+        );
+        Curriculum CSCurriculum = new Curriculum(optionalCSSubjects, coreCSSubjects);
+
         // Lectures and Teachers
         Teacher teacher = new Teacher("brunoD", "12345", "Bruno Dembogurski", "000.000.000-10", "Casa segura", "01/01/1995",  new ArrayList<>(), "curso");
         Lecture lecture = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM01", subject5, null,  new ArrayList<>());
@@ -80,7 +88,7 @@ public class SystemController {
         lecture1.setTeacher(teacher1);
         teacher1.addLecture(lecture1);
 
-        Teacher teacher2 = new Teacher("ligia", "12345", "Ligia Passos", "000.000.000-12", "Casa segura", "01/01/1995",  new ArrayList<>(), "curso");
+        Coordinator teacher2 = new Coordinator("ligia", "12345", "Ligia Passos", "000.000.000-12", "Casa segura", "01/01/1995",  new ArrayList<>(), "curso");
         Lecture lecture2 = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM03", subject6, null,  new ArrayList<>());
         lecture2.setTeacher(teacher2);
         teacher2.addLecture(lecture2);
@@ -90,21 +98,28 @@ public class SystemController {
         lecture3.setTeacher(teacher3);
         teacher3.addLecture(lecture3);
 
+        List<Teacher> teacherList = List.of(teacher, teacher1, teacher2, teacher3);
+
         currentPeriod.addLecture(lecture);
         currentPeriod.addLecture(lecture1);
         currentPeriod.addLecture(lecture2);
         currentPeriod.addLecture(lecture3);
 
+        Course CSCourse = new Course("Ci\u00EAncia da Computa\u00E7\u00E3o", CSCurriculum);
+        CSCourse.setCoordinator(teacher2);
+
         // Students
-        Student student = new Student("yan", "1234", "Yan Charlos", "000.000.000-01", "Minha Casa", "27/05/2001", "That ass", "2019-1", new ArrayList<>(), new ArrayList<>());
-        Student student1 = new Student("edu", "1234", "Eduardo Ferro", "000.000.000-02", "Minha Casa", "27/05/2001", "Ciencia da Computacao", "2019-1", new ArrayList<>(), new ArrayList<>());
-        Student student2 = new Student("romulo", "1234", "Romulo Menezes", "000.000.000-03", "Minha Casa", "27/05/2001", "Administração", "2019-1", new ArrayList<>(), new ArrayList<>());
-        Student student3 = new Student("vasilo", "1234", "Mateus Campello", "000.000.000-04", "Minha Casa", "27/05/2001", "Direito", "2019-1", List.of(lecture, lecture1, lecture2, lecture3), new ArrayList<>());
-        Student student4 = new Student("slindin", "1ns3rtS3qu3nc1@2021LG", "Vikthour López", "000.000.000-05", "Minha Casa", "27/05/2001", "Ciencia da Computacao", "2019-1", new ArrayList<>(), new ArrayList<>());
+        Student student = new Student("yan", "1234", "Yan Charlos", "000.000.000-01", "Minha Casa", "27/05/2001", CSCourse, "2019-1", new ArrayList<>(), new ArrayList<>());
+        Student student1 = new Student("edu", "1234", "Eduardo Ferro", "000.000.000-02", "Minha Casa", "27/05/2001", CSCourse, "2019-1", new ArrayList<>(), new ArrayList<>());
+        Student student2 = new Student("romulo", "1234", "Romulo Menezes", "000.000.000-03", "Minha Casa", "27/05/2001", CSCourse, "2019-1", new ArrayList<>(), new ArrayList<>());
+        Student student3 = new Student("vasilo", "1234", "Mateus Campello", "000.000.000-04", "Minha Casa", "27/05/2001", CSCourse, "2019-1", List.of(lecture, lecture1, lecture2, lecture3), new ArrayList<>());
+        Student student4 = new Student("slindin", "1ns3rtS3qu3nc1@2021LG", "Vikthour López", "000.000.000-05", "Minha Casa", "27/05/2001", CSCourse, "2019-1", new ArrayList<>(), new ArrayList<>());
         userList.add(student);
         userList.add(student1);
         userList.add(student2);
         userList.add(student3);
         userList.add(student4);
+
+        List<Student> studentList = List.of(student, student1, student2, student3, student4);
     }
 }

@@ -61,4 +61,11 @@ public class Period {
         return availableLectures;
     }
 
+    @Override
+    public String toString() {
+        return "Period{" +
+                "name='" + name + '\'' +
+                ", lectureList=" + lectureList +
+                '}';
+    }
 }

@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public class Student extends User {
 
-    private String course;
+    private Course course;
     private String semester;
 
     private List<Lecture> enrollLectures;
@@ -17,7 +17,7 @@ public class Student extends User {
         super();
     }
 
-    public Student(String course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures) {
+    public Student(Course course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures) {
         super();
         this.course = course;
         this.semester = semester;
@@ -26,7 +26,7 @@ public class Student extends User {
     }
 
     public Student(String username, String password, String name, String cpf, String address, String birthday,
-                   String course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures) {
+                   Course course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures) {
         super(username, password, name, cpf, address, birthday);
 
         this.course = course;
@@ -45,7 +45,7 @@ public class Student extends User {
         }
     }
 
-    public String getCourse() {
+    public Course getCourse() {
         return course;
     }
 
@@ -73,7 +73,7 @@ public class Student extends User {
 
     public void addRequestedLectures(Lecture lecture) { this.requestedLectures.add(lecture); }
 
-    public void setCourse(String course) {
+    public void setCourse(Course course) {
         this.course = course;
     }
 
