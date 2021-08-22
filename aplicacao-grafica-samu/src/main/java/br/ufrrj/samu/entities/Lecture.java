@@ -19,7 +19,7 @@ public class Lecture {
 
     private Evaluator evaluator;
 
-    public Lecture(String classPlan, String classRoom, String schedule, String code, Subject subject, Teacher teacher, List<String> students) {
+    public Lecture(String classPlan, String classRoom, String schedule, String code, Subject subject, Teacher teacher, List<Student> students, List<Student> preEnrolledStudent) {
         this.classPlan = classPlan;
         this.classRoom = classRoom;
         this.schedule = schedule;
@@ -27,6 +27,7 @@ public class Lecture {
         this.subject = subject;
         this.teacher = teacher;
         this.students = students;
+        this.preEnrolledStudent = preEnrolledStudent;
         this.evaluator = new Evaluator();
     }
 
@@ -85,13 +86,7 @@ public class Lecture {
         return evaluator.calculateAverage();
     }
 
-    public String getStudentsIds() {
-        return students.stream()
-                .reduce((s1, s2) -> s1 + "," + s2)
-                .orElse("");
-    }
-
-    public List<String> getStudents() {
+    public List<Student> getStudents() {
         return students;
     }
 
@@ -99,7 +94,7 @@ public class Lecture {
         this.teacher = teacher;
     }
 
-    public void setStudents(List<String> students) {
+    public void setStudents(List<Student> students) {
         this.students = students;
     }
 

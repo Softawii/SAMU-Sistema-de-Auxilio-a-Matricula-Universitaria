@@ -106,22 +106,22 @@ public class SystemController {
 
         // Lectures and Teachers
         Teacher teacher = new Teacher("brunoD", "12345", "Bruno Dembogurski", "000.000.000-10", "Casa segura", "01/01/1995",  new ArrayList<>(), "curso");
-        Lecture lecture = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM01", subject5, null,  new ArrayList<>());
+        Lecture lecture = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM01", subject5, null,  new ArrayList<>(), new ArrayList<>());
         lecture.setTeacher(teacher);
         teacher.addLecture(lecture);
 
         Teacher teacher1 = new Teacher("camila", "12345", "Camila Lacerda", "000.000.000-11", "Casa segura", "01/01/1995", new ArrayList<>(), "curso");
-        Lecture lecture1 = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM02", subject, null,  new ArrayList<>());
+        Lecture lecture1 = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM02", subject, null,  new ArrayList<>(), new ArrayList<>());
         lecture1.setTeacher(teacher1);
         teacher1.addLecture(lecture1);
 
         Coordinator teacher2 = new Coordinator("ligia", "12345", "Ligia Passos", "000.000.000-12", "Casa segura", "01/01/1995",  new ArrayList<>(), "curso");
-        Lecture lecture2 = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM03", subject6, null,  new ArrayList<>());
+        Lecture lecture2 = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM03", subject6, null,  new ArrayList<>(), new ArrayList<>());
         lecture2.setTeacher(teacher2);
         teacher2.addLecture(lecture2);
 
         Teacher teacher3 = (new Teacher("braida", "12345", "Filipe Braida", "000.000.000-13", "Casa segura", "01/01/1995", new ArrayList<>(), "curso"));
-        Lecture lecture3 = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM04", subject7, null,  new ArrayList<>());
+        Lecture lecture3 = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM04", subject7, null,  new ArrayList<>(), new ArrayList<>());
         lecture3.setTeacher(teacher3);
         teacher3.addLecture(lecture3);
 
@@ -136,11 +136,11 @@ public class SystemController {
         CSCourse.setCoordinator(teacher2);
 
         // Students
-        Student student = new Student("yan", "1234", "Yan Charlos", "000.000.000-01", "Minha Casa", "27/05/2001", CSCourse, "2019-1", new ArrayList<>(), new ArrayList<>());
-        Student student1 = new Student("edu", "1234", "Eduardo Ferro", "000.000.000-02", "Minha Casa", "27/05/2001", CSCourse, "2019-1", new ArrayList<>(), new ArrayList<>());
-        Student student2 = new Student("romulo", "1234", "Romulo Menezes", "000.000.000-03", "Minha Casa", "27/05/2001", CSCourse, "2019-1", new ArrayList<>(), new ArrayList<>());
-        Student student3 = new Student("vasilo", "1234", "Mateus Campello", "000.000.000-04", "Minha Casa", "27/05/2001", CSCourse, "2019-1", List.of(lecture, lecture1, lecture2, lecture3), new ArrayList<>());
-        Student student4 = new Student("slindin", "1ns3rtS3qu3nc1@2021LG", "Vikthour López", "000.000.000-05", "Minha Casa", "27/05/2001", CSCourse, "2019-1", new ArrayList<>(), new ArrayList<>());
+        Student student = new Student("yan", "1234", "Yan Charlos", "000.000.000-01", "Minha Casa", "27/05/2001", CSCourse, "2019-1", new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        Student student1 = new Student("edu", "1234", "Eduardo Ferro", "000.000.000-02", "Minha Casa", "27/05/2001", CSCourse, "2019-1", new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        Student student2 = new Student("romulo", "1234", "Romulo Menezes", "000.000.000-03", "Minha Casa", "27/05/2001", CSCourse, "2019-1", new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        Student student3 = new Student("vasilo", "1234", "Mateus Campello", "000.000.000-04", "Minha Casa", "27/05/2001", CSCourse, "2019-1", new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        Student student4 = new Student("slindin", "1ns3rtS3qu3nc1@2021LG", "Vikthour López", "000.000.000-05", "Minha Casa", "27/05/2001", CSCourse, "2019-1", new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         userList.add(student);
         userList.add(student1);
         userList.add(student2);

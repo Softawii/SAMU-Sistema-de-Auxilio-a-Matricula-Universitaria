@@ -17,20 +17,22 @@ public class Student extends User {
         super();
     }
 
-    public Student(Course course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures) {
+    public Student(Course course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures, List<Subject> concludedSubjects) {
         super();
         this.course = course;
         this.semester = semester;
         this.enrollLectures = enrollLectures;
         this.requestedLectures = requestedLectures;
+        this.concludedSubjects = concludedSubjects;
     }
 
     public Student(String username, String password, String name, String cpf, String address, String birthday,
-                   Course course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures) {
+                   Course course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures, List<Subject> concludedSubjects) {
         super(username, password, name, cpf, address, birthday);
 
         this.course = course;
         this.semester = semester;
+        this.concludedSubjects = concludedSubjects;
 
         try {
             this.enrollLectures = new ArrayList<>(enrollLectures);

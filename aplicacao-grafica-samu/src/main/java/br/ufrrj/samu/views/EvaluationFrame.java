@@ -34,7 +34,7 @@ public class EvaluationFrame extends JFrame {
     public EvaluationFrame() throws HeadlessException {
         super();
 
-        SystemController systemController = SystemController.getInstance();
+        this.systemController = SystemController.getInstance();
         // Talvez isso de exception, mas vamo que vamo :) - yan
         this.student = (Student) systemController.getCurrentUser();
 
@@ -55,6 +55,7 @@ public class EvaluationFrame extends JFrame {
                     "N\u00E3o h\u00E1 mais turmas para serem avaliadas!",
                     frameTitle,
                     JOptionPane.PLAIN_MESSAGE);
+            return;
         }
 
         // Colunas importantes
@@ -141,7 +142,7 @@ public class EvaluationFrame extends JFrame {
         this.setSize(this.width, this.height);
         this.setTitle(this.frameTitle);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        this.setIconImage(new ImageIcon(requireNonNull(this.getClass().getClassLoader().getResource("friend.png"))).getImage());
+        this.setIconImage(new ImageIcon(requireNonNull(this.getClass().getClassLoader().getResource("bemtevi.png"))).getImage());
         Util.centreWindow(this);
         this.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent evt) {

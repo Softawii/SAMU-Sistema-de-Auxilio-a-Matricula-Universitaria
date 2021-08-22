@@ -43,6 +43,8 @@ public class Period {
         List<Subject> concludedSubjects = student.getConcludedSubjects();
         List<String> concludedSubjectsCodes = concludedSubjects.stream().map(Subject::getCode).collect(Collectors.toList());
         List<Lecture> availableLectures = lectureList.stream()
+                .filter(lecture -> !student.getEnrollLectures().contains(lecture))
+                .filter(lecture -> !student.getRequestedLectures().contains(lecture))
                 .filter(lecture -> {
                     ArrayList<String> prerequisites = lecture.getSubject().getPrerequisites();
                     for (String prerequisite : prerequisites) {
@@ -52,7 +54,6 @@ public class Period {
                     }
                     return true;
                 }).collect(Collectors.toList());
-
 //                        lecture.getSubject().getPrerequisites().stream()
 //                                .map(preReq ->
 //                                        concludedSubjects.stream()

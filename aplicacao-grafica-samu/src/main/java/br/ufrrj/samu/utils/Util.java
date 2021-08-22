@@ -164,4 +164,12 @@ public class Util {
         return sansationFont;
     }
 
+    public static ImageIcon getImageWidth(String path, int width, int height) {
+        ImageIcon image = new ImageIcon(requireNonNull(Util.class.getClassLoader().getResource(path)));
+        return new ImageIcon(image.getImage().getScaledInstance(width, height, Image.SCALE_DEFAULT));
+    }
+
+    public static ImageIcon getImageWidth(ImageIcon image, int width, int height) {
+        return new ImageIcon(image.getImage().getScaledInstance(width, height, Image.SCALE_DEFAULT));
+    }
 }

@@ -283,7 +283,7 @@ public class LoginFrame extends JFrame {
         this.setMinimumSize(new Dimension(this.width, this.height));
         this.setTitle(this.frameTitle);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setIconImage(new ImageIcon(requireNonNull(this.getClass().getClassLoader().getResource("friend.png"))).getImage());
+        this.setIconImage(new ImageIcon(requireNonNull(this.getClass().getClassLoader().getResource("bemtevi.png"))).getImage());
 
         this.addWindowListener(new WindowAdapter() {
             @Override

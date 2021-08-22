@@ -3,12 +3,14 @@ package br.ufrrj.samu.views;
 import br.ufrrj.samu.SAMU;
 import br.ufrrj.samu.entities.Lecture;
 import br.ufrrj.samu.entities.Student;
+import br.ufrrj.samu.entities.Subject;
 import br.ufrrj.samu.utils.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.*;
@@ -27,13 +29,15 @@ public class HomeFrame extends JFrame {
 
     JPanel mainJPanel;
 
-    JTable requestedTable;
+    JTable concludedTable;
 
     private Student student;
     private JButton logoutButton;
     private JButton avaliarDisciplinasButton;
     private JButton realizarMatriculaButton;
     private JTabbedPane tabbedPane;
+    private JTable requestedTable;
+    private JTable enrolledTable;
 
     public HomeFrame(Student student, SAMU samu) throws HeadlessException {
         super();
@@ -62,7 +66,7 @@ public class HomeFrame extends JFrame {
         userImage.setBackground(Color.WHITE);
         userImage.setOpaque(true);
         userImage.setSize(new Dimension(150, 150));
-        userImage.setIcon(new ImageIcon(requireNonNull(this.getClass().getClassLoader().getResource("images/userImage.png"))));
+        userImage.setIcon(requireNonNull(Util.getImageWidth("images/userImage.png", 128,128)));
 
         JLabel username = new JLabel("Nome: " + student.getName());
         JLabel enrollment = new JLabel("Matr\u00EDcula: " + String.format("%s",student.getCpf()));
@@ -110,6 +114,17 @@ public class HomeFrame extends JFrame {
         realizarMatriculaButton = new JButton("Realizar Matr\u00EDcula");
         realizarMatriculaButton.setFocusable(false);
         realizarMatriculaButton.setFont(realizarMatriculaButton.getFont().deriveFont(15f));
+        realizarMatriculaButton.setFont(realizarMatriculaButton.getFont().deriveFont(15f));
+        realizarMatriculaButton.addActionListener(e -> {
+            EnrollFrame enrollFrame = new EnrollFrame();
+            enrollFrame.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    System.out.println("fechou a janela");
+                    refreshData();
+                }
+            });
+        });
         userInfoPanel.add(realizarMatriculaButton, gridConstraints);
 
         gridConstraints.gridy = 8;
@@ -174,26 +189,56 @@ public class HomeFrame extends JFrame {
     }
 
     private JScrollPane initConcludedSubjects() {
+        concludedTable = new JTable() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
 
-        return null;
+            @Override
+            public Class<?> getColumnClass(int column) {
+                return String.class;
+            }
+
+            @Override
+            protected void createDefaultRenderers() {
+                super.createDefaultRenderers();
+            }
+        };
+        initConcludedSubjectsData();
+        concludedTable.setColumnSelectionAllowed(true);
+        concludedTable.setShowGrid(false);
+        concludedTable.addMouseMotionListener(new MouseAdapter() {
+            public void mouseMoved(MouseEvent e) {
+                int row = concludedTable.rowAtPoint(e.getPoint());
+                int col = concludedTable.columnAtPoint(e.getPoint());
+                if (row > -1 && col > -1) {
+                    Object value = concludedTable.getValueAt(row, col);
+                    if (null != value && !"".equals(value)) {
+                        concludedTable.setToolTipText(value.toString());// floating display cell content
+                    } else {
+                        concludedTable.setToolTipText(null);
+                    }
+                }
+            }
+        });
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        concludedTable.setDefaultRenderer(String.class, centerRenderer);
+        concludedTable.setFont(concludedTable.getFont().deriveFont(18f));
+        concludedTable.setRowHeight(concludedTable.getFont().getSize() * 4);
+        concludedTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        concludedTable.getTableHeader().setReorderingAllowed(false);
+        concludedTable.setCellSelectionEnabled(false);
+        concludedTable.setDragEnabled(false);
+        concludedTable.setFillsViewportHeight(true);
+
+        return new JScrollPane(concludedTable);
     }
 
     private JScrollPane initRequestedLectures() {
-        String[] columnNames = {"Nome da Disciplina", "Professor", "Hor\u00E1rio"};
 
-        List<Lecture> requestedLectures = student.getRequestedLectures();
-
-        Object[][] data = new Object[requestedLectures.size()][columnNames.length];
-        for (int i = 0; i < requestedLectures.size(); i++) {
-            Lecture lecture = requestedLectures.get(i);
-            data[i][0] = lecture.getSubject().getName();
-            data[i][1] = lecture.getTeacher().getName();
-            data[i][2] = lecture.getSchedule();
-
-            LOGGER.debug(String.format("[Table] Inserting requested lecture in line %d: %s %s %s", i, data[i][0], data[i][1], data[i][2]));
-        }
-
-        requestedTable = new JTable(data, columnNames) {
+        requestedTable = new JTable() {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return column == 4;
@@ -209,6 +254,7 @@ public class HomeFrame extends JFrame {
                 super.createDefaultRenderers();
             }
         };
+        initRequestedLecturesData();
         requestedTable.setColumnSelectionAllowed(true);
         requestedTable.setShowGrid(false);
         requestedTable.addMouseMotionListener(new MouseAdapter() {
@@ -240,24 +286,7 @@ public class HomeFrame extends JFrame {
     }
 
     private JScrollPane initEnrollLecturesTable() {
-
-        LOGGER.debug("Student Info:" + student);
-
-        String[] columnNames = {"Nome da Disciplina", "Professor", "Hor\u00E1rio"};
-
-        List<Lecture> enrollLectures = student.getEnrollLectures();
-
-        Object[][] data = new Object[enrollLectures.size()][columnNames.length];
-        for (int i = 0; i < enrollLectures.size(); i++) {
-            Lecture lecture = enrollLectures.get(i);
-            data[i][0] = lecture.getSubject().getName();
-            data[i][1] = lecture.getTeacher().getName();
-            data[i][2] = lecture.getSchedule();
-
-            LOGGER.debug(String.format("[Table] Inserting enroll lecture in line %d: %s %s %s", i, data[i][0], data[i][1], data[i][2]));
-        }
-
-        requestedTable = new JTable(data, columnNames) {
+        enrolledTable = new JTable() {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return column == 4;
@@ -287,34 +316,35 @@ public class HomeFrame extends JFrame {
 //                }
 //            }
 //        });
-        requestedTable.setColumnSelectionAllowed(true);
-        requestedTable.setShowGrid(false);
-        requestedTable.addMouseMotionListener(new MouseAdapter() {
+        initEnrolledLecturesData();
+        enrolledTable.setColumnSelectionAllowed(true);
+        enrolledTable.setShowGrid(false);
+        enrolledTable.addMouseMotionListener(new MouseAdapter() {
             public void mouseMoved(MouseEvent e) {
-                int row = requestedTable.rowAtPoint(e.getPoint());
-                int col = requestedTable.columnAtPoint(e.getPoint());
+                int row = enrolledTable.rowAtPoint(e.getPoint());
+                int col = enrolledTable.columnAtPoint(e.getPoint());
                 if (row > -1 && col > -1) {
-                    Object value = requestedTable.getValueAt(row, col);
+                    Object value = enrolledTable.getValueAt(row, col);
                     if (null != value && !"".equals(value)) {
-                        requestedTable.setToolTipText(value.toString());// floating display cell content
+                        enrolledTable.setToolTipText(value.toString());// floating display cell content
                     } else {
-                        requestedTable.setToolTipText(null);
+                        enrolledTable.setToolTipText(null);
                     }
                 }
             }
         });
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        requestedTable.setDefaultRenderer(String.class, centerRenderer);
-        requestedTable.setFont(requestedTable.getFont().deriveFont(18f));
-        requestedTable.setRowHeight(requestedTable.getFont().getSize() * 4);
-        requestedTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        requestedTable.getTableHeader().setReorderingAllowed(false);
-        requestedTable.setCellSelectionEnabled(false);
-        requestedTable.setDragEnabled(false);
-        requestedTable.setFillsViewportHeight(true);
+        enrolledTable.setDefaultRenderer(String.class, centerRenderer);
+        enrolledTable.setFont(enrolledTable.getFont().deriveFont(18f));
+        enrolledTable.setRowHeight(enrolledTable.getFont().getSize() * 4);
+        enrolledTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        enrolledTable.getTableHeader().setReorderingAllowed(false);
+        enrolledTable.setCellSelectionEnabled(false);
+        enrolledTable.setDragEnabled(false);
+        enrolledTable.setFillsViewportHeight(true);
 
-        return new JScrollPane(requestedTable);
+        return new JScrollPane(enrolledTable);
     }
 
     public static void resizeColumnsWidth(JTable table, Dimension dimension) {
@@ -326,6 +356,64 @@ public class HomeFrame extends JFrame {
         }
     }
 
+    public void refreshData() {
+        initRequestedLecturesData();
+        initEnrolledLecturesData();
+        initConcludedSubjectsData();
+    }
+
+    private void initConcludedSubjectsData() {
+        String[] columnNames = {"Codigo", "Nome", "Descrição"};
+
+        List<Subject> concludedSubjects = student.getConcludedSubjects();
+
+        Object[][] data = new Object[concludedSubjects.size()][columnNames.length];
+        for (int i = 0; i < concludedSubjects.size(); i++) {
+            Subject lecture = concludedSubjects.get(i);
+            data[i][0] = lecture.getCode();
+            data[i][1] = lecture.getName();
+            data[i][2] = lecture.getDescription();
+
+            LOGGER.debug(String.format("[Table] Inserting concluded subjects in line %d: %s %s %s", i, data[i][0], data[i][1], data[i][2]));
+        }
+        concludedTable.setModel(new DefaultTableModel(data, columnNames));
+    }
+
+    private void initEnrolledLecturesData() {
+        String[] columnNames = {"Nome da Disciplina", "Professor", "Hor\u00E1rio"};
+
+        List<Lecture> enrollLectures = student.getEnrollLectures();
+
+        Object[][] data = new Object[enrollLectures.size()][columnNames.length];
+        for (int i = 0; i < enrollLectures.size(); i++) {
+            Lecture lecture = enrollLectures.get(i);
+            data[i][0] = lecture.getSubject().getName();
+            data[i][1] = lecture.getTeacher().getName();
+            data[i][2] = lecture.getSchedule();
+
+            LOGGER.debug(String.format("[Table] Inserting enroll lecture in line %d: %s %s %s", i, data[i][0], data[i][1], data[i][2]));
+        }
+        enrolledTable.setModel(new DefaultTableModel(data, columnNames));
+    }
+
+    private void initRequestedLecturesData() {
+        String[] columnNames = {"Nome da Disciplina", "Professor", "Hor\u00E1rio"};
+
+        List<Lecture> requestedLectures = student.getRequestedLectures();
+
+        Object[][] data = new Object[requestedLectures.size()][columnNames.length];
+        for (int i = 0; i < requestedLectures.size(); i++) {
+            Lecture lecture = requestedLectures.get(i);
+            data[i][0] = lecture.getSubject().getName();
+            data[i][1] = lecture.getTeacher().getName();
+            data[i][2] = lecture.getSchedule();
+
+            LOGGER.debug(String.format("[Table] Inserting requested lecture in line %d: %s %s %s", i, data[i][0], data[i][1], data[i][2]));
+        }
+
+        requestedTable.setModel(new DefaultTableModel(data, columnNames));
+    }
+
     @Override
     protected void frameInit() {
         super.frameInit();
@@ -333,7 +421,7 @@ public class HomeFrame extends JFrame {
         this.setMinimumSize(new Dimension(this.width, this.height));
         this.setTitle(this.frameTitle);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setIconImage(new ImageIcon(requireNonNull(this.getClass().getClassLoader().getResource("friend.png"))).getImage());
+        this.setIconImage(new ImageIcon(requireNonNull(this.getClass().getClassLoader().getResource("bemtevi.png"))).getImage());
 
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -343,8 +431,8 @@ public class HomeFrame extends JFrame {
         });
         this.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent evt) {
-                if (requestedTable != null) {
-                    resizeColumnsWidth(requestedTable, requestedTable.getSize());
+                if (concludedTable != null) {
+                    resizeColumnsWidth(concludedTable, concludedTable.getSize());
                 }
             }
         });
