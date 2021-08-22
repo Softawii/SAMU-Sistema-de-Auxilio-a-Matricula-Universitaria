@@ -66,7 +66,7 @@ public class HomeFrame extends JFrame {
 
         JLabel userImage = new JLabel();
         userImage.setBackground(Color.WHITE);
-        userImage.setOpaque(true);
+        userImage.setOpaque(false);
         userImage.setSize(new Dimension(150, 150));
         userImage.setIcon(requireNonNull(Util.getImageWidth("images/userImage.png", 128,128)));
 
