@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
@@ -113,6 +114,16 @@ public class EnrollFrame extends JFrame {
                 }
                 return Boolean.class;
             }
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component c = super.prepareRenderer(renderer, row, column);
+                if (row % 2 == 0) {
+                    c.setBackground(UIManager.getColor("Table.background"));
+                } else {
+                    c.setBackground(UIManager.getColor("Table.alternateRowColor"));
+                }
+                return c;
+            }
         };
 
         lecturesTable.getModel().addTableModelListener(e -> {
@@ -163,21 +174,14 @@ public class EnrollFrame extends JFrame {
                     //TODO MUDAR MENSAGEM DE LOG
                     LOGGER.debug(String.format("%s pre-requested in %s", student.getName(), lectureRow.getCode()));
                 }
-
-
             }
             this.dispose();
             JOptionPane.showMessageDialog(this,
-                    "Matrícula realizada com sucesso!",
+                    "Matr\u00EDcula realizada com sucesso!",
                     frameTitle,
                     JOptionPane.PLAIN_MESSAGE);
         });
         cancelEnrollment.addActionListener(null);
-
-        Dimension dim = getPreferredSize();
-//        dim.height = 200;
-//        bottomPanel.setPreferredSize(dim);
-
         bottomPanel.setLayout(new GridBagLayout());
         GridBagConstraints gridConstraint = new GridBagConstraints();
 

@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
@@ -72,6 +73,16 @@ public class EvaluationFrame extends JFrame {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return column == 2;
+            }
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component c = super.prepareRenderer(renderer, row, column);
+                if (row % 2 == 0) {
+                    c.setBackground(UIManager.getColor("Table.background"));
+                } else {
+                    c.setBackground(UIManager.getColor("Table.alternateRowColor"));
+                }
+                return c;
             }
         };
 

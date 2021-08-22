@@ -371,7 +371,7 @@ public class HomeFrame extends JFrame {
     }
 
     private void initConcludedSubjectsData() {
-        String[] columnNames = {"Codigo", "Nome", "Descrição"};
+        String[] columnNames = {"C\u00F3digo", "Nome", "Descri\u00E7\u00E3o"};
 
         List<Subject> concludedSubjects = student.getConcludedSubjects();
 
