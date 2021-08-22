@@ -5,6 +5,7 @@ import br.ufrrj.samu.entities.Lecture;
 import br.ufrrj.samu.entities.Student;
 import br.ufrrj.samu.entities.Subject;
 import br.ufrrj.samu.utils.Util;
+import br.ufrrj.samu.views.listeners.LogoutListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -38,6 +39,7 @@ public class HomeFrame extends JFrame {
     private JTabbedPane tabbedPane;
     private JTable requestedTable;
     private JTable enrolledTable;
+    private LogoutListener logoutListener;
 
     public HomeFrame(Student student, SAMU samu) throws HeadlessException {
         super();
@@ -141,8 +143,14 @@ public class HomeFrame extends JFrame {
         gridConstraints.weighty = 2.0;
         logoutButton = new JButton("Logout");
         logoutButton.setFocusable(false);
-        logoutButton.setEnabled(false);
+        logoutButton.setEnabled(true);
         logoutButton.setFont(logoutButton.getFont().deriveFont(15f));
+        logoutButton.addActionListener(e -> {
+            if (logoutListener != null) {
+                this.dispose();
+                logoutListener.logoutEventOccurred();
+            }
+        });
         userInfoPanel.add(logoutButton, gridConstraints);
 
         mainJPanel.add(userInfoPanel, BorderLayout.WEST);
@@ -438,6 +446,10 @@ public class HomeFrame extends JFrame {
         });
         centreWindow(this);
 //        this.setResizable(false);
+    }
+
+    public void setLogoutListener(LogoutListener listener) {
+        this.logoutListener = listener;
     }
 
 }

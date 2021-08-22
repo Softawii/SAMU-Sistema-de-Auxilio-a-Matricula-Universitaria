@@ -72,8 +72,8 @@ public class LoginFrame extends JFrame {
         GridBagConstraints gridConstraints = new GridBagConstraints();
         loginJPanel.setOpaque(false);
 
-        String usernameLabel = "Usu\u00E1rio";
-        String passwordLabel = "Senha";
+        final String usernameLabel = "Usu\u00E1rio";
+        final String passwordLabel = "Senha";
         String empty = "\u200C";
 
         usernameTextField = new JTextField(usernameLabel) {
@@ -207,7 +207,20 @@ public class LoginFrame extends JFrame {
                 User user = loginController.signIn(username, password);
                 if (user instanceof Student) {
                     this.dispose();
-                    new HomeFrame(((Student) user), samu);
+                    HomeFrame homeFrame = new HomeFrame(((Student) user), samu);
+                    homeFrame.setLogoutListener(() -> {
+                        this.setVisible(true);
+
+                        usernameTextField.setText(usernameLabel);
+                        passwordField.setText(passwordLabel);
+
+                        // Botão desaparece do panel por algum motivo
+                        int leftPadding = 30;
+                        int rightPadding = 30;
+                        gridConstraints.gridy = 7;
+                        gridConstraints.insets = new Insets(0, leftPadding, 0, rightPadding);
+                        loginJPanel.add(Util.THEME_BUTTON, gridConstraints);
+                    });
                 } else {
                     JOptionPane.showMessageDialog(
                             this,
