@@ -12,7 +12,6 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -125,21 +124,6 @@ public class EnrollFrame extends JFrame {
                 return c;
             }
         };
-
-        lecturesTable.getModel().addTableModelListener(e -> {
-            int row = e.getFirstRow();
-            int column = e.getColumn();
-            if (column == boolColumn) {
-                TableModel model = (TableModel) e.getSource();
-                String columnName = model.getColumnName(column);
-                Boolean checked = (Boolean) model.getValueAt(row, column);
-                if (checked) {
-                    System.out.println(columnName + ": " + true);
-                } else {
-                    System.out.println(columnName + ": " + false);
-                }
-            }
-        });
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         lecturesTable.setDefaultRenderer(Object.class, centerRenderer);

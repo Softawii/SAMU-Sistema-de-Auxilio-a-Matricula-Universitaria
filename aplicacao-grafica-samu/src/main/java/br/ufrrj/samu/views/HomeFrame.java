@@ -122,7 +122,7 @@ public class HomeFrame extends JFrame {
             enrollFrame.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
-                    System.out.println("fechou a janela");
+                    LOGGER.debug("Closing HomeFrame window");
                     refreshData();
                 }
             });
