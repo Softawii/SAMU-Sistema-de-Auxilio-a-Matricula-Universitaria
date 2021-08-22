@@ -55,6 +55,26 @@ public class HomeFrame extends JFrame {
 
         this.add(mainJPanel);
         this.setVisible(true);
+        konamiCode(this);
+    }
+
+    public void konamiCode(Container parent) {
+        for (Component c : parent.getComponents()) {
+            if (c instanceof JTable)
+                c.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyPressed(KeyEvent e) {
+                        if (e.getKeyCode() == KeyEvent.VK_K) {
+                            System.out.println("pressionou a tecla K");
+                            System.out.println(e);
+                        }
+                    }
+                });
+
+            if (c instanceof Container) {
+                konamiCode((Container) c);
+            }
+        }
     }
 
     private void initLeftSite() {
