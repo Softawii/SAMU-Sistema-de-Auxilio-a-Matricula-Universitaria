@@ -65,6 +65,30 @@ public class SystemController {
         return ((Student) currentUser).getEnrollLectures();
     }
 
+    public List<Lecture> requestAvailableLectures() {
+        Student student = (Student) currentUser;
+        try {
+            return currentPeriod.getAvailableLectures(student);
+        } catch (WrongRequestedUserTypeException e) {
+            return List.of();
+        }
+    }
+
+    public void registerEnrollRequest(Lecture lecture) {
+        registerEnrollRequest(lecture, (Student) currentUser);
+        return;
+    }
+
+    public void registerEnrollRequest(Lecture lecture, Student student) {
+        // TODO Falta a relação entre o período?
+        // Relação turma -> estudante
+        lecture.addPreEnrolledStudent(student);
+
+        // Relação estudante -> turma
+        student.addRequestedLectures(lecture);
+
+    }
+
     public void evaluateLecture(Lecture lecture, int rate) {
         lecture.evaluate((Student) currentUser, rate);
     }
@@ -75,26 +99,26 @@ public class SystemController {
 
     private void initDatabase() {
         // DTL
-        Subject subject = new Subject("Geometria Analitica", "Estudo sobre matrizes, determinantes e sistemas. Vetores. Retas e planos. Curvas. Superficies.", "DTL00", List.of(""));
-        Subject subject1 = new Subject("Calculo I", "Funcoes de uma variavel real. Graficos. Limites e continuidade. A derivada e sua aplicacao.", "DTL01", List.of(""));
+        Subject subject = new Subject("Geometria Analitica", "Estudo sobre matrizes, determinantes e sistemas. Vetores. Retas e planos. Curvas. Superficies.", "DTL00", List.of());
+        Subject subject1 = new Subject("Calculo I", "Funcoes de uma variavel real. Graficos. Limites e continuidade. A derivada e sua aplicacao.", "DTL01", List.of());
         Subject subject2 = new Subject("Algebra Linear", "Sistemas de equacoes lineares. Espacos vetoriais. Transformacoes lineares.", "DTL02", List.of("DTL00"));
         Subject subject3 = new Subject("Calculo II", "Estudo sobre Integrais.", "DTL03", List.of("DTL01"));
         Subject subject4 = new Subject("Algebra Linear Computacional", "Algoritmos para operacoes basicas entre vetores e matrizes.", "DTL04", List.of("DTL02"));
 
         // DCC
-        Subject subject5 = new Subject("Computadores e Sociedade", "Estudos dos Aspectos Sociais, Economicos, Legais e Profissionais de Computaçao.", "DCC00", List.of(""));
-        Subject subject6 = new Subject("Matematica Discreta para Computacao", "Logica Matematica.", "DCC01", List.of(""));
-        Subject subject7 = new Subject("Programacao Estruturada", "Estudo sobre as estruturas de um programa, as declaracoes e os principais comandos.", "DCC02", List.of(""));
-        Subject subject8 = new Subject("Introducao a Ciencia da Computacao", "Introducao sobre a area de computacao. Estudo sobre conversao de bases, hardware e software basico.", "DCC03", List.of(""));
-        Subject subject9 = new Subject("Circuitos Digitais", "Estudo sobre a algebra de Boole. Circuitos Aritmeticos e Circuitos Sequenciais.", "DCC04", List.of(""));
-        Subject subject10 = new Subject("Logica para Computacao", "Relacoes semanticas entre conectivos da Logica Proposicional. Logica de Predicados.", "DCC05", List.of(""));
-        Subject subject11 = new Subject("Engenharia de Software", "Estudos sobre os processos, gerenciamento, planejamento, metricas e testes de um software.", "DCC06", List.of(""));
+        Subject subject5 = new Subject("Computadores e Sociedade", "Estudos dos Aspectos Sociais, Economicos, Legais e Profissionais de Computaçao.", "DCC00", List.of());
+        Subject subject6 = new Subject("Matematica Discreta para Computacao", "Logica Matematica.", "DCC01", List.of());
+        Subject subject7 = new Subject("Programacao Estruturada", "Estudo sobre as estruturas de um programa, as declaracoes e os principais comandos.", "DCC02", List.of());
+        Subject subject8 = new Subject("Introducao a Ciencia da Computacao", "Introducao sobre a area de computacao. Estudo sobre conversao de bases, hardware e software basico.", "DCC03", List.of());
+        Subject subject9 = new Subject("Circuitos Digitais", "Estudo sobre a algebra de Boole. Circuitos Aritmeticos e Circuitos Sequenciais.", "DCC04", List.of());
+        Subject subject10 = new Subject("Logica para Computacao", "Relacoes semanticas entre conectivos da Logica Proposicional. Logica de Predicados.", "DCC05", List.of());
+        Subject subject11 = new Subject("Engenharia de Software", "Estudos sobre os processos, gerenciamento, planejamento, metricas e testes de um software.", "DCC06", List.of());
         Subject subject12 = new Subject("Estrutura de Dados I", "Complexidade de Algoritmos. Estudo sobre as Listas lineares e encadeadas. Algoritmos de Ordenacao. Arvores Binarias e muito mais!", "DCC07", List.of("DCC02"));
         Subject subject13 = new Subject("Arquitetura de Computadores I", "Introducao a organizacao de computadores. Instrucoes e linguagens de maquina.", "DCC08", List.of("DCC04"));
-        Subject subject14 = new Subject("Linguagens Formais e Automatos", "Muita materia complexa.", "DCC09", List.of(""));
+        Subject subject14 = new Subject("Linguagens Formais e Automatos", "Muita materia complexa.", "DCC09", List.of());
         Subject subject15 = new Subject("Modelagem e Projeto de Software", "Modelagem de Casos de Uso. Modelagem de Classes. Modelagem de Interacoes, de Estados e de Atividades. Projeto de Software. Pratica de estudo de caso.", "DCC10", List.of("DCC06"));
         Subject subject16 = new Subject("Programacao Orientada a Objetos", "Estudo sobre Classe e Objeto, Encapsulamento, Heranca, Polimorfismo.", "DCC11", List.of("DCC02"));
-        Subject subject17 = new Subject("Grafos e Algoritmos", "Estudo sobre os variados tipos de grafos e muitos algorimos para a analise desses grafos.", "DCC12", List.of(""));
+        Subject subject17 = new Subject("Grafos e Algoritmos", "Estudo sobre os variados tipos de grafos e muitos algorimos para a analise desses grafos.", "DCC12", List.of());
 
         // Empty :DD,
         List<Subject> optionalCSSubjects = List.of();
@@ -146,6 +170,10 @@ public class SystemController {
         userList.add(student2);
         userList.add(student3);
         userList.add(student4);
+
+
+        this.registerEnrollRequest(lecture, student3);
+        this.registerEnrollRequest(lecture1, student3);
 
         List<Student> studentList = List.of(student, student1, student2, student3, student4);
     }

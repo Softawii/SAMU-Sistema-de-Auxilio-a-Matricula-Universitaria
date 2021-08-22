@@ -40,13 +40,27 @@ public class Period {
         }
 
         Student student = (Student) user;
+        System.out.println("[Period Lectures]" + lectureList);
+
         List<Subject> concludedSubjects = student.getConcludedSubjects();
+
         List<String> concludedSubjectsCodes = concludedSubjects.stream().map(Subject::getCode).collect(Collectors.toList());
+
         List<Lecture> availableLectures = lectureList.stream()
                 .filter(lecture -> !student.getEnrollLectures().contains(lecture))
                 .filter(lecture -> !student.getRequestedLectures().contains(lecture))
                 .filter(lecture -> {
                     ArrayList<String> prerequisites = lecture.getSubject().getPrerequisites();
+
+                    System.out.println(lecture);
+                    System.out.println(prerequisites);
+
+                    System.out.println(lecture.getSubject().getName());
+                    System.out.println(prerequisites.size());
+                    if (prerequisites.size() == 0) {
+                        return true;
+                    }
+
                     for (String prerequisite : prerequisites) {
                         if (!concludedSubjectsCodes.contains(prerequisite)) {
                             return false;

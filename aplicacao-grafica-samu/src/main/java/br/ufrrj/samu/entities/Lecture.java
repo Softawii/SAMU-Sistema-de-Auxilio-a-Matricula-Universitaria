@@ -15,7 +15,9 @@ public class Lecture {
 
     private Teacher teacher;
 
-    private List<String> students;
+    private List<Student> students;
+
+    private List<Student> preEnrolledStudent;
 
     private Evaluator evaluator;
 
@@ -36,6 +38,10 @@ public class Lecture {
                 .map(Lecture::getCode)
                 .reduce((s1, s2) -> s1 + "," + s2)
                 .orElse("");
+    }
+
+    public void addPreEnrolledStudent(Student student) {
+        preEnrolledStudent.add(student);
     }
 
     public String getClassPlan() {
