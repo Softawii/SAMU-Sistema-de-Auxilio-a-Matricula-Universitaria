@@ -1,9 +1,7 @@
 package br.ufrrj.samu.entities;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.OptionalDouble;
+import java.util.*;
+import java.util.function.Predicate;
 
 public class Lecture {
     private String classPlan;
@@ -42,6 +40,10 @@ public class Lecture {
 
     public void addPreEnrolledStudent(Student student) {
         preEnrolledStudent.add(student);
+    }
+
+    public List<Student> getPreEnrolledStudent() {
+        return preEnrolledStudent;
     }
 
     public String getClassPlan() {
@@ -102,6 +104,23 @@ public class Lecture {
 
     public void setStudents(List<Student> students) {
         this.students = students;
+    }
+
+    public static Predicate<Lecture> isEnrollablePredicate(List<String> concludedSubjectsCodes) {
+        return lecture -> {
+            ArrayList<String> prerequisites = lecture.getSubject().getPrerequisites();
+
+            if (prerequisites.size() == 0) {
+                return true;
+            }
+
+            for (String prerequisite : prerequisites) {
+                if (!concludedSubjectsCodes.contains(prerequisite)) {
+                    return false;
+                }
+            }
+            return true;
+        };
     }
 
     @Override

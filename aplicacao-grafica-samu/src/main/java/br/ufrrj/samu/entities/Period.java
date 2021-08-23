@@ -30,6 +30,10 @@ public class Period {
         return User.Type.OTHER;
     }
 
+    public List<Lecture> getLectureList() {
+        return lectureList;
+    }
+
     public List<Lecture> getAvailableLectures(User user) throws WrongRequestedUserTypeException {
         if (userType(user) != User.Type.STUDENT) {
             throw new WrongRequestedUserTypeException("Current user is not a Student");
@@ -45,30 +49,7 @@ public class Period {
         List<Lecture> availableLectures = lectureList.stream()
                 .filter(lecture -> !student.getEnrollLectures().contains(lecture))
                 .filter(lecture -> !student.getRequestedLectures().contains(lecture))
-                .filter(lecture -> {
-                    ArrayList<String> prerequisites = lecture.getSubject().getPrerequisites();
-
-                    System.out.println(lecture);
-                    System.out.println(prerequisites);
-
-                    System.out.println(lecture.getSubject().getName());
-                    System.out.println(prerequisites.size());
-                    if (prerequisites.size() == 0) {
-                        return true;
-                    }
-
-                    for (String prerequisite : prerequisites) {
-                        if (!concludedSubjectsCodes.contains(prerequisite)) {
-                            return false;
-                        }
-                    }
-                    return true;
-                }).collect(Collectors.toList());
-//                        lecture.getSubject().getPrerequisites().stream()
-//                                .map(preReq ->
-//                                        concludedSubjects.stream()
-//                                                .map(Subject::getCode)
-//                                                .anyMatch(s -> preReq.equals(s))).reduce()
+                .filter(Lecture.isEnrollablePredicate(concludedSubjectsCodes)).collect(Collectors.toList());
         return availableLectures;
     }
 
