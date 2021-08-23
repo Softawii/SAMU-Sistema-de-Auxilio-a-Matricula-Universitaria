@@ -61,7 +61,7 @@ public class Semester {
                 '}';
     }
 
-    enum CurrentStatus {
+    public enum CurrentStatus {
         ENROLLMENT,
         ONGOING,
         CONCLUDED
