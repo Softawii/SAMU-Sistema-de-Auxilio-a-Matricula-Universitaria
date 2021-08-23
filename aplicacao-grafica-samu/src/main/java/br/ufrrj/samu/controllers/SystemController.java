@@ -128,23 +128,26 @@ public class SystemController {
         );
         Curriculum CSCurriculum = new Curriculum(optionalCSSubjects, coreCSSubjects);
 
+        Course CSCourse = new Course("Ci\u00EAncia da Computa\u00E7\u00E3o", CSCurriculum);
+
         // Lectures and Teachers
-        Teacher teacher = new Teacher("brunoD", "12345", "Bruno Dembogurski", "000.000.000-10", "Casa segura", "01/01/1995",  new ArrayList<>(), "curso");
+        Teacher teacher = new Teacher("brunoD", "12345", "Bruno Dembogurski", "000.000.000-10", "Casa segura", "01/01/1995",  new ArrayList<>(), CSCourse);
         Lecture lecture = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM01", subject5, null,  new ArrayList<>(), new ArrayList<>());
         lecture.setTeacher(teacher);
         teacher.addLecture(lecture);
 
-        Teacher teacher1 = new Teacher("camila", "12345", "Camila Lacerda", "000.000.000-11", "Casa segura", "01/01/1995", new ArrayList<>(), "curso");
+        Teacher teacher1 = new Teacher("camila", "12345", "Camila Lacerda", "000.000.000-11", "Casa segura", "01/01/1995", new ArrayList<>(), CSCourse);
         Lecture lecture1 = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM02", subject, null,  new ArrayList<>(), new ArrayList<>());
         lecture1.setTeacher(teacher1);
         teacher1.addLecture(lecture1);
 
-        Coordinator teacher2 = new Coordinator("ligia", "12345", "Ligia Passos", "000.000.000-12", "Casa segura", "01/01/1995",  new ArrayList<>(), "curso");
+        Coordinator teacher2 = new Coordinator("ligia", "1234", "Ligia Passos", "000.000.000-12", "Casa segura", "01/01/1995",  new ArrayList<>(), CSCourse);
         Lecture lecture2 = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM03", subject6, null,  new ArrayList<>(), new ArrayList<>());
+        CSCourse.setCoordinator(teacher2);
         lecture2.setTeacher(teacher2);
         teacher2.addLecture(lecture2);
 
-        Teacher teacher3 = (new Teacher("braida", "12345", "Filipe Braida", "000.000.000-13", "Casa segura", "01/01/1995", new ArrayList<>(), "curso"));
+        Teacher teacher3 = (new Teacher("braida", "12345", "Filipe Braida", "000.000.000-13", "Casa segura", "01/01/1995", new ArrayList<>(), CSCourse));
         Lecture lecture3 = new Lecture("plano de classe", "sala da turma", "hora da aula", "TM04", subject7, null,  new ArrayList<>(), new ArrayList<>());
         lecture3.setTeacher(teacher3);
         teacher3.addLecture(lecture3);
@@ -155,9 +158,6 @@ public class SystemController {
         currentPeriod.addLecture(lecture1);
         currentPeriod.addLecture(lecture2);
         currentPeriod.addLecture(lecture3);
-
-        Course CSCourse = new Course("Ci\u00EAncia da Computa\u00E7\u00E3o", CSCurriculum);
-        CSCourse.setCoordinator(teacher2);
 
         // Students
         Student student = new Student("yan", "1234", "Yan Charlos", "000.000.000-01", "Minha Casa", "27/05/2001", CSCourse, "2019-1", new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
@@ -170,6 +170,8 @@ public class SystemController {
         userList.add(student2);
         userList.add(student3);
         userList.add(student4);
+
+        userList.add(teacher2);
 
 
         this.registerEnrollRequest(lecture, student3);

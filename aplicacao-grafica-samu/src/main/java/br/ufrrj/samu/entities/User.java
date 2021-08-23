@@ -10,6 +10,7 @@ public class User {
     private String cpf;
     private String address;
     private String birthday;
+    private Course course;
 
     public User() {
     }
@@ -19,13 +20,22 @@ public class User {
         this.password = password;
     }
 
-    public User(String username, String password, String name, String cpf, String address, String birthday) {
+    public User(String username, String password, String name, String cpf, String address, String birthday, Course course) {
         this.username = username;
         this.password = password;
         this.name = name;
         this.cpf = cpf;
         this.address = address;
         this.birthday = birthday;
+        this.course = course;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
     }
 
     public String getName() {
@@ -95,6 +105,7 @@ public class User {
                 "username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
+                ", course='" + course + '\'' +
                 ", cpf='" + cpf + '\'' +
                 ", address='" + address + '\'' +
                 ", birthday='" + birthday + '\'' +

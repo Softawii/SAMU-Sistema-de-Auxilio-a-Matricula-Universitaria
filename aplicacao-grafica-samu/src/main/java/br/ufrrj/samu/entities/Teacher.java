@@ -11,17 +11,9 @@ public class Teacher extends User {
 
     private List<Lecture> lectures;
 
-    private String course;
-
-    public Teacher(List<Lecture> lectures, String course) {
+    public Teacher(String username, String password, String name, String cpf, String address, String birthday, List<Lecture> lectures, Course course) {
+        super(username, password, name, cpf, address, birthday, course);
         this.lectures = lectures;
-        this.course = course;
-    }
-
-    public Teacher(String username, String password, String name, String cpf, String address, String birthday, List<Lecture> lectures, String course) {
-        super(username, password, name, cpf, address, birthday);
-        this.lectures = lectures;
-        this.course = course;
     }
 
     public List<Lecture> getLectures() {
@@ -40,19 +32,11 @@ public class Teacher extends User {
         this.lectures.add(lecture);
     }
 
-    public String getCourse() {
-        return course;
-    }
-
-    public void setCourse(String course) {
-        this.course = course;
-    }
-
     @Override
     public String toString() {
         return "Teacher{" +
+                ", super='" + super.toString() + '\'' +
                 ", lectures='" + lectures.stream().map(Lecture::getCode) + '\'' +
-                ", course='" + course + '\'' +
                 '}';
     }
 

@@ -6,7 +6,6 @@ import java.util.Optional;
 
 public class Student extends User {
 
-    private Course course;
     private String semester;
 
     private List<Lecture> enrollLectures;
@@ -17,20 +16,9 @@ public class Student extends User {
         super();
     }
 
-    public Student(Course course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures, List<Subject> concludedSubjects) {
-        super();
-        this.course = course;
-        this.semester = semester;
-        this.enrollLectures = enrollLectures;
-        this.requestedLectures = requestedLectures;
-        this.concludedSubjects = concludedSubjects;
-    }
-
     public Student(String username, String password, String name, String cpf, String address, String birthday,
                    Course course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures, List<Subject> concludedSubjects) {
-        super(username, password, name, cpf, address, birthday);
-
-        this.course = course;
+        super(username, password, name, cpf, address, birthday, course);
         this.semester = semester;
         this.concludedSubjects = concludedSubjects;
 
@@ -45,10 +33,6 @@ public class Student extends User {
         } catch (Exception e) {
             this.requestedLectures = new ArrayList<>();
         }
-    }
-
-    public Course getCourse() {
-        return course;
     }
 
     public String getSemester() {
@@ -75,10 +59,6 @@ public class Student extends User {
 
     public void addRequestedLectures(Lecture lecture) { this.requestedLectures.add(lecture); }
 
-    public void setCourse(Course course) {
-        this.course = course;
-    }
-
     public void setSemester(String semester) {
         this.semester = semester;
     }
@@ -103,7 +83,6 @@ public class Student extends User {
     public String toString() {
         return "Student{" +
                 "user='" + super.toString() + '\'' +
-                ", course='" + course + '\'' +
                 ", semester='" + semester + '\'' +
                 ", enrollLectures=" + enrollLectures +
                 ", requestedLectures=" + requestedLectures +

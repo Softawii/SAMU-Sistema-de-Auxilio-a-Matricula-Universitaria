@@ -4,6 +4,7 @@ import br.ufrrj.samu.SAMU;
 import br.ufrrj.samu.entities.Lecture;
 import br.ufrrj.samu.entities.Student;
 import br.ufrrj.samu.entities.Subject;
+import br.ufrrj.samu.entities.User;
 import br.ufrrj.samu.utils.Util;
 import br.ufrrj.samu.views.listeners.LogoutListener;
 import org.apache.logging.log4j.LogManager;
@@ -32,7 +33,7 @@ public class HomeFrame extends JFrame {
 
     JTable concludedTable;
 
-    private Student student;
+    private User user;
     private JButton logoutButton;
     private JButton avaliarDisciplinasButton;
     private JButton realizarMatriculaButton;
@@ -41,10 +42,10 @@ public class HomeFrame extends JFrame {
     private JTable enrolledTable;
     private LogoutListener logoutListener;
 
-    public HomeFrame(Student student, SAMU samu) throws HeadlessException {
+    public HomeFrame(User user, SAMU samu) throws HeadlessException {
         super();
         frameInit();
-        this.student = student;
+        this.user = user;
 
         mainJPanel = new JPanel();
         mainJPanel.setLayout(new BorderLayout());
@@ -90,17 +91,17 @@ public class HomeFrame extends JFrame {
         userImage.setSize(new Dimension(150, 150));
         userImage.setIcon(requireNonNull(Util.getImageWidth("images/userImage.png", 128,128)));
 
-        JLabel username = new JLabel("Nome: " + student.getName());
-        JLabel enrollment = new JLabel("Matr\u00EDcula: " + String.format("%s",student.getCpf()));
-        JLabel course = new JLabel("Curso: " + student.getCourse().getName());
-        JLabel semester = new JLabel("Entrou: " + student.getSemester());
+        JLabel username = new JLabel("Nome: " + user.getName());
+        JLabel enrollment = new JLabel("Matr\u00EDcula: " + String.format("%s", user.getCpf()));
+        JLabel course = new JLabel("Curso: " + user.getCourse().getName());
+        JLabel semester = new JLabel("Semestre atual: " + Util.getCurrentSemester());
 
         GridBagConstraints gridConstraints = new GridBagConstraints();
 
         gridConstraints.anchor = GridBagConstraints.CENTER;
         gridConstraints.weighty = 0.05;
 
-        gridConstraints.gridy = 1;
+        gridConstraints.gridy = 0;
         gridConstraints.gridx = 0;
         gridConstraints.fill = GridBagConstraints.NONE; /* Troquei para NONE, o both tava fazendo ficar com a parte branca bem maior */
         gridConstraints.insets = new Insets(0, 0, 10, 4);
@@ -109,20 +110,20 @@ public class HomeFrame extends JFrame {
         gridConstraints.insets = new Insets(0, 0, 0, 0);
 
         gridConstraints.fill = GridBagConstraints.NONE;
-        gridConstraints.gridy = 2;
+        gridConstraints.gridy++;
         userInfoPanel.add(username, gridConstraints);
 
-        gridConstraints.gridy = 3;
+        gridConstraints.gridy++;
         userInfoPanel.add(enrollment, gridConstraints);
 
-        gridConstraints.gridy = 4;
+        gridConstraints.gridy++;
         userInfoPanel.add(course, gridConstraints);
 
-        gridConstraints.gridy = 5;
+        gridConstraints.gridy++;
         userInfoPanel.add(semester, gridConstraints);
 
         gridConstraints.weighty = 0.08;
-        gridConstraints.gridy = 6;
+        gridConstraints.gridy++;
         gridConstraints.insets = new Insets(20,0,0,0);
         userInfoPanel.add(new JLabel("Menu de Navega\u00E7\u00E3o"), gridConstraints);
 
@@ -132,34 +133,37 @@ public class HomeFrame extends JFrame {
         gridConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridConstraints.anchor = GridBagConstraints.FIRST_LINE_START;
 
-        gridConstraints.gridy = 7;
-        realizarMatriculaButton = new JButton("Realizar Matr\u00EDcula");
-        realizarMatriculaButton.setFocusable(false);
-        realizarMatriculaButton.setFont(realizarMatriculaButton.getFont().deriveFont(15f));
-        realizarMatriculaButton.setFont(realizarMatriculaButton.getFont().deriveFont(15f));
-        realizarMatriculaButton.addActionListener(e -> {
-            EnrollFrame enrollFrame = new EnrollFrame();
-            enrollFrame.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosed(WindowEvent e) {
-                    LOGGER.debug("Closing HomeFrame window");
-                    refreshData();
-                }
+        if (user instanceof Student) {
+            gridConstraints.gridy++;
+            realizarMatriculaButton = new JButton("Realizar Matr\u00EDcula");
+            realizarMatriculaButton.setFocusable(false);
+            realizarMatriculaButton.setFont(realizarMatriculaButton.getFont().deriveFont(15f));
+            realizarMatriculaButton.setFont(realizarMatriculaButton.getFont().deriveFont(15f));
+            realizarMatriculaButton.addActionListener(e -> {
+                EnrollFrame enrollFrame = new EnrollFrame();
+                enrollFrame.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        LOGGER.debug("Closing HomeFrame window");
+                        refreshData();
+                    }
+                });
             });
-        });
-        userInfoPanel.add(realizarMatriculaButton, gridConstraints);
+            userInfoPanel.add(realizarMatriculaButton, gridConstraints);
 
-        gridConstraints.gridy = 8;
-        avaliarDisciplinasButton = new JButton("Avaliar Disciplinas");
-        avaliarDisciplinasButton.setFocusable(false);
-        avaliarDisciplinasButton.setEnabled(true);
-        avaliarDisciplinasButton.setFont(avaliarDisciplinasButton.getFont().deriveFont(15f));
-        avaliarDisciplinasButton.addActionListener(e -> {
-            new EvaluationFrame();
-        });
-        userInfoPanel.add(avaliarDisciplinasButton, gridConstraints);
+            gridConstraints.gridy++;
+            avaliarDisciplinasButton = new JButton("Avaliar Disciplinas");
+            avaliarDisciplinasButton.setFocusable(false);
+            avaliarDisciplinasButton.setEnabled(true);
+            avaliarDisciplinasButton.setFont(avaliarDisciplinasButton.getFont().deriveFont(15f));
+            avaliarDisciplinasButton.addActionListener(e -> {
+                new EvaluationFrame();
+            });
+            userInfoPanel.add(avaliarDisciplinasButton, gridConstraints);
 
-        gridConstraints.gridy = 9;
+        }
+
+        gridConstraints.gridy++;
         gridConstraints.weighty = 2.0;
         logoutButton = new JButton("Logout");
         logoutButton.setFocusable(false);
@@ -184,33 +188,36 @@ public class HomeFrame extends JFrame {
         tableJPanel.setLayout(new BorderLayout());
 
         GridBagConstraints gridConstraints = new GridBagConstraints();
-        JScrollPane scrollPaneEnrollLecture = initEnrollLecturesTable();
-        JScrollPane scrollPaneRequestedLectures = initRequestedLectures();
-        JScrollPane scrollPaneConcludedLectures = initConcludedSubjects();
+        if (user instanceof Student) {
 
-        tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("Turmas Matriculadas", scrollPaneEnrollLecture);
-        tabbedPane.addTab("Turmas Pr\u00E9-Matriculadas", scrollPaneRequestedLectures);
-        tabbedPane.addTab("Disciplinas Conclu\u00EDdas", scrollPaneConcludedLectures);
+            JScrollPane scrollPaneEnrollLecture = initEnrollLecturesTable();
+            JScrollPane scrollPaneRequestedLectures = initRequestedLectures();
+            JScrollPane scrollPaneConcludedLectures = initConcludedSubjects();
 
-        tableJPanel.add(tabbedPane, BorderLayout.CENTER);
+            tabbedPane = new JTabbedPane();
+            tabbedPane.addTab("Turmas Matriculadas", scrollPaneEnrollLecture);
+            tabbedPane.addTab("Turmas Pr\u00E9-Matriculadas", scrollPaneRequestedLectures);
+            tabbedPane.addTab("Disciplinas Conclu\u00EDdas", scrollPaneConcludedLectures);
 
-        gridConstraints.gridx = 2;
-        gridConstraints.gridy = 1;
-        gridConstraints.insets = new Insets(10, 10, 10, 10);
-        gridConstraints.anchor = GridBagConstraints.EAST;
-        rightSidePanel.add(Util.THEME_BUTTON, gridConstraints);
+            tableJPanel.add(tabbedPane, BorderLayout.CENTER);
+
+            gridConstraints.gridx = 2;
+            gridConstraints.gridy = 1;
+            gridConstraints.insets = new Insets(10, 10, 10, 10);
+            gridConstraints.anchor = GridBagConstraints.EAST;
+            rightSidePanel.add(Util.THEME_BUTTON, gridConstraints);
 
 
-        gridConstraints.gridx = 0;
-        gridConstraints.gridy = 2;
-        gridConstraints.weightx = 1;
-        gridConstraints.weighty = 1;
-        gridConstraints.anchor = GridBagConstraints.CENTER;
-        gridConstraints.fill = GridBagConstraints.BOTH;
-        gridConstraints.gridwidth = 3;
-        gridConstraints.insets = new Insets(10, 10, 10, 10);
-        rightSidePanel.add(tableJPanel, gridConstraints);
+            gridConstraints.gridx = 0;
+            gridConstraints.gridy = 2;
+            gridConstraints.weightx = 1;
+            gridConstraints.weighty = 1;
+            gridConstraints.anchor = GridBagConstraints.CENTER;
+            gridConstraints.fill = GridBagConstraints.BOTH;
+            gridConstraints.gridwidth = 3;
+            gridConstraints.insets = new Insets(10, 10, 10, 10);
+            rightSidePanel.add(tableJPanel, gridConstraints);
+        }
 
 
         mainJPanel.add(rightSidePanel, BorderLayout.CENTER);
@@ -393,7 +400,7 @@ public class HomeFrame extends JFrame {
     private void initConcludedSubjectsData() {
         String[] columnNames = {"C\u00F3digo", "Nome", "Descri\u00E7\u00E3o"};
 
-        List<Subject> concludedSubjects = student.getConcludedSubjects();
+        List<Subject> concludedSubjects = ((Student) user).getConcludedSubjects();
 
         Object[][] data = new Object[concludedSubjects.size()][columnNames.length];
         for (int i = 0; i < concludedSubjects.size(); i++) {
@@ -410,7 +417,7 @@ public class HomeFrame extends JFrame {
     private void initEnrolledLecturesData() {
         String[] columnNames = {"Nome da Disciplina", "Professor", "Hor\u00E1rio"};
 
-        List<Lecture> enrollLectures = student.getEnrollLectures();
+        List<Lecture> enrollLectures = ((Student) user).getEnrollLectures();
 
         Object[][] data = new Object[enrollLectures.size()][columnNames.length];
         for (int i = 0; i < enrollLectures.size(); i++) {
@@ -427,7 +434,7 @@ public class HomeFrame extends JFrame {
     private void initRequestedLecturesData() {
         String[] columnNames = {"Nome da Disciplina", "Professor", "Hor\u00E1rio"};
 
-        List<Lecture> requestedLectures = student.getRequestedLectures();
+        List<Lecture> requestedLectures = ((Student) user).getRequestedLectures();
 
         Object[][] data = new Object[requestedLectures.size()][columnNames.length];
         for (int i = 0; i < requestedLectures.size(); i++) {

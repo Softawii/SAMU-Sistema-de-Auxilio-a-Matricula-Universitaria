@@ -3,6 +3,7 @@ package br.ufrrj.samu.views;
 import br.ufrrj.samu.RoundedCornerBorder;
 import br.ufrrj.samu.SAMU;
 import br.ufrrj.samu.controllers.SystemController;
+import br.ufrrj.samu.entities.Coordinator;
 import br.ufrrj.samu.entities.Student;
 import br.ufrrj.samu.entities.User;
 import br.ufrrj.samu.exceptions.PasswordNotMatchesException;
@@ -205,9 +206,9 @@ public class LoginFrame extends JFrame {
             String password = new String(passwordField.getPassword());
             try {
                 User user = loginController.signIn(username, password);
-                if (user instanceof Student) {
+                if (user instanceof Student || user instanceof Coordinator) {
                     this.dispose();
-                    HomeFrame homeFrame = new HomeFrame(((Student) user), samu);
+                    HomeFrame homeFrame = new HomeFrame(user, samu);
                     homeFrame.setLogoutListener(() -> {
                         this.setVisible(true);
 

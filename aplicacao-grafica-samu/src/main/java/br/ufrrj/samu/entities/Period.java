@@ -1,8 +1,8 @@
 package br.ufrrj.samu.entities;
 
 import br.ufrrj.samu.exceptions.WrongRequestedUserTypeException;
+import br.ufrrj.samu.utils.Util;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,11 +14,7 @@ public class Period {
     private List<Lecture> lectureList;
 
     public Period() {
-        LocalDateTime now = LocalDateTime.now();
-        int year = now.getYear();
-        int monthValue = now.getMonthValue(); // 1-12
-        int semester = monthValue <= 6 ? 1 : 2;
-        this.name = String.format("%d.%d", year, semester);
+        this.name = Util.getCurrentSemester();
         this.lectureList = new ArrayList<>();
     }
 
