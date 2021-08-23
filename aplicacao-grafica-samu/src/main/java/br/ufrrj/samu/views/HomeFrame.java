@@ -164,7 +164,9 @@ public class HomeFrame extends JFrame {
             confirmRequestedLecturesButton.setFocusable(false);
             confirmRequestedLecturesButton.setFont(confirmRequestedLecturesButton.getFont().deriveFont(15f));
             confirmRequestedLecturesButton.setFont(confirmRequestedLecturesButton.getFont().deriveFont(15f));
+            ConfirmFrame confirmFrame = new ConfirmFrame();
             confirmRequestedLecturesButton.addActionListener(e -> {
+                confirmFrame.setVisible(true);
                 System.out.println("confirmar matrículas");
             });
             userInfoPanel.add(confirmRequestedLecturesButton, gridConstraints);

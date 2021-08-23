@@ -97,6 +97,10 @@ public class SystemController {
         return currentUser;
     }
 
+    public Period getCurrentPeriod() {
+        return currentPeriod;
+    }
+
     private void initDatabase() {
         // DTL
         Subject subject = new Subject("Geometria Analitica", "Estudo sobre matrizes, determinantes e sistemas. Vetores. Retas e planos. Curvas. Superficies.", "DTL00", List.of());
