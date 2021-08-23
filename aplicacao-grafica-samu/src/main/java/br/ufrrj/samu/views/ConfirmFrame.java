@@ -11,10 +11,13 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
@@ -33,11 +36,14 @@ public class ConfirmFrame extends JFrame {
     private List<Lecture> requestedLectures;
     private int numRows;
 
+
+
     public ConfirmFrame() throws HeadlessException {
         super();
         frameInit();
-
         this.systemController = SystemController.getInstance();
+        requestedLectures = systemController.getCurrentPeriod().getLectureList();
+
         this.coordinator = (Coordinator) systemController.getCurrentUser();
 
         JPanel main = new JPanel();
@@ -82,33 +88,8 @@ public class ConfirmFrame extends JFrame {
         return topPanel;
     }
     private JScrollPane initMiddlePanel() {
-        String[] columnNames = new String[]{"Aluno", "Nome da Turma", "Professor", "Hor\u00E1rio",  "Confirmar"};
-
-        // TODO deixar semelhante ao diagrama, desacoplar
-        requestedLectures = systemController.getCurrentPeriod().getLectureList();
-
-        // num_rows = num_students
-        numRows = requestedLectures.stream().mapToInt(lecture -> {
-            LOGGER.debug(lecture.getSubject().getName() + " : " + lecture.getPreEnrolledStudent().size());
-            return lecture.getPreEnrolledStudent().size();
-        }).sum();
-
-        Object[][] data = new Object[numRows][columnNames.length];
-        for (int i = 0, k = 0; i < requestedLectures.size() && k < numRows; i++) {
-            Lecture lecture = requestedLectures.get(i);
-            for (int j = 0; j < lecture.getPreEnrolledStudent().size() && k < numRows; k++, j++) {
-                Student student = lecture.getPreEnrolledStudent().get(j);
-                data[k][0] = student.getName();
-                data[k][1] = lecture.getSubject().getName();
-                data[k][2] = lecture.getTeacher().getName();
-                data[k][3] = lecture.getSchedule();
-                data[k][4] = false;
-                LOGGER.debug(String.format("[Table] Inserting requested lecture in line %d: %s %s %s %s %s", i, data[k][0], data[k][1], data[k][2], data[k][3], data[k][4]));
-            }
-        }
         int boolColumn = 4;
-
-        lecturesTable = new JTable(data, columnNames){
+        lecturesTable = new JTable(){
             @Override
             public boolean isCellEditable(int row, int column) {
                 return column == boolColumn;
@@ -131,6 +112,7 @@ public class ConfirmFrame extends JFrame {
                 return c;
             }
         };
+        updateTableData();
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         lecturesTable.setDefaultRenderer(Object.class, centerRenderer);
@@ -154,25 +136,28 @@ public class ConfirmFrame extends JFrame {
         JButton cancelEnrollment = new JButton("Cancelar Matr\u00EDculas");
         confirmEnrollment.setFont(confirmEnrollment.getFont().deriveFont(20f));
         cancelEnrollment.setFont(cancelEnrollment.getFont().deriveFont(20f));
+        cancelEnrollment.addActionListener(e -> {
+            this.dispose();
+        });
 
         confirmEnrollment.addActionListener(e -> {
             lecturesTable.setEnabled(false);
             for (int i = 0, k = 0; i < requestedLectures.size(); i++) {
                 Lecture lecture = requestedLectures.get(i);
-                for (int j = 0; j < lecture.getPreEnrolledStudent().size(); k++, j++) {
-                    // bugando quando remove das listas
-                    if (((Boolean) lecturesTable.getModel().getValueAt(i, 4)) == true) {
+                for (int j = 0; j < lecture.getPreEnrolledStudent().size(); k++) {
+                    if (((Boolean) lecturesTable.getModel().getValueAt(k, 4)) == true) {
                         Student student = lecture.getPreEnrolledStudent().get(j);
-
+                        System.out.printf("%s confirmado na turma %s%n", student.getName(), lecture.getSubject().getName());
                         systemController.confirmEnrollment(student, lecture);
-//
-//                      LOGGER.debug(String.format("[Table] Inserting requested lecture in line %d: %s %s %s %s %s", i, data[i][0], data[i][1], data[i][2], data[i][3], data[i][4]));
+                        LOGGER.debug(String.format("[Table] Confirming %s enroll in %s", student.getName(), lecture.getSubject().getName()));
+                    } else {
+                        j++; // bruxaria do yan
                     }
                 }
             }
             this.dispose();
             JOptionPane.showMessageDialog(this,
-                    "Matr\u00EDcula realizada com sucesso!",
+                    "Matr\u00EDcula confirmada com sucesso!",
                     frameTitle,
                     JOptionPane.PLAIN_MESSAGE);
         });
@@ -204,6 +189,39 @@ public class ConfirmFrame extends JFrame {
 //                }
             }
         });
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                updateTableData();
+            }
+        });
+    }
+
+    private void updateTableData() {
+        // atualiza os dados quando abre
+        String[] columnNames = new String[]{"Aluno", "Nome da Turma", "Professor", "Hor\u00E1rio",  "Confirmar"};
+
+        // TODO deixar semelhante ao diagrama, desacoplar
+        requestedLectures = systemController.getCurrentPeriod().getLectureList();
+
+        // num_rows = num_students
+        numRows = requestedLectures.stream().mapToInt(lecture -> lecture.getPreEnrolledStudent().size()).sum();
+
+        Object[][] data = new Object[numRows][columnNames.length];
+        for (int i = 0, k = 0; i < requestedLectures.size() && k < numRows; i++) {
+            Lecture lecture = requestedLectures.get(i);
+            for (int j = 0; j < lecture.getPreEnrolledStudent().size() && k < numRows; k++, j++) {
+                Student student = lecture.getPreEnrolledStudent().get(j);
+                data[k][0] = student.getName();
+                data[k][1] = lecture.getSubject().getName();
+                data[k][2] = lecture.getTeacher().getName();
+                data[k][3] = lecture.getSchedule();
+                data[k][4] = false;
+                LOGGER.debug(String.format("[Table] Inserting requested lecture in line %d: %s %s %s %s %s", i, data[k][0], data[k][1], data[k][2], data[k][3], data[k][4]));
+            }
+        }
+        lecturesTable.setEnabled(true);
+        lecturesTable.setModel(new DefaultTableModel(data, columnNames));
     }
 
 }
