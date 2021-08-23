@@ -88,22 +88,26 @@ public class ConfirmFrame extends JFrame {
         requestedLectures = systemController.getCurrentPeriod().getLectureList();
 
         // num_rows = num_students
-        numRows = requestedLectures.stream().mapToInt(lecture -> lecture.getPreEnrolledStudent().size()).sum();
+        numRows = requestedLectures.stream().mapToInt(lecture -> {
+            LOGGER.debug(lecture.getSubject().getName() + " : " + lecture.getPreEnrolledStudent().size());
+            return lecture.getPreEnrolledStudent().size();
+        }).sum();
 
         Object[][] data = new Object[numRows][columnNames.length];
-        for (int i = 0, k = 0; i < requestedLectures.size(); i++) {
+        for (int i = 0, k = 0; i < requestedLectures.size() && k < numRows; i++) {
             Lecture lecture = requestedLectures.get(i);
-            for (int j = 0; j < lecture.getPreEnrolledStudent().size(); k++, j++) {
+            for (int j = 0; j < lecture.getPreEnrolledStudent().size() && k < numRows; k++, j++) {
                 Student student = lecture.getPreEnrolledStudent().get(j);
                 data[k][0] = student.getName();
                 data[k][1] = lecture.getSubject().getName();
                 data[k][2] = lecture.getTeacher().getName();
                 data[k][3] = lecture.getSchedule();
                 data[k][4] = false;
-                LOGGER.debug(String.format("[Table] Inserting requested lecture in line %d: %s %s %s %s %s", i, data[i][0], data[i][1], data[i][2], data[i][3], data[i][4]));
+                LOGGER.debug(String.format("[Table] Inserting requested lecture in line %d: %s %s %s %s %s", i, data[k][0], data[k][1], data[k][2], data[k][3], data[k][4]));
             }
         }
         int boolColumn = 4;
+
         lecturesTable = new JTable(data, columnNames){
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -163,7 +167,8 @@ public class ConfirmFrame extends JFrame {
                         lecture.getPreEnrolledStudent().remove(student);
                         student.addEnrollLectures(lecture);
                         lecture.getStudents().add(student);
-//                        LOGGER.debug(String.format("[Table] Inserting requested lecture in line %d: %s %s %s %s %s", i, data[i][0], data[i][1], data[i][2], data[i][3], data[i][4]));
+//
+//                      LOGGER.debug(String.format("[Table] Inserting requested lecture in line %d: %s %s %s %s %s", i, data[i][0], data[i][1], data[i][2], data[i][3], data[i][4]));
                     }
                 }
             }
