@@ -60,4 +60,10 @@ public class Semester {
                 ", lectureList=" + lectureList +
                 '}';
     }
+
+    enum CurrentStatus {
+        ENROLLMENT,
+        ONGOING,
+        CONCLUDED
+    }
 }
