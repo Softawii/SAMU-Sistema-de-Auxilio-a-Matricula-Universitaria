@@ -183,4 +183,17 @@ public class SystemController {
 
         List<Student> studentList = List.of(student, student1, student2, student3, student4);
     }
+
+    public void confirmEnrollment(Student student, Lecture lecture) {
+        student.getRequestedLectures().remove(lecture);
+        lecture.getPreEnrolledStudent().remove(student);
+        student.addEnrollLectures(lecture);
+        lecture.getStudents().add(student);
+    }
+
+
+    public void deniedEnrollment(Student student, Lecture lecture) {
+        student.getRequestedLectures().remove(lecture);
+        lecture.getPreEnrolledStudent().remove(student);
+    }
 }

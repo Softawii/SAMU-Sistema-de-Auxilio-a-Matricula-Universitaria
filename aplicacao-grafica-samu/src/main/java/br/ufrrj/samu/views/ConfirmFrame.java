@@ -163,10 +163,8 @@ public class ConfirmFrame extends JFrame {
                     // bugando quando remove das listas
                     if (((Boolean) lecturesTable.getModel().getValueAt(i, 4)) == true) {
                         Student student = lecture.getPreEnrolledStudent().get(j);
-                        student.getRequestedLectures().remove(lecture);
-                        lecture.getPreEnrolledStudent().remove(student);
-                        student.addEnrollLectures(lecture);
-                        lecture.getStudents().add(student);
+
+                        systemController.confirmEnrollment(student, lecture);
 //
 //                      LOGGER.debug(String.format("[Table] Inserting requested lecture in line %d: %s %s %s %s %s", i, data[i][0], data[i][1], data[i][2], data[i][3], data[i][4]));
                     }
