@@ -7,13 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Period {
+public class Semester {
 
     private String name;
 
     private List<Lecture> lectureList;
 
-    public Period() {
+    public Semester() {
         this.name = Util.getCurrentSemester();
         this.lectureList = new ArrayList<>();
     }

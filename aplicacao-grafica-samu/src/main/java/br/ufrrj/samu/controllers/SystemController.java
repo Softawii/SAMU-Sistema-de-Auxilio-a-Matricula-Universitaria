@@ -13,14 +13,14 @@ public class SystemController {
     //pre-maricular student methods
     public List<Lecture> requestAvailableLecture(User user) {
         try {
-            return currentPeriod.getAvailableLectures(user);
+            return currentSemester.getAvailableLectures(user);
         } catch (WrongRequestedUserTypeException e) {
             e.printStackTrace();
             return List.of();
         }
     }
 
-    private Period currentPeriod;
+    private Semester currentSemester;
 
     private User currentUser;
 
@@ -28,7 +28,7 @@ public class SystemController {
 
     private SystemController() {
         this.userList = new ArrayList<>();
-        this.currentPeriod = new Period();
+        this.currentSemester = new Semester();
         initDatabase();
     }
 
@@ -68,7 +68,7 @@ public class SystemController {
     public List<Lecture> requestAvailableLectures() {
         Student student = (Student) currentUser;
         try {
-            return currentPeriod.getAvailableLectures(student);
+            return currentSemester.getAvailableLectures(student);
         } catch (WrongRequestedUserTypeException e) {
             return List.of();
         }
@@ -97,8 +97,8 @@ public class SystemController {
         return currentUser;
     }
 
-    public Period getCurrentPeriod() {
-        return currentPeriod;
+    public Semester getCurrentPeriod() {
+        return currentSemester;
     }
 
     private void initDatabase() {
@@ -158,10 +158,10 @@ public class SystemController {
 
         List<Teacher> teacherList = List.of(teacher, teacher1, teacher2, teacher3);
 
-        currentPeriod.addLecture(lecture);
-        currentPeriod.addLecture(lecture1);
-        currentPeriod.addLecture(lecture2);
-        currentPeriod.addLecture(lecture3);
+        currentSemester.addLecture(lecture);
+        currentSemester.addLecture(lecture1);
+        currentSemester.addLecture(lecture2);
+        currentSemester.addLecture(lecture3);
 
         // Students
         Student student = new Student("yan", "1234", "Yan Charlos", "000.000.000-01", "Minha Casa", "27/05/2001", CSCourse, "2019-1", new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
