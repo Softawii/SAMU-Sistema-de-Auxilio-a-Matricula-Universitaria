@@ -35,7 +35,6 @@ public class Teacher extends User {
     @Override
     public String toString() {
         return "Teacher{" +
-                ", super='" + super.toString() + '\'' +
                 ", lectures='" + lectures.stream().map(Lecture::getCode) + '\'' +
                 '}';
     }
