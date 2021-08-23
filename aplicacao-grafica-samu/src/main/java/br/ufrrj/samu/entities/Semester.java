@@ -62,8 +62,15 @@ public class Semester {
     }
 
     public enum CurrentStatus {
-        ENROLLMENT,
-        ONGOING,
-        CONCLUDED
+        ENROLLMENT("Matr\u00EDcula"),
+        ONGOING("Andamento"),
+        CONCLUDED("Conclu\u00EDdo");
+        String status;
+        CurrentStatus(String status) {
+            this.status = status;
+        }
+        public String getStatus() {
+            return status;
+        }
     }
 }

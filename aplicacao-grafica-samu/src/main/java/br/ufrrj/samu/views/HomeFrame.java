@@ -2,6 +2,7 @@ package br.ufrrj.samu.views;
 
 import br.ufrrj.samu.SAMU;
 import br.ufrrj.samu.entities.*;
+import br.ufrrj.samu.entities.Semester.CurrentStatus;
 import br.ufrrj.samu.utils.Util;
 import br.ufrrj.samu.views.listeners.LogoutListener;
 import org.apache.logging.log4j.LogManager;
@@ -39,11 +40,15 @@ public class HomeFrame extends JFrame {
     private JTable enrolledTable;
     private JTable teachingTable;
     private LogoutListener logoutListener;
+    private CurrentStatus currentStatus;
+    private JLabel currentStatusSemester;
+    private JButton confirmRequestedLecturesButton;
 
     public HomeFrame(User user, SAMU samu) throws HeadlessException {
         super();
         frameInit();
         this.user = user;
+        this.currentStatus = CurrentStatus.ENROLLMENT;
 
         mainJPanel = new JPanel();
         mainJPanel.setLayout(new BorderLayout());
@@ -64,8 +69,30 @@ public class HomeFrame extends JFrame {
                     @Override
                     public void keyPressed(KeyEvent e) {
                         if (e.getKeyCode() == KeyEvent.VK_K) {
-                            System.out.println("pressionou a tecla K");
-                            System.out.println(e);
+                            if (currentStatus == CurrentStatus.ENROLLMENT) {
+                                if (user instanceof Student) {
+                                    realizarMatriculaButton.setEnabled(false);
+                                    avaliarDisciplinasButton.setEnabled(false);
+                                } else if (user instanceof Coordinator) {
+                                    confirmRequestedLecturesButton.setEnabled(false);
+                                }
+                                currentStatus = CurrentStatus.ONGOING;
+                            } else if (currentStatus == CurrentStatus.ONGOING) {
+                                if (user instanceof Student) {
+                                    realizarMatriculaButton.setEnabled(false);
+                                    avaliarDisciplinasButton.setEnabled(true);
+                                }
+                                currentStatus = CurrentStatus.CONCLUDED;
+                            } else {
+                                if (user instanceof Student) {
+                                    realizarMatriculaButton.setEnabled(true);
+                                    avaliarDisciplinasButton.setEnabled(false);
+                                } else if (user instanceof Coordinator) {
+                                    confirmRequestedLecturesButton.setEnabled(true);
+                                }
+                                currentStatus = CurrentStatus.ENROLLMENT;
+                            }
+                            currentStatusSemester.setText("Semestre: " + currentStatus.getStatus());
                         }
                     }
                 });
@@ -93,6 +120,7 @@ public class HomeFrame extends JFrame {
         JLabel enrollment = new JLabel("Matr\u00EDcula: " + String.format("%s", user.getCpf()));
         JLabel course = new JLabel("Curso: " + user.getCourse().getName());
         JLabel semester = new JLabel("Semestre atual: " + Util.getCurrentSemester());
+        currentStatusSemester = new JLabel("Semestre: " + this.currentStatus.getStatus());
 
         GridBagConstraints gridConstraints = new GridBagConstraints();
 
@@ -119,6 +147,9 @@ public class HomeFrame extends JFrame {
 
         gridConstraints.gridy++;
         userInfoPanel.add(semester, gridConstraints);
+
+        gridConstraints.gridy++;
+        userInfoPanel.add(currentStatusSemester, gridConstraints);
 
         gridConstraints.weighty = 0.08;
         gridConstraints.gridy++;
@@ -152,7 +183,7 @@ public class HomeFrame extends JFrame {
             gridConstraints.gridy++;
             avaliarDisciplinasButton = new JButton("Avaliar Disciplinas");
             avaliarDisciplinasButton.setFocusable(false);
-            avaliarDisciplinasButton.setEnabled(true);
+            avaliarDisciplinasButton.setEnabled(false);
             avaliarDisciplinasButton.setFont(avaliarDisciplinasButton.getFont().deriveFont(15f));
             avaliarDisciplinasButton.addActionListener(e -> {
                 new EvaluationFrame();
@@ -160,7 +191,7 @@ public class HomeFrame extends JFrame {
             userInfoPanel.add(avaliarDisciplinasButton, gridConstraints);
         } else if (user instanceof Coordinator) {
             gridConstraints.gridy++;
-            JButton confirmRequestedLecturesButton = new JButton("Confirmar Matr\u00EDculas");
+            confirmRequestedLecturesButton = new JButton("Confirmar Matr\u00EDculas");
             confirmRequestedLecturesButton.setFocusable(false);
             confirmRequestedLecturesButton.setFont(confirmRequestedLecturesButton.getFont().deriveFont(15f));
             confirmRequestedLecturesButton.setFont(confirmRequestedLecturesButton.getFont().deriveFont(15f));
