@@ -3,6 +3,7 @@ package br.ufrrj.samu.entities;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class Student extends User {
 
@@ -84,9 +85,11 @@ public class Student extends User {
         return "Student{" +
                 "user='" + super.toString() + '\'' +
                 ", semester='" + semester + '\'' +
-                ", enrollLectures=" + enrollLectures +
-                ", requestedLectures=" + requestedLectures +
-                ", concludedSubjects=" + concludedSubjects +
+                ", enrollLectures=" + enrollLectures.stream().map(lecture -> { return lecture.getSubject().getName(); }) +
+                ", requestedLectures=" + requestedLectures.stream().map(lecture -> {
+                    return lecture.getSubject().getName();
+        }) +
+                ", concludedSubjects=" + concludedSubjects.stream().map(Subject::getName) +
                 '}';
     }
 
