@@ -16,6 +16,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Map;
@@ -171,5 +172,13 @@ public class Util {
 
     public static ImageIcon getImageWidth(ImageIcon image, int width, int height) {
         return new ImageIcon(image.getImage().getScaledInstance(width, height, Image.SCALE_DEFAULT));
+    }
+
+    public static String getCurrentSemester() {
+        LocalDateTime now = LocalDateTime.now();
+        int year = now.getYear();
+        int monthValue = now.getMonthValue(); // 1-12
+        int semester = monthValue <= 6 ? 1 : 2;
+        return String.format("%d.%d", year, semester);
     }
 }
