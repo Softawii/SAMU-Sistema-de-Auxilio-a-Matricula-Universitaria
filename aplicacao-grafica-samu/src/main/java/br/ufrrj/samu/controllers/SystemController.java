@@ -101,6 +101,19 @@ public class SystemController {
         return currentSemester;
     }
 
+    public void confirmEnrollment(Student student, Lecture lecture) {
+        student.getRequestedLectures().remove(lecture);
+        lecture.getPreEnrolledStudent().remove(student);
+        student.addEnrollLectures(lecture);
+        lecture.getStudents().add(student);
+    }
+
+
+    public void deniedEnrollment(Student student, Lecture lecture) {
+        student.getRequestedLectures().remove(lecture);
+        lecture.getPreEnrolledStudent().remove(student);
+    }
+
     private void initDatabase() {
         // DTL
         Subject subject = new Subject("Geometria Analitica", "Estudo sobre matrizes, determinantes e sistemas. Vetores. Retas e planos. Curvas. Superficies.", "DTL00", List.of());
@@ -184,16 +197,4 @@ public class SystemController {
         List<Student> studentList = List.of(student, student1, student2, student3, student4);
     }
 
-    public void confirmEnrollment(Student student, Lecture lecture) {
-        student.getRequestedLectures().remove(lecture);
-        lecture.getPreEnrolledStudent().remove(student);
-        student.addEnrollLectures(lecture);
-        lecture.getStudents().add(student);
-    }
-
-
-    public void deniedEnrollment(Student student, Lecture lecture) {
-        student.getRequestedLectures().remove(lecture);
-        lecture.getPreEnrolledStudent().remove(student);
-    }
 }
