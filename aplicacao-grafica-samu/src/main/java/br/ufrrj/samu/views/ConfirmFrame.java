@@ -201,8 +201,8 @@ public class ConfirmFrame extends JFrame {
         // atualiza os dados quando abre
         String[] columnNames = new String[]{"Aluno", "Nome da Turma", "Professor", "Hor\u00E1rio",  "Confirmar"};
 
-        // TODO deixar semelhante ao diagrama, desacoplar
-        requestedLectures = systemController.getCurrentPeriod().getLectureList();
+        // desacoplado? nunca saberemos 😎😎😎😎
+        requestedLectures = systemController.getCurrentLectures();
 
         // num_rows = num_students
         numRows = requestedLectures.stream().mapToInt(lecture -> lecture.getPreEnrolledStudent().size()).sum();

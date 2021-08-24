@@ -61,8 +61,10 @@ public class SystemController {
     }
 
     public List<Lecture> requestEnrollLectures() {
-        // TODO Gambiarra? Talvez, mas isso só ocorreria se um estudante estivesse logado - edu
-        return ((Student) currentUser).getEnrollLectures();
+        // TODO deveria retornar uma throw, mas já estou surtando suficiente é noix xD
+        if(currentUser instanceof Student)
+            return ((Student) currentUser).getEnrollLectures();
+        return List.of();
     }
 
     public List<Lecture> requestAvailableLectures() {
@@ -76,11 +78,12 @@ public class SystemController {
 
     public void registerEnrollRequest(Lecture lecture) {
         registerEnrollRequest(lecture, (Student) currentUser);
-        return;
     }
 
     public void registerEnrollRequest(Lecture lecture, Student student) {
-        // TODO Falta a relação entre o período?
+
+        // TODO VERIFICAR SE É STUDENT, NÃO VOU FAZER PQ TO SEM TEMPO - yan
+
         // Relação turma -> estudante
         lecture.addPreEnrolledStudent(student);
 
@@ -90,6 +93,9 @@ public class SystemController {
     }
 
     public void evaluateLecture(Lecture lecture, int rate) {
+
+        // TODO VERIFICAR SE É STUDANT, NÃO VOU FAZER PQ TO SEM TEMPO
+
         lecture.evaluate((Student) currentUser, rate);
     }
 
@@ -101,18 +107,26 @@ public class SystemController {
         return currentSemester;
     }
 
+    public List<Lecture> getCurrentLectures() { return this.currentSemester.getLectureList(); }
+
     public void confirmEnrollment(Student student, Lecture lecture) {
-        student.getRequestedLectures().remove(lecture);
-        lecture.getPreEnrolledStudent().remove(student);
+
+        // TODO VERIFICAR SE É COORDENADOR, NÃO VOU FAZER PQ TO SEM TEMPO - yan
+
+        student.removeRequestedLectures(lecture);
         student.addEnrollLectures(lecture);
-        lecture.getStudents().add(student);
+
+        lecture.acceptPreEnrolledStudent(student);
     }
 
+    public void denyEnrollment(Student student, Lecture lecture) {
 
-    public void deniedEnrollment(Student student, Lecture lecture) {
-        student.getRequestedLectures().remove(lecture);
-        lecture.getPreEnrolledStudent().remove(student);
+        // TODO VERIFICAR SE É COORDENADOR, NÃO VOU FAZER PQ TO SEM TEMPO - yan
+
+        student.removeRequestedLectures(lecture);
+        lecture.removePreEnrolledStudent(student);
     }
+
 
     private void initDatabase() {
         // DTL
