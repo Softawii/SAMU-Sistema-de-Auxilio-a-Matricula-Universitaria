@@ -42,6 +42,13 @@ public class Lecture {
         preEnrolledStudent.add(student);
     }
 
+    public void removePreEnrolledStudent(Student student) { preEnrolledStudent.remove(student); }
+
+    public void acceptPreEnrolledStudent(Student student) {
+        preEnrolledStudent.remove(student);
+        students.add(student);
+    }
+
     public List<Student> getPreEnrolledStudent() {
         return preEnrolledStudent;
     }
@@ -122,6 +129,7 @@ public class Lecture {
             return true;
         };
     }
+
 
     @Override
     public String toString() {

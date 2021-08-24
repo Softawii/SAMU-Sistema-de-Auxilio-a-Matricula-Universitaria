@@ -58,7 +58,10 @@ public class Student extends User {
 
     public void addEnrollLectures(Lecture lecture) { this.enrollLectures.add(lecture); }
 
+
     public void addRequestedLectures(Lecture lecture) { this.requestedLectures.add(lecture); }
+
+    public void removeRequestedLectures(Lecture lecture) { this.requestedLectures.remove(lecture); }
 
     public void setSemester(String semester) {
         this.semester = semester;
