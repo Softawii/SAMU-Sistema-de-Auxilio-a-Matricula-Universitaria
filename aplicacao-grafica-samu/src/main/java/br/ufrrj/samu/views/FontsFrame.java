@@ -44,7 +44,7 @@ public class FontsFrame extends JFrame {
         this.setSize(this.width, this.height);
         this.setTitle(this.frameTitle);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        this.setIconImage(new ImageIcon(requireNonNull(this.getClass().getClassLoader().getResource("friend.png"))).getImage());
+        this.setIconImage(new ImageIcon(requireNonNull(this.getClass().getClassLoader().getResource("bemtevi.png"))).getImage());
         Util.centreWindow(this);
     }
 }

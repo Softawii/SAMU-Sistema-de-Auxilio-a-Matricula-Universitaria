@@ -4,47 +4,38 @@ import java.util.Objects;
 
 public class User {
 
-    private long id;
     private String username;
     private String password;
     private String name;
     private String cpf;
     private String address;
     private String birthday;
+    private Course course;
 
     public User() {
     }
 
     public User(String username, String password) {
-        this(0, username, password);
-    }
-
-    public User(long id, String username, String password) {
-        this.id = id;
         this.username = username;
         this.password = password;
     }
 
-    public User(String username, String password, String name, String cpf, String address, String birthday) {
-        this(0, username, password, name, cpf, address, birthday);
-    }
-
-    public User(long id, String username, String password, String name, String cpf, String address, String birthday) {
-        this.id = id;
+    public User(String username, String password, String name, String cpf, String address, String birthday, Course course) {
         this.username = username;
         this.password = password;
         this.name = name;
         this.cpf = cpf;
         this.address = address;
         this.birthday = birthday;
+        this.course = course;
     }
 
-    public long getId() {
-        return id;
+    public Course getCourse() {
+        return course;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setCourse(Course course) {
+        this.course = course;
     }
 
     public String getName() {
@@ -99,25 +90,43 @@ public class User {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User user1 = (User) o;
-        return username.equals(user1.username) && password.equals(user1.password);
+        User user = (User) o;
+        return cpf.equals(user.cpf);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(username, password);
+        return Objects.hash(cpf);
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
+                "username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
+                ", course='" + course + '\'' +
                 ", cpf='" + cpf + '\'' +
                 ", address='" + address + '\'' +
                 ", birthday='" + birthday + '\'' +
                 '}';
+    }
+
+    enum Type {
+        STUDENT("Student"),
+        TEACHER("Teacher"),
+        COORDINATOR("Coordinator"),
+        ADMINISTRATOR("Administrator"),
+        OTHER("Other");
+
+        private String name;
+
+        Type(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 }

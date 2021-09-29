@@ -52,6 +52,9 @@ public class Subject {
         this.description = description;
     }
 
+    public ArrayList<String> getPrerequisites() {
+        return prerequisites;
+    }
 
     public String getPrerequisitesList() {
 
@@ -68,11 +71,6 @@ public class Subject {
         return stringBuilder.toString();
     }
 
-    public String getProfessor() {
-        return "Filipe Braida do Carmo";
-    }
-
-    //TODO: Maybe in the future we need to get prereqs informations (like name) maybe a method to do this would be a good thing
 
     @Override
     public String toString() {

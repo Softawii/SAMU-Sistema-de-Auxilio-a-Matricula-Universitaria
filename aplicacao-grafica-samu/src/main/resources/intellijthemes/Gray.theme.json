@@ -188,6 +188,7 @@
     },
 
     "Table": {
+      "background": "#F2F3F5",
       "stripeColor": "#F2F3F5",
       "gridColor": "#2f334d",
       "alternateRowColor": "#b7b7b7"

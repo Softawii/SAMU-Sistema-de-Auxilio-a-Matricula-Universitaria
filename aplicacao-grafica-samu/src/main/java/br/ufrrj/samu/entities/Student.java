@@ -3,38 +3,25 @@ package br.ufrrj.samu.entities;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class Student extends User {
 
-    private String course;
     private String semester;
 
     private List<Lecture> enrollLectures;
     private List<Lecture> requestedLectures;
+    private List<Subject> concludedSubjects;
 
     public Student() {
         super();
     }
 
-    public Student(long id, String course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures) {
-        this(course, semester, enrollLectures, requestedLectures);
-        super.setId(id);
-    }
-
-    public Student(String course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures) {
-        super();
-        this.course = course;
+    public Student(String username, String password, String name, String cpf, String address, String birthday,
+                   Course course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures, List<Subject> concludedSubjects) {
+        super(username, password, name, cpf, address, birthday, course);
         this.semester = semester;
-        this.enrollLectures = enrollLectures;
-        this.requestedLectures = requestedLectures;
-    }
-
-    public Student(long id, String username, String password, String name, String cpf, String address, String birthday,
-                   String course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures) {
-        super(id, username, password, name, cpf, address, birthday);
-
-        this.course = course;
-        this.semester = semester;
+        this.concludedSubjects = concludedSubjects;
 
         try {
             this.enrollLectures = new ArrayList<>(enrollLectures);
@@ -47,14 +34,6 @@ public class Student extends User {
         } catch (Exception e) {
             this.requestedLectures = new ArrayList<>();
         }
-    }
-
-    public Student(String username, String password, String name, String cpf, String address, String birthday,
-                   String course, String semester, List<Lecture> enrollLectures, List<Lecture> requestedLectures) {
-        this(0, username, password, name, cpf, address, birthday, course, semester, enrollLectures, requestedLectures);
-    }
-    public String getCourse() {
-        return course;
     }
 
     public String getSemester() {
@@ -79,11 +58,10 @@ public class Student extends User {
 
     public void addEnrollLectures(Lecture lecture) { this.enrollLectures.add(lecture); }
 
+
     public void addRequestedLectures(Lecture lecture) { this.requestedLectures.add(lecture); }
 
-    public void setCourse(String course) {
-        this.course = course;
-    }
+    public void removeRequestedLectures(Lecture lecture) { this.requestedLectures.remove(lecture); }
 
     public void setSemester(String semester) {
         this.semester = semester;
@@ -97,14 +75,24 @@ public class Student extends User {
         this.requestedLectures = requestedLectures;
     }
 
+    public List<Subject> getConcludedSubjects() {
+        return concludedSubjects;
+    }
+
+    public void setConcludedSubjects(List<Subject> concludedSubjects) {
+        this.concludedSubjects = concludedSubjects;
+    }
+
     @Override
     public String toString() {
         return "Student{" +
                 "user='" + super.toString() + '\'' +
-                ", course='" + course + '\'' +
                 ", semester='" + semester + '\'' +
-                ", enrollLectures=" + enrollLectures +
-                ", requestedLectures=" + requestedLectures +
+                ", enrollLectures=" + enrollLectures.stream().map(lecture -> { return lecture.getSubject().getName(); }) +
+                ", requestedLectures=" + requestedLectures.stream().map(lecture -> {
+                    return lecture.getSubject().getName();
+        }) +
+                ", concludedSubjects=" + concludedSubjects.stream().map(Subject::getName) +
                 '}';
     }
 

@@ -1,24 +1,20 @@
 package br.ufrrj.samu.views;
 
 import br.ufrrj.samu.SAMU;
-import br.ufrrj.samu.controllers.HomeController;
-import br.ufrrj.samu.entities.Lecture;
-import br.ufrrj.samu.entities.Student;
-import br.ufrrj.samu.entities.User;
+import br.ufrrj.samu.entities.*;
+import br.ufrrj.samu.entities.Semester.CurrentStatus;
 import br.ufrrj.samu.utils.Util;
+import br.ufrrj.samu.views.listeners.LogoutListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.*;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import static br.ufrrj.samu.utils.Util.centreWindow;
 import static java.util.Objects.requireNonNull;
@@ -33,22 +29,26 @@ public class HomeFrame extends JFrame {
 
     JPanel mainJPanel;
 
-    JTable lecturesTable;
+    JTable concludedTable;
 
-    private HomeController homeController;
-
-    private Student student;
-    private JScrollPane scrollPane;
+    private User user;
     private JButton logoutButton;
     private JButton avaliarDisciplinasButton;
     private JButton realizarMatriculaButton;
+    private JTabbedPane tabbedPane;
+    private JTable requestedTable;
+    private JTable enrolledTable;
+    private JTable teachingTable;
+    private LogoutListener logoutListener;
+    private CurrentStatus currentStatus;
+    private JLabel currentStatusSemester;
+    private JButton confirmRequestedLecturesButton;
 
-    public HomeFrame(long userId, SAMU samu) throws HeadlessException {
+    public HomeFrame(User user, SAMU samu) throws HeadlessException {
         super();
         frameInit();
-        sim();
-        homeController = samu.getHomeController();
-        this.student = homeController.getStudent(userId);
+        this.user = user;
+        this.currentStatus = CurrentStatus.ENROLLMENT;
 
         mainJPanel = new JPanel();
         mainJPanel.setLayout(new BorderLayout());
@@ -59,6 +59,48 @@ public class HomeFrame extends JFrame {
 
         this.add(mainJPanel);
         this.setVisible(true);
+        konamiCode(this);
+    }
+
+    public void konamiCode(Container parent) {
+        for (Component c : parent.getComponents()) {
+            if (c instanceof JTable)
+                c.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyPressed(KeyEvent e) {
+                        if (e.getKeyCode() == KeyEvent.VK_K) {
+                            if (currentStatus == CurrentStatus.ENROLLMENT) {
+                                if (user instanceof Student) {
+                                    realizarMatriculaButton.setEnabled(false);
+                                    avaliarDisciplinasButton.setEnabled(false);
+                                } else if (user instanceof Coordinator) {
+                                    confirmRequestedLecturesButton.setEnabled(false);
+                                }
+                                currentStatus = CurrentStatus.ONGOING;
+                            } else if (currentStatus == CurrentStatus.ONGOING) {
+                                if (user instanceof Student) {
+                                    realizarMatriculaButton.setEnabled(false);
+                                    avaliarDisciplinasButton.setEnabled(true);
+                                }
+                                currentStatus = CurrentStatus.CONCLUDED;
+                            } else {
+                                if (user instanceof Student) {
+                                    realizarMatriculaButton.setEnabled(true);
+                                    avaliarDisciplinasButton.setEnabled(false);
+                                } else if (user instanceof Coordinator) {
+                                    confirmRequestedLecturesButton.setEnabled(true);
+                                }
+                                currentStatus = CurrentStatus.ENROLLMENT;
+                            }
+                            currentStatusSemester.setText("Semestre: " + currentStatus.getStatus());
+                        }
+                    }
+                });
+
+            if (c instanceof Container) {
+                konamiCode((Container) c);
+            }
+        }
     }
 
     private void initLeftSite() {
@@ -70,21 +112,22 @@ public class HomeFrame extends JFrame {
 
         JLabel userImage = new JLabel();
         userImage.setBackground(Color.WHITE);
-        userImage.setOpaque(true);
+        userImage.setOpaque(false);
         userImage.setSize(new Dimension(150, 150));
-        userImage.setIcon(new ImageIcon(requireNonNull(this.getClass().getClassLoader().getResource("images/userImage.png"))));
+        userImage.setIcon(requireNonNull(Util.getImageWidth("images/userImage.png", 128,128)));
 
-        JLabel username = new JLabel("Nome: " + student.getName());
-        JLabel enrollment = new JLabel("Matr\u00EDcula: " + String.format("%05d",student.getId()));
-        JLabel course = new JLabel("Curso: " + student.getCourse());
-        JLabel semester = new JLabel("Entrou: " + student.getSemester());
+        JLabel username = new JLabel("Nome: " + user.getName());
+        JLabel enrollment = new JLabel("Matr\u00EDcula: " + String.format("%s", user.getCpf()));
+        JLabel course = new JLabel("Curso: " + user.getCourse().getName());
+        JLabel semester = new JLabel("Semestre atual: " + Util.getCurrentSemester());
+        currentStatusSemester = new JLabel("Semestre: " + this.currentStatus.getStatus());
 
         GridBagConstraints gridConstraints = new GridBagConstraints();
 
         gridConstraints.anchor = GridBagConstraints.CENTER;
         gridConstraints.weighty = 0.05;
 
-        gridConstraints.gridy = 1;
+        gridConstraints.gridy = 0;
         gridConstraints.gridx = 0;
         gridConstraints.fill = GridBagConstraints.NONE; /* Troquei para NONE, o both tava fazendo ficar com a parte branca bem maior */
         gridConstraints.insets = new Insets(0, 0, 10, 4);
@@ -93,20 +136,23 @@ public class HomeFrame extends JFrame {
         gridConstraints.insets = new Insets(0, 0, 0, 0);
 
         gridConstraints.fill = GridBagConstraints.NONE;
-        gridConstraints.gridy = 2;
+        gridConstraints.gridy++;
         userInfoPanel.add(username, gridConstraints);
 
-        gridConstraints.gridy = 3;
+        gridConstraints.gridy++;
         userInfoPanel.add(enrollment, gridConstraints);
 
-        gridConstraints.gridy = 4;
+        gridConstraints.gridy++;
         userInfoPanel.add(course, gridConstraints);
 
-        gridConstraints.gridy = 5;
+        gridConstraints.gridy++;
         userInfoPanel.add(semester, gridConstraints);
 
+        gridConstraints.gridy++;
+        userInfoPanel.add(currentStatusSemester, gridConstraints);
+
         gridConstraints.weighty = 0.08;
-        gridConstraints.gridy = 6;
+        gridConstraints.gridy++;
         gridConstraints.insets = new Insets(20,0,0,0);
         userInfoPanel.add(new JLabel("Menu de Navega\u00E7\u00E3o"), gridConstraints);
 
@@ -116,25 +162,69 @@ public class HomeFrame extends JFrame {
         gridConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridConstraints.anchor = GridBagConstraints.FIRST_LINE_START;
 
-        gridConstraints.gridy = 7;
-        realizarMatriculaButton = new JButton("Realizar Matr\u00EDcula");
-        realizarMatriculaButton.setFocusable(false);
-        realizarMatriculaButton.setFont(realizarMatriculaButton.getFont().deriveFont(15f));
-        userInfoPanel.add(realizarMatriculaButton, gridConstraints);
+        if (user instanceof Student) {
+            gridConstraints.gridy++;
+            realizarMatriculaButton = new JButton("Realizar Matr\u00EDcula");
+            realizarMatriculaButton.setFocusable(false);
+            realizarMatriculaButton.setFont(realizarMatriculaButton.getFont().deriveFont(15f));
+            realizarMatriculaButton.setFont(realizarMatriculaButton.getFont().deriveFont(15f));
+            realizarMatriculaButton.addActionListener(e -> {
+                EnrollFrame enrollFrame = new EnrollFrame();
+                enrollFrame.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        LOGGER.debug("Closing HomeFrame window");
+                        refreshData();
+                    }
+                });
+            });
+            userInfoPanel.add(realizarMatriculaButton, gridConstraints);
 
-        gridConstraints.gridy = 8;
-        avaliarDisciplinasButton = new JButton("Avaliar Disciplinas");
-        avaliarDisciplinasButton.setFocusable(false);
-        avaliarDisciplinasButton.setEnabled(false);
-        avaliarDisciplinasButton.setFont(avaliarDisciplinasButton.getFont().deriveFont(15f));
-        userInfoPanel.add(avaliarDisciplinasButton, gridConstraints);
+            gridConstraints.gridy++;
+            avaliarDisciplinasButton = new JButton("Avaliar Disciplinas");
+            avaliarDisciplinasButton.setFocusable(false);
+            avaliarDisciplinasButton.setEnabled(false);
+            avaliarDisciplinasButton.setFont(avaliarDisciplinasButton.getFont().deriveFont(15f));
+            avaliarDisciplinasButton.addActionListener(e -> {
+                new EvaluationFrame();
+            });
+            userInfoPanel.add(avaliarDisciplinasButton, gridConstraints);
+        } else if (user instanceof Coordinator) {
+            gridConstraints.gridy++;
+            confirmRequestedLecturesButton = new JButton("Confirmar Matr\u00EDculas");
+            confirmRequestedLecturesButton.setFocusable(false);
+            confirmRequestedLecturesButton.setFont(confirmRequestedLecturesButton.getFont().deriveFont(15f));
+            confirmRequestedLecturesButton.setFont(confirmRequestedLecturesButton.getFont().deriveFont(15f));
+            ConfirmFrame confirmFrame = new ConfirmFrame();
+            confirmRequestedLecturesButton.addActionListener(e -> {
+                confirmFrame.setVisible(true);
+                System.out.println("confirmar matrículas");
+            });
+            userInfoPanel.add(confirmRequestedLecturesButton, gridConstraints);
 
-        gridConstraints.gridy = 9;
+            gridConstraints.gridy++;
+            JButton generateReportButton = new JButton("Gerar Relat\u00F3rio");
+            generateReportButton.setFocusable(false);
+            generateReportButton.setEnabled(true);
+            generateReportButton.setFont(generateReportButton.getFont().deriveFont(15f));
+            generateReportButton.addActionListener(e -> {
+                System.out.println("gerar relatório");
+            });
+            userInfoPanel.add(generateReportButton, gridConstraints);
+        }
+
+        gridConstraints.gridy++;
         gridConstraints.weighty = 2.0;
         logoutButton = new JButton("Logout");
         logoutButton.setFocusable(false);
-        logoutButton.setEnabled(false);
+        logoutButton.setEnabled(true);
         logoutButton.setFont(logoutButton.getFont().deriveFont(15f));
+        logoutButton.addActionListener(e -> {
+            if (logoutListener != null) {
+                this.dispose();
+                logoutListener.logoutEventOccurred();
+            }
+        });
         userInfoPanel.add(logoutButton, gridConstraints);
 
         mainJPanel.add(userInfoPanel, BorderLayout.WEST);
@@ -147,10 +237,24 @@ public class HomeFrame extends JFrame {
         JPanel tableJPanel = new JPanel();
         tableJPanel.setLayout(new BorderLayout());
 
-        GridBagConstraints gridConstraints = new GridBagConstraints();
-        initLecturesTable();
+        if (user instanceof Student) {
+            initStudentRightSide(rightSidePanel, tableJPanel);
+        } else if (user instanceof Coordinator) {
+            initCoordinatorRightSide(rightSidePanel, tableJPanel);
+        }
 
-        tableJPanel.add(scrollPane, BorderLayout.CENTER);
+
+        mainJPanel.add(rightSidePanel, BorderLayout.CENTER);
+    }
+
+    private void initCoordinatorRightSide(JPanel rightSidePanel, JPanel tableJPanel) {
+        GridBagConstraints gridConstraints = new GridBagConstraints();
+        JScrollPane scrollPaneTeachingLectures = initTeachingLecturesTable();
+
+        tabbedPane = new JTabbedPane();
+        tabbedPane.addTab("Suas turmas", scrollPaneTeachingLectures);
+
+        tableJPanel.add(tabbedPane, BorderLayout.CENTER);
 
         gridConstraints.gridx = 2;
         gridConstraints.gridy = 1;
@@ -168,38 +272,206 @@ public class HomeFrame extends JFrame {
         gridConstraints.gridwidth = 3;
         gridConstraints.insets = new Insets(10, 10, 10, 10);
         rightSidePanel.add(tableJPanel, gridConstraints);
-
-
-        mainJPanel.add(rightSidePanel, BorderLayout.CENTER);
     }
 
-
-    public void initLecturesTable() {
-
-        LOGGER.debug("Student Info:" + student);
-
-        String[] columnNames = {"Nome da Disciplina", "Professor", "Hor\u00E1rio"};
-
-        // TODO: TEMPORARY!!!!!!!!!!!!! We need to get enroll lectures instead of requested or maybe both
-        //List<Lecture> studentSubjects = student.getEnrollLectures();
-        List<Lecture> studentSubjects = student.getRequestedLectures();
-
-        Object[][] data = new Object[studentSubjects.size()][columnNames.length];
-        for (int i = 0; i < studentSubjects.size(); i++) {
-            Lecture lecture = studentSubjects.get(i);
-            data[i][0] = lecture.getSubject().getName();
-            Optional<User> teacher = homeController.getTeacher(lecture.getTeacher());
-
-            data[i][1] = teacher.isPresent() ? teacher.get().getName() : "Unknown 404";//PEGAR O PROF PELO ID
-            data[i][2] = lecture.getSchedule();
-
-            LOGGER.debug(String.format("[Table] Inserting in line %d: %s %s %s", i, data[i][0], data[i][1], data[i][2]));
-        }
-
-        lecturesTable = new JTable(data, columnNames) {
+    private JScrollPane initTeachingLecturesTable() {
+        teachingTable = new JTable() {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return column == 4;
+            }
+
+            @Override
+            public Class<?> getColumnClass(int column) {
+                return String.class;
+            }
+
+            @Override
+            protected void createDefaultRenderers() {
+                super.createDefaultRenderers();
+            }
+        };
+        initTeachingLecturesData();
+        teachingTable.setColumnSelectionAllowed(true);
+        teachingTable.setShowGrid(false);
+        teachingTable.addMouseMotionListener(new MouseAdapter() {
+            public void mouseMoved(MouseEvent e) {
+                int row = teachingTable.rowAtPoint(e.getPoint());
+                int col = teachingTable.columnAtPoint(e.getPoint());
+                if (row > -1 && col > -1) {
+                    Object value = teachingTable.getValueAt(row, col);
+                    if (null != value && !"".equals(value)) {
+                        teachingTable.setToolTipText(value.toString());// floating display cell content
+                    } else {
+                        teachingTable.setToolTipText(null);
+                    }
+                }
+            }
+        });
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        teachingTable.setDefaultRenderer(String.class, centerRenderer);
+        teachingTable.setFont(teachingTable.getFont().deriveFont(18f));
+        teachingTable.setRowHeight(teachingTable.getFont().getSize() * 4);
+        teachingTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        teachingTable.getTableHeader().setReorderingAllowed(false);
+        teachingTable.setCellSelectionEnabled(false);
+        teachingTable.setDragEnabled(false);
+        teachingTable.setFillsViewportHeight(true);
+
+        return new JScrollPane(teachingTable);
+    }
+
+    private void initTeachingLecturesData() {
+        String[] columnNames = {"Nome da Disciplina", "Hor\u00E1rio"};
+
+        List<Lecture> teachingLectures = ((Teacher) user).getLectures();
+
+        Object[][] data = new Object[teachingLectures.size()][columnNames.length];
+        for (int i = 0; i < teachingLectures.size(); i++) {
+            Lecture lecture = teachingLectures.get(i);
+            data[i][0] = lecture.getSubject().getName();
+            data[i][1] = lecture.getSchedule();
+
+            LOGGER.debug(String.format("[Table] Inserting teaching lecture in line %d: %s %s", i, data[i][0], data[i][1]));
+        }
+
+        teachingTable.setModel(new DefaultTableModel(data, columnNames));
+    }
+
+    private void initStudentRightSide(JPanel rightSidePanel, JPanel tableJPanel) {
+        GridBagConstraints gridConstraints = new GridBagConstraints();
+        JScrollPane scrollPaneEnrollLecture = initEnrollLecturesTable();
+        JScrollPane scrollPaneRequestedLectures = initRequestedLectures();
+        JScrollPane scrollPaneConcludedLectures = initConcludedSubjects();
+
+        tabbedPane = new JTabbedPane();
+        tabbedPane.addTab("Turmas Matriculadas", scrollPaneEnrollLecture);
+        tabbedPane.addTab("Turmas Pr\u00E9-Matriculadas", scrollPaneRequestedLectures);
+        tabbedPane.addTab("Disciplinas Conclu\u00EDdas", scrollPaneConcludedLectures);
+
+        tableJPanel.add(tabbedPane, BorderLayout.CENTER);
+
+        gridConstraints.gridx = 2;
+        gridConstraints.gridy = 1;
+        gridConstraints.insets = new Insets(10, 10, 10, 10);
+        gridConstraints.anchor = GridBagConstraints.EAST;
+        rightSidePanel.add(Util.THEME_BUTTON, gridConstraints);
+
+
+        gridConstraints.gridx = 0;
+        gridConstraints.gridy = 2;
+        gridConstraints.weightx = 1;
+        gridConstraints.weighty = 1;
+        gridConstraints.anchor = GridBagConstraints.CENTER;
+        gridConstraints.fill = GridBagConstraints.BOTH;
+        gridConstraints.gridwidth = 3;
+        gridConstraints.insets = new Insets(10, 10, 10, 10);
+        rightSidePanel.add(tableJPanel, gridConstraints);
+    }
+
+    private JScrollPane initConcludedSubjects() {
+        concludedTable = new JTable() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+
+            @Override
+            public Class<?> getColumnClass(int column) {
+                return String.class;
+            }
+
+            @Override
+            protected void createDefaultRenderers() {
+                super.createDefaultRenderers();
+            }
+        };
+        initConcludedSubjectsData();
+        concludedTable.setColumnSelectionAllowed(true);
+        concludedTable.setShowGrid(false);
+        concludedTable.addMouseMotionListener(new MouseAdapter() {
+            public void mouseMoved(MouseEvent e) {
+                int row = concludedTable.rowAtPoint(e.getPoint());
+                int col = concludedTable.columnAtPoint(e.getPoint());
+                if (row > -1 && col > -1) {
+                    Object value = concludedTable.getValueAt(row, col);
+                    if (null != value && !"".equals(value)) {
+                        concludedTable.setToolTipText(value.toString());// floating display cell content
+                    } else {
+                        concludedTable.setToolTipText(null);
+                    }
+                }
+            }
+        });
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        concludedTable.setDefaultRenderer(String.class, centerRenderer);
+        concludedTable.setFont(concludedTable.getFont().deriveFont(18f));
+        concludedTable.setRowHeight(concludedTable.getFont().getSize() * 4);
+        concludedTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        concludedTable.getTableHeader().setReorderingAllowed(false);
+        concludedTable.setCellSelectionEnabled(false);
+        concludedTable.setDragEnabled(false);
+        concludedTable.setFillsViewportHeight(true);
+
+        return new JScrollPane(concludedTable);
+    }
+
+    private JScrollPane initRequestedLectures() {
+
+        requestedTable = new JTable() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+
+            @Override
+            public Class<?> getColumnClass(int column) {
+                return String.class;
+            }
+
+            @Override
+            protected void createDefaultRenderers() {
+                super.createDefaultRenderers();
+            }
+        };
+        initRequestedLecturesData();
+        requestedTable.setColumnSelectionAllowed(true);
+        requestedTable.setShowGrid(false);
+        requestedTable.addMouseMotionListener(new MouseAdapter() {
+            public void mouseMoved(MouseEvent e) {
+                int row = requestedTable.rowAtPoint(e.getPoint());
+                int col = requestedTable.columnAtPoint(e.getPoint());
+                if (row > -1 && col > -1) {
+                    Object value = requestedTable.getValueAt(row, col);
+                    if (null != value && !"".equals(value)) {
+                        requestedTable.setToolTipText(value.toString());// floating display cell content
+                    } else {
+                        requestedTable.setToolTipText(null);
+                    }
+                }
+            }
+        });
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        requestedTable.setDefaultRenderer(String.class, centerRenderer);
+        requestedTable.setFont(requestedTable.getFont().deriveFont(18f));
+        requestedTable.setRowHeight(requestedTable.getFont().getSize() * 4);
+        requestedTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        requestedTable.getTableHeader().setReorderingAllowed(false);
+        requestedTable.setCellSelectionEnabled(false);
+        requestedTable.setDragEnabled(false);
+        requestedTable.setFillsViewportHeight(true);
+
+        return new JScrollPane(requestedTable);
+    }
+
+    private JScrollPane initEnrollLecturesTable() {
+        enrolledTable = new JTable() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
             }
 
             @Override
@@ -226,34 +498,35 @@ public class HomeFrame extends JFrame {
 //                }
 //            }
 //        });
-        lecturesTable.setColumnSelectionAllowed(true);
-        lecturesTable.setShowGrid(false);
-        lecturesTable.addMouseMotionListener(new MouseAdapter() {
+        initEnrolledLecturesData();
+        enrolledTable.setColumnSelectionAllowed(true);
+        enrolledTable.setShowGrid(false);
+        enrolledTable.addMouseMotionListener(new MouseAdapter() {
             public void mouseMoved(MouseEvent e) {
-                int row = lecturesTable.rowAtPoint(e.getPoint());
-                int col = lecturesTable.columnAtPoint(e.getPoint());
+                int row = enrolledTable.rowAtPoint(e.getPoint());
+                int col = enrolledTable.columnAtPoint(e.getPoint());
                 if (row > -1 && col > -1) {
-                    Object value = lecturesTable.getValueAt(row, col);
+                    Object value = enrolledTable.getValueAt(row, col);
                     if (null != value && !"".equals(value)) {
-                        lecturesTable.setToolTipText(value.toString());// floating display cell content
+                        enrolledTable.setToolTipText(value.toString());// floating display cell content
                     } else {
-                        lecturesTable.setToolTipText(null);
+                        enrolledTable.setToolTipText(null);
                     }
                 }
             }
         });
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        lecturesTable.setDefaultRenderer(String.class, centerRenderer);
-        lecturesTable.setFont(lecturesTable.getFont().deriveFont(18f));
-        lecturesTable.setRowHeight(lecturesTable.getFont().getSize() * 4);
-        lecturesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        lecturesTable.getTableHeader().setReorderingAllowed(false);
-        lecturesTable.setCellSelectionEnabled(false);
-        lecturesTable.setDragEnabled(false);
-        lecturesTable.setFillsViewportHeight(true);
+        enrolledTable.setDefaultRenderer(String.class, centerRenderer);
+        enrolledTable.setFont(enrolledTable.getFont().deriveFont(18f));
+        enrolledTable.setRowHeight(enrolledTable.getFont().getSize() * 4);
+        enrolledTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        enrolledTable.getTableHeader().setReorderingAllowed(false);
+        enrolledTable.setCellSelectionEnabled(false);
+        enrolledTable.setDragEnabled(false);
+        enrolledTable.setFillsViewportHeight(true);
 
-        scrollPane = new JScrollPane(lecturesTable);
+        return new JScrollPane(enrolledTable);
     }
 
     public static void resizeColumnsWidth(JTable table, Dimension dimension) {
@@ -265,16 +538,62 @@ public class HomeFrame extends JFrame {
         }
     }
 
-    public void sim() {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime ahead = now.plusSeconds(30);
+    public void refreshData() {
+        initRequestedLecturesData();
+        initEnrolledLecturesData();
+        initConcludedSubjectsData();
+    }
 
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                avaliarDisciplinasButton.setEnabled(true);
-            }
-        }, 10 * 1000);
+    private void initConcludedSubjectsData() {
+        String[] columnNames = {"C\u00F3digo", "Nome", "Descri\u00E7\u00E3o"};
+
+        List<Subject> concludedSubjects = ((Student) user).getConcludedSubjects();
+
+        Object[][] data = new Object[concludedSubjects.size()][columnNames.length];
+        for (int i = 0; i < concludedSubjects.size(); i++) {
+            Subject lecture = concludedSubjects.get(i);
+            data[i][0] = lecture.getCode();
+            data[i][1] = lecture.getName();
+            data[i][2] = lecture.getDescription();
+
+            LOGGER.debug(String.format("[Table] Inserting concluded subjects in line %d: %s %s %s", i, data[i][0], data[i][1], data[i][2]));
+        }
+        concludedTable.setModel(new DefaultTableModel(data, columnNames));
+    }
+
+    private void initEnrolledLecturesData() {
+        String[] columnNames = {"Nome da Disciplina", "Professor", "Hor\u00E1rio"};
+
+        List<Lecture> enrollLectures = ((Student) user).getEnrollLectures();
+
+        Object[][] data = new Object[enrollLectures.size()][columnNames.length];
+        for (int i = 0; i < enrollLectures.size(); i++) {
+            Lecture lecture = enrollLectures.get(i);
+            data[i][0] = lecture.getSubject().getName();
+            data[i][1] = lecture.getTeacher().getName();
+            data[i][2] = lecture.getSchedule();
+
+            LOGGER.debug(String.format("[Table] Inserting enroll lecture in line %d: %s %s %s", i, data[i][0], data[i][1], data[i][2]));
+        }
+        enrolledTable.setModel(new DefaultTableModel(data, columnNames));
+    }
+
+    private void initRequestedLecturesData() {
+        String[] columnNames = {"Nome da Disciplina", "Professor", "Hor\u00E1rio"};
+
+        List<Lecture> requestedLectures = ((Student) user).getRequestedLectures();
+
+        Object[][] data = new Object[requestedLectures.size()][columnNames.length];
+        for (int i = 0; i < requestedLectures.size(); i++) {
+            Lecture lecture = requestedLectures.get(i);
+            data[i][0] = lecture.getSubject().getName();
+            data[i][1] = lecture.getTeacher().getName();
+            data[i][2] = lecture.getSchedule();
+
+            LOGGER.debug(String.format("[Table] Inserting requested lecture in line %d: %s %s %s", i, data[i][0], data[i][1], data[i][2]));
+        }
+
+        requestedTable.setModel(new DefaultTableModel(data, columnNames));
     }
 
     @Override
@@ -284,7 +603,7 @@ public class HomeFrame extends JFrame {
         this.setMinimumSize(new Dimension(this.width, this.height));
         this.setTitle(this.frameTitle);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setIconImage(new ImageIcon(requireNonNull(this.getClass().getClassLoader().getResource("friend.png"))).getImage());
+        this.setIconImage(new ImageIcon(requireNonNull(this.getClass().getClassLoader().getResource("bemtevi.png"))).getImage());
 
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -294,13 +613,17 @@ public class HomeFrame extends JFrame {
         });
         this.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent evt) {
-                if (lecturesTable != null) {
-                    resizeColumnsWidth(lecturesTable, lecturesTable.getSize());
+                if (concludedTable != null) {
+                    resizeColumnsWidth(concludedTable, concludedTable.getSize());
                 }
             }
         });
         centreWindow(this);
 //        this.setResizable(false);
+    }
+
+    public void setLogoutListener(LogoutListener listener) {
+        this.logoutListener = listener;
     }
 
 }
